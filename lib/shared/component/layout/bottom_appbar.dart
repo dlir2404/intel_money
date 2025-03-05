@@ -13,7 +13,6 @@ class CustomBottomAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      // Use Container instead of directly using BottomAppBar
       height: kBottomNavigationBarHeight,
       child: BottomAppBar(
         padding: EdgeInsets.zero,

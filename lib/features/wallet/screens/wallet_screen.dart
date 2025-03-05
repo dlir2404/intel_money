@@ -1,12 +1,77 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:intel_money/features/wallet/widgets/wallet_appbar.dart';
 
-class WalletScreen extends StatelessWidget {
+class WalletScreen extends StatefulWidget {
   const WalletScreen({super.key});
 
   @override
+  State<WalletScreen> createState() => _WalletScreenState();
+}
+
+class _WalletScreenState extends State<WalletScreen> with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(
+      length: 3,
+      vsync: this,
+    );
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: Text('Wallet Screen'),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 80),
+      child: Scaffold(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        appBar: const WalletAppbar(),
+        floatingActionButton: SizedBox(
+          height: 56, // Set a fixed size for FAB
+          width: 56,
+          child: FloatingActionButton(
+            onPressed: () {},
+            elevation: 4.0,
+            shape: const CircleBorder(),
+            backgroundColor: Theme.of(context).colorScheme.primary,
+            foregroundColor: Colors.white,
+            child: const Icon(Icons.add_card),
+          ),
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+        body: Column(
+          children: [
+            TabBar(
+              controller: _tabController,
+              labelColor: Theme.of(context).colorScheme.primary,
+              unselectedLabelColor: Colors.grey,
+              indicatorColor: Theme.of(context).colorScheme.primary,
+              tabs: const [
+                Tab(text: 'Wallet'),
+                Tab(text: 'Savings'),
+                Tab(text: 'Accumulate'),
+              ],
+            ),
+            Expanded(
+              child: TabBarView(
+                controller: _tabController,
+                children: const [
+                  Center(child: Text('Wallet')),
+                  Center(child: Text('Savings')),
+                  Center(child: Text('Accumulate')),
+                ],
+              ),
+            )
+          ],
+        )
+      ),
     );
   }
 }
