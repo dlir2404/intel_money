@@ -1,36 +1,49 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
-import '../../helper/validation.dart';
-import '../register/register_view.dart';
+import '../../../shared/helper/validation.dart';
 
-class LoginView extends StatelessWidget {
-  const LoginView({super.key});
+
+class RegisterView extends StatelessWidget {
+  const RegisterView({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
-      body: SafeArea(
-        child: const BodyWidget(),
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+      ),
+      body: const SafeArea(
+        child: RegisterBodyWidget(),
       ),
     );
   }
 }
 
-
-class BodyWidget extends StatefulWidget {
-  const BodyWidget({super.key});
+class RegisterBodyWidget extends StatefulWidget {
+  const RegisterBodyWidget({super.key});
 
   @override
-  State<BodyWidget> createState() => _BodyWidgetState();
+  State<RegisterBodyWidget> createState() => _RegisterBodyWidgetState();
 }
 
-class _BodyWidgetState extends State<BodyWidget> {
+class _RegisterBodyWidgetState extends State<RegisterBodyWidget> {
   final _formKey = GlobalKey<FormState>();
   bool _isObscure = true;
   bool _isLoading = false;
+  final _passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,15 +60,14 @@ class _BodyWidgetState extends State<BodyWidget> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
-                const SizedBox(height: 30),
                 Icon(
-                  Icons.lock_outlined,
+                  Icons.app_registration,
                   size: 80,
                   color: Theme.of(context).colorScheme.primary,
                 ),
                 const SizedBox(height: 20),
                 Text(
-                  'Welcome Back',
+                  'Create Account',
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                     fontWeight: FontWeight.bold,
@@ -64,7 +76,7 @@ class _BodyWidgetState extends State<BodyWidget> {
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  'Sign in to continue',
+                  'Sign up to get started',
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                     color: Colors.grey[600],
@@ -73,7 +85,20 @@ class _BodyWidgetState extends State<BodyWidget> {
                 const SizedBox(height: 40),
                 TextFormField(
                   decoration: InputDecoration(
-                    labelText: 'Email',
+                    labelText: 'Full Name *',
+                    prefixIcon: const Icon(Icons.person_outline),
+                    hintText: 'John Doe',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(vertical: 16),
+                  ),
+                  validator: (value) => Validation.validateName(value ?? ''),
+                ),
+                const SizedBox(height: 20),
+                TextFormField(
+                  decoration: InputDecoration(
+                    labelText: 'Email *',
                     prefixIcon: const Icon(Icons.email_outlined),
                     hintText: 'example@gmail.com',
                     border: OutlineInputBorder(
@@ -88,7 +113,7 @@ class _BodyWidgetState extends State<BodyWidget> {
                 TextFormField(
                   obscureText: _isObscure,
                   decoration: InputDecoration(
-                    labelText: 'Password',
+                    labelText: 'Password *',
                     prefixIcon: const Icon(Icons.lock_outline),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(15),
@@ -105,35 +130,36 @@ class _BodyWidgetState extends State<BodyWidget> {
                   ),
                   validator: (value) => Validation.validatePassword(value ?? ''),
                 ),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton(
-                    onPressed: () {
-                      // Forgot password functionality
-                    },
-                    child: Text(
-                      'Forgot Password?',
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.secondary,
-                      ),
+                const SizedBox(height: 20),
+                TextFormField(
+                  obscureText: _isObscure,
+                  decoration: InputDecoration(
+                    labelText: 'Confirm Password *',
+                    prefixIcon: const Icon(Icons.lock_outline),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15),
                     ),
+                    contentPadding: const EdgeInsets.symmetric(vertical: 16),
+                  ),
+                  validator: (value) => Validation.validateConfirmPassword(
+                    _passwordController.text,
+                    value ?? '',
                   ),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 30),
                 ElevatedButton(
                   onPressed: _isLoading ? null : () {
                     if (_formKey.currentState!.validate()) {
                       setState(() {
                         _isLoading = true;
                       });
-                      // Handle login
-                      // Simulate network delay
+                      // Handle registration
                       Future.delayed(const Duration(seconds: 2), () {
                         setState(() {
                           _isLoading = false;
                         });
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Processing Data')),
+                          const SnackBar(content: Text('Processing Registration')),
                         );
                       });
                     }
@@ -157,7 +183,7 @@ class _BodyWidgetState extends State<BodyWidget> {
                     ),
                   )
                       : const Text(
-                    'SIGN IN',
+                    'SIGN UP',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -178,7 +204,7 @@ class _BodyWidgetState extends State<BodyWidget> {
                 ),
                 const SizedBox(height: 20),
                 OutlinedButton(
-                  onPressed: () => _handleGoogleSignIn(context), // or _handleGoogleSignUp(context)
+                  onPressed: () => _handleGoogleSignUp(context), // or _handleGoogleSignUp(context)
                   style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     shape: RoundedRectangleBorder(
@@ -193,11 +219,10 @@ class _BodyWidgetState extends State<BodyWidget> {
                         'assets/images/google_logo.svg',
                         width: 24,
                         height: 24,
-                        colorFilter: null,
                       ),
                       const SizedBox(width: 12),
                       const Text(
-                        'Sign in with Google',
+                        'Sign up with Google',
                         style: TextStyle(fontSize: 14),
                       ),
                     ],
@@ -208,17 +233,15 @@ class _BodyWidgetState extends State<BodyWidget> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      "Don't have an account? ",
+                      "Already have an account? ",
                       style: TextStyle(color: Colors.grey[600]),
                     ),
                     TextButton(
                       onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(builder: (context) => const RegisterView()),
-                        );
+                        Navigator.of(context).pop(); // Go back to login
                       },
                       child: Text(
-                        'Sign Up',
+                        'Sign In',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Theme.of(context).colorScheme.secondary,
@@ -227,6 +250,7 @@ class _BodyWidgetState extends State<BodyWidget> {
                     ),
                   ],
                 ),
+                const SizedBox(height: 20),
               ],
             ),
           ),
@@ -235,31 +259,21 @@ class _BodyWidgetState extends State<BodyWidget> {
     );
   }
 
-  Future<void> _handleGoogleSignIn(BuildContext context) async {
+  Future<void> _handleGoogleSignUp(BuildContext context) async {
     setState(() {
       _isLoading = true;
     });
 
     try {
-      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-      if (googleUser == null) {
-        throw Exception('Sign in aborted by user');
-      }
-
-      // Get authentication details from Google Sign In
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-
-      // You can now use googleAuth.idToken and googleAuth.accessToken
-      // to authenticate with your backend server or directly with Firebase
+      // Implement Google sign-up logic
+      await Future.delayed(const Duration(seconds: 2)); // Simulating network delay
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Google Sign-In Successful')),
+        const SnackBar(content: Text('Google Sign-Up Successful')),
       );
-
-      // Navigate to home screen or next appropriate screen
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Sign in failed: ${error.toString()}')),
+        SnackBar(content: Text('Sign up failed: ${error.toString()}')),
       );
     } finally {
       setState(() {
