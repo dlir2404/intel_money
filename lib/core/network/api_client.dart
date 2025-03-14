@@ -5,14 +5,34 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'api_exception.dart';
 
 class ApiClient {
+  static ApiClient? _instance;
+
   final String baseUrl;
   final http.Client _client = http.Client();
   final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
 
   String? _accessToken;
 
-  ApiClient({required this.baseUrl}) {
+  //private contructor
+  ApiClient._({required this.baseUrl}) {
     _initTokens();
+  }
+
+  //factory constructor to return the singleton instance
+  factory ApiClient({required String baseUrl}) {
+    _instance ??= ApiClient._(baseUrl: baseUrl);
+    return _instance!;
+  }
+
+  static ApiClient get instance {
+    if (_instance == null) {
+      throw Exception('ApiClient must be initialized before accessing instance');
+    }
+    return _instance!;
+  }
+
+  static void initialize({required String baseUrl}) {
+    _instance = ApiClient._(baseUrl: baseUrl);
   }
 
   Future<void> _initTokens() async {
