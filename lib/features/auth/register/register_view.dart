@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:intel_money/shared/helper/toast.dart';
 
+import '../../../core/config/routes.dart';
+import '../../../core/services/auth_service.dart';
 import '../../../shared/helper/validation.dart';
 
 
@@ -34,15 +37,51 @@ class RegisterBodyWidget extends StatefulWidget {
 }
 
 class _RegisterBodyWidgetState extends State<RegisterBodyWidget> {
+  final AuthService _authService = AuthService();
+
   final _formKey = GlobalKey<FormState>();
+
   bool _isObscure = true;
   bool _isLoading = false;
+  final _nameController = TextEditingController();
+  final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
   @override
   void dispose() {
     _passwordController.dispose();
+    _emailController.dispose();
+    _nameController.dispose();
     super.dispose();
+  }
+
+  Future<void> _handleRegister(BuildContext context) async {
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        _isLoading = true;
+      });
+
+      _authService.register(
+          _nameController.text,
+          _emailController.text,
+          _passwordController.text
+      ).then((value) {
+        if (mounted){
+          AppToast.showSuccess(context, 'Register successfully');
+          AppRoutes.navigateToHome(context);
+        }
+      }).catchError((error) {
+        if (mounted){
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Sign in failed: ${error.toString()}')),
+          );
+        }
+      }).whenComplete(() {
+        setState(() {
+          _isLoading = false;
+        });
+      });
+    }
   }
 
   @override
@@ -84,6 +123,7 @@ class _RegisterBodyWidgetState extends State<RegisterBodyWidget> {
                 ),
                 const SizedBox(height: 40),
                 TextFormField(
+                  controller: _nameController,
                   decoration: InputDecoration(
                     labelText: 'Full Name *',
                     prefixIcon: const Icon(Icons.person_outline),
@@ -97,6 +137,7 @@ class _RegisterBodyWidgetState extends State<RegisterBodyWidget> {
                 ),
                 const SizedBox(height: 20),
                 TextFormField(
+                  controller: _emailController,
                   decoration: InputDecoration(
                     labelText: 'Email *',
                     prefixIcon: const Icon(Icons.email_outlined),
@@ -111,6 +152,7 @@ class _RegisterBodyWidgetState extends State<RegisterBodyWidget> {
                 ),
                 const SizedBox(height: 20),
                 TextFormField(
+                  controller: _passwordController,
                   obscureText: _isObscure,
                   decoration: InputDecoration(
                     labelText: 'Password *',
@@ -148,22 +190,7 @@ class _RegisterBodyWidgetState extends State<RegisterBodyWidget> {
                 ),
                 const SizedBox(height: 30),
                 ElevatedButton(
-                  onPressed: _isLoading ? null : () {
-                    if (_formKey.currentState!.validate()) {
-                      setState(() {
-                        _isLoading = true;
-                      });
-                      // Handle registration
-                      Future.delayed(const Duration(seconds: 2), () {
-                        setState(() {
-                          _isLoading = false;
-                        });
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Processing Registration')),
-                        );
-                      });
-                    }
-                  },
+                  onPressed: _isLoading ? null : () => _handleRegister(context),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Theme.of(context).colorScheme.primary,
                     foregroundColor: Colors.white,

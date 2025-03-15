@@ -14,9 +14,7 @@ class ApiClient {
   String? _accessToken;
 
   //private contructor
-  ApiClient._({required this.baseUrl}) {
-    _initTokens();
-  }
+  ApiClient._({required this.baseUrl});
 
   //factory constructor to return the singleton instance
   factory ApiClient({required String baseUrl}) {
@@ -31,8 +29,9 @@ class ApiClient {
     return _instance!;
   }
 
-  static void initialize({required String baseUrl}) {
+  static Future<void> initialize({required String baseUrl}) async {
     _instance = ApiClient._(baseUrl: baseUrl);
+    await _instance!._initTokens();
   }
 
   Future<void> _initTokens() async {
@@ -47,6 +46,10 @@ class ApiClient {
   Future<void> saveToken(String token) async {
     _accessToken = token;
     await _secureStorage.write(key: 'accessToken', value: token);
+  }
+
+  Future<void> saveRefreshToken(String token) async {
+    await _secureStorage.write(key: 'refreshToken', value: token);
   }
 
   Future<void> deleteToken() async {

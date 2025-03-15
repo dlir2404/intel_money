@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:intel_money/core/config/routes.dart';
+import 'package:intel_money/shared/helper/toast.dart';
 
+import '../../../core/services/auth_service.dart';
 import '../../../shared/helper/validation.dart';
 import '../register/register_view.dart';
 
@@ -28,9 +31,48 @@ class BodyWidget extends StatefulWidget {
 }
 
 class _BodyWidgetState extends State<BodyWidget> {
+  final AuthService _authService = AuthService();
+
   final _formKey = GlobalKey<FormState>();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
   bool _isObscure = true;
   bool _isLoading = false;
+
+  @override
+  void dispose() {
+    _passwordController.dispose();
+    _emailController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _handleLogin(BuildContext context) async {
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        _isLoading = true;
+      });
+
+      _authService.login(
+          _emailController.text,
+          _passwordController.text
+      ).then((value) {
+        if (mounted){
+          AppToast.showSuccess(context, 'Login successfully');
+          AppRoutes.navigateToHome(context);
+        }
+      }).catchError((error) {
+        if (mounted){
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Sign in failed: ${error.toString()}')),
+          );
+        }
+      }).whenComplete(() {
+        setState(() {
+          _isLoading = false;
+        });
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -72,6 +114,7 @@ class _BodyWidgetState extends State<BodyWidget> {
                 ),
                 const SizedBox(height: 40),
                 TextFormField(
+                  controller: _emailController,
                   decoration: InputDecoration(
                     labelText: 'Email',
                     prefixIcon: const Icon(Icons.email_outlined),
@@ -87,6 +130,7 @@ class _BodyWidgetState extends State<BodyWidget> {
                 const SizedBox(height: 20),
                 TextFormField(
                   obscureText: _isObscure,
+                  controller: _passwordController,
                   decoration: InputDecoration(
                     labelText: 'Password',
                     prefixIcon: const Icon(Icons.lock_outline),
@@ -121,23 +165,7 @@ class _BodyWidgetState extends State<BodyWidget> {
                 ),
                 const SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: _isLoading ? null : () {
-                    if (_formKey.currentState!.validate()) {
-                      setState(() {
-                        _isLoading = true;
-                      });
-                      // Handle login
-                      // Simulate network delay
-                      Future.delayed(const Duration(seconds: 2), () {
-                        setState(() {
-                          _isLoading = false;
-                        });
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Processing Data')),
-                        );
-                      });
-                    }
-                  },
+                  onPressed: _isLoading ? null : () => _handleLogin(context),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Theme.of(context).colorScheme.primary,
                     foregroundColor: Colors.white,
