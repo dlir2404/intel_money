@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intel_money/features/wallet/widgets/wallet_appbar.dart';
 
+import '../../../core/config/routes.dart';
+
 class WalletScreen extends StatefulWidget {
   const WalletScreen({super.key});
 
@@ -26,6 +28,10 @@ class _WalletScreenState extends State<WalletScreen> with SingleTickerProviderSt
     super.dispose();
   }
 
+  void _showCreateWalletScreen() {
+    Navigator.of(context).pushNamed(AppRoutes.createWallet);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -37,7 +43,7 @@ class _WalletScreenState extends State<WalletScreen> with SingleTickerProviderSt
           height: 56, // Set a fixed size for FAB
           width: 56,
           child: FloatingActionButton(
-            onPressed: () {},
+            onPressed: () => _showCreateWalletScreen(),
             elevation: 4.0,
             shape: const CircleBorder(),
             backgroundColor: Theme.of(context).colorScheme.primary,
