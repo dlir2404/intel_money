@@ -33,8 +33,9 @@ class WalletService {
   Future<void> getWallets() async {
     final response = await _apiClient.get('/wallet');
 
-    final List<dynamic> data = response.wallets;
-    final wallets = data.map((wallet) => Wallet.fromJson(wallet)).toList();
+    final List<dynamic> walletsData = response['wallets'];
+    final wallets =
+        walletsData.map((wallet) => Wallet.fromJson(wallet)).toList();
     _appState.setWallets(wallets);
   }
 

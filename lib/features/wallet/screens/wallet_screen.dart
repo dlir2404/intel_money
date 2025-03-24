@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:intel_money/features/wallet/screens/wallet_list_tab.dart';
 import 'package:intel_money/features/wallet/widgets/wallet_appbar.dart';
+import 'package:provider/provider.dart';
 
 import '../../../core/config/routes.dart';
+import '../../../core/services/wallet_service.dart';
+import '../../../core/state/app_state.dart';
 
 class WalletScreen extends StatefulWidget {
   const WalletScreen({super.key});
@@ -12,6 +16,7 @@ class WalletScreen extends StatefulWidget {
 
 class _WalletScreenState extends State<WalletScreen> with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  late WalletService _walletService;
 
   @override
   void initState() {
@@ -20,6 +25,21 @@ class _WalletScreenState extends State<WalletScreen> with SingleTickerProviderSt
       length: 3,
       vsync: this,
     );
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final appState = Provider.of<AppState>(context, listen: false);
+      _walletService = WalletService(appState: appState);
+      _loadWallets();
+    });
+  }
+
+  Future<void> _loadWallets() async {
+    try {
+      await _walletService.getWallets();
+    } catch (e) {
+      // Handle error (you might want to show a snackbar or dialog)
+      debugPrint('Error fetching wallets: $e');
+    }
   }
 
   @override
@@ -69,7 +89,7 @@ class _WalletScreenState extends State<WalletScreen> with SingleTickerProviderSt
               child: TabBarView(
                 controller: _tabController,
                 children: const [
-                  Center(child: Text('Wallet')),
+                  WalletListTab(),
                   Center(child: Text('Savings')),
                   Center(child: Text('Accumulate')),
                 ],
