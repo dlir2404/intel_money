@@ -42,6 +42,7 @@ dependencies:
   fluttertoast: ^8.2.12
   intl: ^0.18.1
   flutter_multi_formatter: ^2.12.0
+  provider: ^6.1.1
 
 dev_dependencies:
   flutter_test:

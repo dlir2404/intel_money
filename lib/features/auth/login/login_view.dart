@@ -62,9 +62,7 @@ class _BodyWidgetState extends State<BodyWidget> {
         }
       }).catchError((error) {
         if (mounted){
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Sign in failed: ${error.toString()}')),
-          );
+          AppToast.showError(context, 'Sign in failed: ${error.toString()}');
         }
       }).whenComplete(() {
         setState(() {

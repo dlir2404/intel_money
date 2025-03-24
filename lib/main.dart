@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:intel_money/core/network/api_client.dart';
 import 'package:intel_money/core/services/auth_service.dart';
+import 'package:intel_money/core/state/app_state.dart';
 import 'package:intel_money/features/auth/login/login_view.dart';
 import 'package:intel_money/shared/component/layout/authenticated_app.dart';
+import 'package:provider/provider.dart';
 
 import 'core/config/routes.dart';
 
@@ -14,7 +16,10 @@ Future<void> main() async {
   //initialize the API client
   await ApiClient.initialize(baseUrl: dotenv.env['API_URL'] ?? 'https://dev-api.intel-money.com');
 
-  runApp(MyApp());
+  runApp(ChangeNotifierProvider(
+    create: (context) => AppState(),
+    child: MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
