@@ -59,7 +59,6 @@ class _MainInputState extends State<MainInput> {
   }
 
   void _handleFocusChange() {
-    debugPrint("Focus changed: ${_focusNode.hasFocus}");
     if (_focusNode.hasFocus) {
       _showOverlay();
     } else {
@@ -84,16 +83,31 @@ class _MainInputState extends State<MainInput> {
     }
 
     try {
+      // If the text contains a decimal point, handle it specially
+      if (widget.controller.text.contains(".")) {
+        // Split the number into parts
+        List<String> parts = widget.controller.text.split('.');
+        String integerPart = NumberFormat('#,###').format(int.parse(parts[0]));
+
+        // Get decimal part
+        String decimalPart = parts.length > 1 ? parts[1] : '';
+
+        // Combine parts
+        _displayText = integerPart;
+        if (decimalPart.isNotEmpty || widget.controller.text.endsWith('.')) {
+          _displayText += '.' + decimalPart;
+        }
+
+        setState(() {});
+        return;
+      }
+
+      // No decimal point in the input
       double value = double.parse(widget.controller.text);
-
-      // Format with or without decimal places based on settings
-      final formatter = widget.showDecimals
-          ? NumberFormat('#,##0.00')
-          : NumberFormat('#,###');
-
-      _displayText = '${widget.currency} ${formatter.format(value)}';
+      _displayText = NumberFormat('#,###').format(value);
     } catch (e) {
       _displayText = widget.controller.text;
+      debugPrint("Formatting error: $e");
     }
 
     setState(() {});
@@ -207,15 +221,30 @@ class _MainInputState extends State<MainInput> {
         widget.controller.text = widget.controller.text + '000';
       }
     } else if (key == ',') {
+      // Add decimal point if not already present
       if (!widget.controller.text.contains('.')) {
         widget.controller.text = widget.controller.text + '.';
+        _formatDisplayText();
+        if (widget.onChanged != null) {
+          widget.onChanged!(widget.controller.text);
+        }
+        return;
       }
-    } else {
+    }
+    else {
       // Handle numeric input
       if (widget.controller.text == '0') {
         // Replace 0 with the new digit
         widget.controller.text = key;
       } else {
+        // Check if adding would exceed decimal limit
+        if (widget.controller.text.contains('.')) {
+          List<String> parts = widget.controller.text.split('.');
+          if (parts.length > 1 && parts[1].length >= 6) {
+            // Already at max decimal digits, don't add more
+            return;
+          }
+        }
         // Append the digit
         widget.controller.text = widget.controller.text + key;
       }
@@ -302,10 +331,21 @@ class _MainInputState extends State<MainInput> {
                     style: TextStyle(
                       color: _displayText.isEmpty ? Colors.grey : Colors.black,
                       fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    textAlign: TextAlign.right, // Align text to the right
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 8.0), // Add margin between text and currency
+                  child: Text(
+                    widget.currency,
+                    style: const TextStyle(
+                      color: Colors.grey,
+                      fontSize: 16,
                     ),
                   ),
                 ),
-                const Icon(Icons.attach_money, color: Colors.grey),
               ],
             ),
           ),
