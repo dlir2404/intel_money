@@ -63,6 +63,7 @@ class _WalletScreenState extends State<WalletScreen> with SingleTickerProviderSt
           height: 56, // Set a fixed size for FAB
           width: 56,
           child: FloatingActionButton(
+            heroTag: 'create_wallet',
             onPressed: () => _showCreateWalletScreen(),
             elevation: 4.0,
             shape: const CircleBorder(),
