@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intel_money/core/config/routes.dart';
 import 'package:provider/provider.dart';
 import 'package:intel_money/core/state/app_state.dart';
 import 'package:intel_money/core/types/category.dart';
@@ -33,6 +34,18 @@ class _CategoryScreenState extends State<CategoryScreen> with SingleTickerProvid
     _tabController.dispose();
     _searchController.dispose();
     super.dispose();
+  }
+
+  void _navigateToCreateCategory() {
+    Navigator.pushNamed(
+      context,
+      AppRoutes.createCategory,
+      arguments: {
+        'categoryType': _tabController.index == 0
+            ? CategoryType.expense
+            : CategoryType.income
+      },
+    );
   }
 
   @override
@@ -145,7 +158,7 @@ class _CategoryScreenState extends State<CategoryScreen> with SingleTickerProvid
           child: FloatingActionButton(
             heroTag: 'create_category',
             onPressed: () {
-              // Navigate to create category screen
+              Navigator.pushNamed(context, AppRoutes.createCategory);
             },
             elevation: 4.0,
             shape: const CircleBorder(),
@@ -321,6 +334,11 @@ class _CategoryScreenState extends State<CategoryScreen> with SingleTickerProvid
                 ),
                 onPressed: () {
                   // Add subcategory
+                  Navigator.pushNamed(
+                    context,
+                    AppRoutes.createCategory,
+                    arguments: {'parentId': parent.id, 'parentName': parent.name, 'categoryType': parent.type},
+                  );
                 },
               ),
             ),
@@ -382,7 +400,7 @@ class _CategoryScreenState extends State<CategoryScreen> with SingleTickerProvid
               ),
             ),
             onPressed: () {
-              // Navigate to create category screen
+              _navigateToCreateCategory();
             },
           ),
         ],

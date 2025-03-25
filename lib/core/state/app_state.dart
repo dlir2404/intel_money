@@ -78,6 +78,7 @@ class AppState extends ChangeNotifier {
   }
 
   void removeCategory(int id) {
+    //TODO: must remove in children too
     _categories.removeWhere((element) => element.id == id);
     if (_expenseCategories.indexWhere((element) => element.id == id) != -1) {
       _expenseCategories.removeWhere((element) => element.id == id);

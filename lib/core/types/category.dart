@@ -5,7 +5,7 @@ class Category{
   final String name;
   final String icon;
   final CategoryType type;
-  final int parentId;
+  final int? parentId;
   final bool editable;
   final List<Category> children = [];
 
@@ -23,7 +23,7 @@ class Category{
       id: json['id'],
       name: json['name'],
       icon: json['icon'],
-      type: json['type'],
+      type: json['type'] == 'expense' ? CategoryType.expense : CategoryType.income,
       parentId: json['parentId'],
       editable: json['editable'],
     );

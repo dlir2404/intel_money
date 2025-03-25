@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -105,6 +106,7 @@ class ApiClient {
 
   Future<dynamic> post(String endpoint, dynamic body) async {
     try {
+      debugPrint(json.encode(body));
       final token = await getToken();
       final response = await _client.post(
         Uri.parse('$baseUrl$endpoint'),
@@ -117,6 +119,7 @@ class ApiClient {
 
       return _handleResponse(response, () => post(endpoint, body));
     } catch (e) {
+      debugPrint(e.toString());
       throw _handleError(e);
     }
   }
