@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="intel_money"
+        android:label="Intel Money"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
