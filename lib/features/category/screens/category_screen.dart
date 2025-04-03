@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:intel_money/core/config/routes.dart';
 import 'package:provider/provider.dart';
 import 'package:intel_money/core/state/app_state.dart';
-import 'package:intel_money/core/types/category.dart';
+import 'package:intel_money/core/models/category.dart';
 import 'package:intel_money/shared/const/enum/category_type.dart';
 
 import '../widgets/category_group.dart';

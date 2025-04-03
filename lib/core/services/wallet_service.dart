@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:intel_money/core/network/api_client.dart';
 import 'package:intel_money/core/state/app_state.dart';
-import 'package:intel_money/core/types/wallet.dart';
+import 'package:intel_money/core/models/wallet.dart';
 
 class WalletService {
   final AppState _appState;

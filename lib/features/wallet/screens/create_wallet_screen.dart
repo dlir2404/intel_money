@@ -5,6 +5,8 @@ import 'package:intel_money/shared/component/input/main_input.dart';
 import 'package:intel_money/shared/helper/toast.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/services/ad_service.dart';
+
 class CreateWalletScreen extends StatefulWidget {
   const CreateWalletScreen({Key? key}) : super(key: key);
 
@@ -235,6 +237,8 @@ class _CreateWalletScreenState extends State<CreateWalletScreen> {
       initialAmount,
     ).then((_) {
       if (mounted) {
+        AdService().showInterstitialAd();
+
         AppToast.showSuccess(context, "Wallet created successfully");
         Future.delayed(const Duration(seconds: 1), () {
           Navigator.pop(context);

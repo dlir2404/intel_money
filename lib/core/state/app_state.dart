@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:intel_money/core/models/user.dart';
-import 'package:intel_money/core/types/wallet.dart';
+import 'package:intel_money/core/models/wallet.dart';
 
 import '../../shared/const/enum/category_type.dart';
-import '../types/category.dart';
+import '../models/category.dart';
 
 class AppState extends ChangeNotifier {
   User? _user;

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intel_money/features/category/controller/category_controller.dart';
 
-import '../../../core/types/category.dart';
+import '../../../core/models/category.dart';
 
 class CategoryItem extends StatelessWidget {
   final Category category;

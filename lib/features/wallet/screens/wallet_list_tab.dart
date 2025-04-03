@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intel_money/core/services/wallet_service.dart';
 import 'package:intel_money/core/state/app_state.dart';
-import 'package:intel_money/core/types/wallet.dart';
+import 'package:intel_money/core/models/wallet.dart';
 import 'package:provider/provider.dart';
 
 class WalletListTab extends StatelessWidget {

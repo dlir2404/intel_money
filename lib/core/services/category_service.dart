@@ -3,7 +3,7 @@ import 'package:intel_money/core/network/api_client.dart';
 import 'package:intel_money/shared/const/enum/category_type.dart';
 
 import '../state/app_state.dart';
-import '../types/category.dart';
+import '../models/category.dart';
 
 class CategoryService {
   final AppState _appState;
