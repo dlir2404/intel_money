@@ -25,7 +25,7 @@ class Category{
       icon: json['icon'],
       type: json['type'] == 'expense' ? CategoryType.expense : CategoryType.income,
       parentId: json['parentId'],
-      editable: json['editable'],
+      editable: json['editable'] == 1 ? true : false,
     );
   }
 

@@ -9,17 +9,14 @@ import 'package:intel_money/shared/component/layout/authenticated_app.dart';
 import 'package:provider/provider.dart';
 
 import 'core/config/routes.dart';
+import 'core/initialization/app_initializer.dart';
 import 'core/services/ad_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load(fileName: '.env.dev');
 
-  //initialize the API client
-  await ApiClient.initialize(baseUrl: dotenv.env['API_URL'] ?? 'https://dev-api.intel-money.com');
-
-  MobileAds.instance.initialize();
-  AdService().loadInterstitialAd();
+  //initialize app
+  await AppInitializer.initialize();
 
   runApp(ChangeNotifierProvider(
     create: (context) => AppState(),
@@ -32,6 +29,7 @@ class MyApp extends StatelessWidget {
   MyApp({super.key});
 
   Future<bool> _checkAuth() async {
+    //can set app state here to reduce 1 api call, maybe check later
     final user = await _authService.getMe();
     return user != null;
   }

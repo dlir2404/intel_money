@@ -37,6 +37,7 @@ class ApiClient {
 
   Future<void> _initTokens() async {
     _accessToken = await _secureStorage.read(key: 'accessToken');
+    debugPrint('>>> User access_token: $_accessToken');
   }
 
   // Token management

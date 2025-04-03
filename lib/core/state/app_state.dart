@@ -88,9 +88,6 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-
-
-
   void clear() {
     _user = null;
     _wallets = [];

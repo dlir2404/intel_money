@@ -16,8 +16,10 @@ class CategoryService {
   Future<void> getCategories() async {
     final response = await _apiClient.get('/category');
 
-    final categoriesData =
-        response.map((category) => Category.fromJson(category)).toList();
+    final List<Category> categoriesData = (response as List)
+        .map((category) => Category.fromJson(category as Map<String, dynamic>))
+        .toList();
+
     final categories = handleCategories(categoriesData);
     _appState.setCategories(categories);
   }
