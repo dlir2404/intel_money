@@ -5,6 +5,7 @@ import 'package:intel_money/core/state/app_state.dart';
 import 'package:intel_money/core/types/category.dart';
 import 'package:intel_money/shared/const/enum/category_type.dart';
 
+import '../../../core/services/ad_service.dart';
 import '../../../shared/helper/toast.dart';
 
 class CreateCategoryScreen extends StatefulWidget {
@@ -300,6 +301,9 @@ class _CreateCategoryScreenState extends State<CreateCategoryScreen> {
         });
 
         AppToast.showSuccess(context, "Category created successfully");
+
+        AdService().showInterstitialAd();
+
         Future.delayed(const Duration(seconds: 1), () {
           Navigator.pop(context);
         });
