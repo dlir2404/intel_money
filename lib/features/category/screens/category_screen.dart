@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intel_money/core/config/routes.dart';
-import 'package:provider/provider.dart';
-import 'package:intel_money/core/state/app_state.dart';
-import 'package:intel_money/core/models/category.dart';
 import 'package:intel_money/shared/const/enum/category_type.dart';
+import 'package:provider/provider.dart';
 
+import '../../../core/state/app_state.dart';
 import '../widgets/category_group.dart';
+import 'category_list_tab.dart';
 
 class CategoryScreen extends StatefulWidget {
   const CategoryScreen({Key? key}) : super(key: key);
@@ -15,64 +15,11 @@ class CategoryScreen extends StatefulWidget {
   State<CategoryScreen> createState() => _CategoryScreenState();
 }
 
-class _CategoryScreenState extends State<CategoryScreen>
-    with SingleTickerProviderStateMixin {
+class _CategoryScreenState extends State<CategoryScreen> with TickerProviderStateMixin {
   late TabController _tabController;
-  final TextEditingController _searchController = TextEditingController();
+  TextEditingController _searchController = TextEditingController();
   bool _isSearching = false;
-  String _searchQuery = "";
-
-  // Mock categories for testing
-  final List<Category> _mockCategories = [
-    Category(
-      id: 1,
-      name: 'Food & Dining',
-      icon: 'food',
-      type: CategoryType.expense,
-      parentId: 0,
-      editable: true,
-    ),
-    Category(
-      id: 2,
-      name: 'Groceries',
-      icon: 'shopping',
-      type: CategoryType.expense,
-      parentId: 1,
-      editable: true,
-    ),
-    Category(
-      id: 3,
-      name: 'Restaurants',
-      icon: 'food',
-      type: CategoryType.expense,
-      parentId: 1,
-      editable: true,
-    ),
-    Category(
-      id: 4,
-      name: 'Transportation',
-      icon: 'transport',
-      type: CategoryType.expense,
-      parentId: 0,
-      editable: true,
-    ),
-    Category(
-      id: 5,
-      name: 'Income',
-      icon: 'salary',
-      type: CategoryType.income,
-      parentId: 0,
-      editable: true,
-    ),
-    Category(
-      id: 6,
-      name: 'Salary',
-      icon: 'money',
-      type: CategoryType.income,
-      parentId: 5,
-      editable: true,
-    ),
-  ];
+  String _searchQuery = '';
 
   @override
   void initState() {
@@ -97,10 +44,9 @@ class _CategoryScreenState extends State<CategoryScreen>
       context,
       AppRoutes.createCategory,
       arguments: {
-        'categoryType':
-            _tabController.index == 0
-                ? CategoryType.expense
-                : CategoryType.income,
+        'categoryType': _tabController.index == 0
+            ? CategoryType.expense
+            : CategoryType.income,
       },
     );
   }
@@ -110,7 +56,6 @@ class _CategoryScreenState extends State<CategoryScreen>
     final theme = Theme.of(context);
     final primaryColor = theme.primaryColor;
 
-    // Set system UI for proper ad display
     SystemChrome.setSystemUIOverlayStyle(
       SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
@@ -154,7 +99,7 @@ class _CategoryScreenState extends State<CategoryScreen>
       ),
       body: Column(
         children: [
-          // Search field - Only show when needed
+          // Search field
           if (_isSearching)
             Container(
               height: 50,
@@ -195,24 +140,20 @@ class _CategoryScreenState extends State<CategoryScreen>
             tabs: const [Tab(text: 'Expense'), Tab(text: 'Income')],
           ),
 
-          // Tab content
+          // Tab content with real data from AppState
           Expanded(
             child: TabBarView(
               controller: _tabController,
               children: [
-                // Expense categories - Using mock data
-                _buildCategoryList(
-                  _mockCategories
-                      .where((cat) => cat.type == CategoryType.expense)
-                      .toList(),
-                ),
+                // Filtered view wrapper for expense categories
+                _isSearching && _searchQuery.isNotEmpty
+                    ? _buildFilteredView(CategoryType.expense)
+                    : const CategoryListTab(categoryType: CategoryType.expense),
 
-                // Income categories - Using mock data
-                _buildCategoryList(
-                  _mockCategories
-                      .where((cat) => cat.type == CategoryType.income)
-                      .toList(),
-                ),
+                // Filtered view wrapper for income categories
+                _isSearching && _searchQuery.isNotEmpty
+                    ? _buildFilteredView(CategoryType.income)
+                    : const CategoryListTab(categoryType: CategoryType.income),
               ],
             ),
           ),
@@ -233,36 +174,77 @@ class _CategoryScreenState extends State<CategoryScreen>
     );
   }
 
-  Widget _buildCategoryList(List<Category> categories) {
-    // Filter categories based on search query
-    if (_searchQuery.isNotEmpty) {
-      categories =
-          categories
-              .where(
-                (category) => category.name.toLowerCase().contains(
-                  _searchQuery.toLowerCase(),
+  Widget _buildFilteredView(CategoryType type) {
+    return Consumer<AppState>(
+      builder: (context, appState, _) {
+        final categories = type == CategoryType.expense
+            ? appState.expenseCategories
+            : appState.incomeCategories;
+
+        final filteredCategories = categories
+            .where((category) => category.name.toLowerCase().contains(_searchQuery.toLowerCase()))
+            .toList();
+
+        if (filteredCategories.isEmpty) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.search_off, size: 64, color: Colors.grey[300]),
+                const SizedBox(height: 16),
+                Text(
+                  'No matches found',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey[700],
+                  ),
                 ),
-              )
-              .toList();
-    }
+                const SizedBox(height: 8),
+                Text(
+                  'Try a different search term',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.grey[600],
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
 
-    // Separate parent and child categories
-    final parentCategories =
-        categories.where((cat) => cat.parentId == 0).toList();
+        // Separate parent and child categories
+        final parentCategories = filteredCategories
+            .where((cat) => cat.parentId == 0 || cat.parentId == null)
+            .toList();
 
-    return parentCategories.isEmpty
-        ? _buildEmptyState()
-        : ListView.builder(
+        // For search results, also include parent categories of matching children
+        final childCategories = filteredCategories
+            .where((cat) => cat.parentId != 0 && cat.parentId != null)
+            .toList();
+
+        // Add parents of matching children if they're not already included
+        for (final child in childCategories) {
+          if (!parentCategories.any((parent) => parent.id == child.parentId)) {
+            final parent = categories
+                .firstWhere((cat) => cat.id == child.parentId, orElse: () => child);
+            parentCategories.add(parent);
+          }
+        }
+
+        return ListView.builder(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
           itemCount: parentCategories.length,
           itemBuilder: (context, index) {
             final parent = parentCategories[index];
-            final childCategories =
-                categories.where((cat) => cat.parentId == parent.id).toList();
+            final matchingChildren = categories
+                .where((cat) => cat.parentId == parent.id)
+                .where((cat) => cat.name.toLowerCase().contains(_searchQuery.toLowerCase()))
+                .toList();
 
             return CategoryGroup(
               parent: parent,
-              children: childCategories,
+              children: matchingChildren,
               onCategoryTap: (category) {
                 if (category.editable) {
                   Navigator.pushNamed(
@@ -282,57 +264,7 @@ class _CategoryScreenState extends State<CategoryScreen>
             );
           },
         );
-  }
-
-  Widget _buildEmptyState() {
-    final theme = Theme.of(context);
-    final primaryColor = theme.primaryColor;
-
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: primaryColor.withOpacity(0.1),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(Icons.category, size: 60, color: primaryColor),
-          ),
-          const SizedBox(height: 20),
-          Text(
-            'No Categories Found',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.grey[800],
-            ),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            _searchQuery.isNotEmpty
-                ? 'Try a different search term'
-                : 'Add categories to organize your transactions',
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-          ),
-          const SizedBox(height: 30),
-          ElevatedButton.icon(
-            icon: const Icon(Icons.add, color: Colors.white),
-            label: const Text('Add Category'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: primaryColor,
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15),
-              ),
-            ),
-            onPressed: _navigateToCreateCategory,
-          ),
-        ],
-      ),
+      },
     );
   }
 }

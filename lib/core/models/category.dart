@@ -23,7 +23,7 @@ class Category{
       id: json['id'],
       name: json['name'],
       icon: json['icon'],
-      type: json['type'] == 'expense' ? CategoryType.expense : CategoryType.income,
+      type: json['type'] == 'EXPENSE' ? CategoryType.expense : json['type'] == 'INCOME' ? CategoryType.income : CategoryType.expense,
       parentId: json['parentId'],
       editable: json['editable'] == 1 ? true : false,
     );
@@ -34,7 +34,7 @@ class Category{
       'id': id,
       'name': name,
       'icon': icon,
-      'type': type,
+      'type': type.name,
       'parentId': parentId,
       'editable': editable,
     };
