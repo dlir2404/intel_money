@@ -1,6 +1,24 @@
 import 'package:flutter/material.dart';
 
 class CategoryController {
+  static List<Map<String, dynamic>> iconOptions = [
+    {'name': 'category', 'icon': Icons.category, 'label': 'General'},
+    {'name': 'food', 'icon': Icons.restaurant, 'label': 'Food'},
+    {'name': 'shopping', 'icon': Icons.shopping_bag, 'label': 'Shopping'},
+    {'name': 'transport', 'icon': Icons.directions_car, 'label': 'Transport'},
+    {'name': 'entertainment', 'icon': Icons.movie, 'label': 'Entertainment'},
+    {'name': 'health', 'icon': Icons.medical_services, 'label': 'Health'},
+    {'name': 'education', 'icon': Icons.school, 'label': 'Education'},
+    {'name': 'bills', 'icon': Icons.receipt, 'label': 'Bills'},
+    {'name': 'salary', 'icon': Icons.work, 'label': 'Salary'},
+    {'name': 'investment', 'icon': Icons.trending_up, 'label': 'Investment'},
+    {'name': 'wallet', 'icon': Icons.account_balance_wallet, 'label': 'Wallet'},
+    {'name': 'savings', 'icon': Icons.savings, 'label': 'Savings'},
+    {'name': 'card', 'icon': Icons.credit_card, 'label': 'Card'},
+    {'name': 'exchange', 'icon': Icons.currency_exchange, 'label': 'Exchange'},
+    {'name': 'money', 'icon': Icons.attach_money, 'label': 'Money'},
+  ];
+
   static IconData getCategoryIcon(String iconName) {
     switch (iconName) {
       case 'food':
@@ -36,7 +54,7 @@ class CategoryController {
     }
   }
 
-  static Color getCategoryColor(String iconName) {
+  static Color getIconColor(String iconName) {
     // Using the icon name to determine color for visual consistency
     switch (iconName) {
       case 'food':

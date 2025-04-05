@@ -9,7 +9,7 @@ import '../widgets/category_group.dart';
 import 'category_list_tab.dart';
 
 class CategoryScreen extends StatefulWidget {
-  const CategoryScreen({Key? key}) : super(key: key);
+  const CategoryScreen({super.key});
 
   @override
   State<CategoryScreen> createState() => _CategoryScreenState();
@@ -17,7 +17,7 @@ class CategoryScreen extends StatefulWidget {
 
 class _CategoryScreenState extends State<CategoryScreen> with TickerProviderStateMixin {
   late TabController _tabController;
-  TextEditingController _searchController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
   bool _isSearching = false;
   String _searchQuery = '';
 
@@ -145,15 +145,8 @@ class _CategoryScreenState extends State<CategoryScreen> with TickerProviderStat
             child: TabBarView(
               controller: _tabController,
               children: [
-                // Filtered view wrapper for expense categories
-                _isSearching && _searchQuery.isNotEmpty
-                    ? _buildFilteredView(CategoryType.expense)
-                    : const CategoryListTab(categoryType: CategoryType.expense),
-
-                // Filtered view wrapper for income categories
-                _isSearching && _searchQuery.isNotEmpty
-                    ? _buildFilteredView(CategoryType.income)
-                    : const CategoryListTab(categoryType: CategoryType.income),
+                const CategoryListTab(categoryType: CategoryType.expense),
+                const CategoryListTab(categoryType: CategoryType.income),
               ],
             ),
           ),
@@ -171,100 +164,6 @@ class _CategoryScreenState extends State<CategoryScreen> with TickerProviderStat
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-    );
-  }
-
-  Widget _buildFilteredView(CategoryType type) {
-    return Consumer<AppState>(
-      builder: (context, appState, _) {
-        final categories = type == CategoryType.expense
-            ? appState.expenseCategories
-            : appState.incomeCategories;
-
-        final filteredCategories = categories
-            .where((category) => category.name.toLowerCase().contains(_searchQuery.toLowerCase()))
-            .toList();
-
-        if (filteredCategories.isEmpty) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.search_off, size: 64, color: Colors.grey[300]),
-                const SizedBox(height: 16),
-                Text(
-                  'No matches found',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey[700],
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Try a different search term',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey[600],
-                  ),
-                ),
-              ],
-            ),
-          );
-        }
-
-        // Separate parent and child categories
-        final parentCategories = filteredCategories
-            .where((cat) => cat.parentId == 0 || cat.parentId == null)
-            .toList();
-
-        // For search results, also include parent categories of matching children
-        final childCategories = filteredCategories
-            .where((cat) => cat.parentId != 0 && cat.parentId != null)
-            .toList();
-
-        // Add parents of matching children if they're not already included
-        for (final child in childCategories) {
-          if (!parentCategories.any((parent) => parent.id == child.parentId)) {
-            final parent = categories
-                .firstWhere((cat) => cat.id == child.parentId, orElse: () => child);
-            parentCategories.add(parent);
-          }
-        }
-
-        return ListView.builder(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-          itemCount: parentCategories.length,
-          itemBuilder: (context, index) {
-            final parent = parentCategories[index];
-            final matchingChildren = categories
-                .where((cat) => cat.parentId == parent.id)
-                .where((cat) => cat.name.toLowerCase().contains(_searchQuery.toLowerCase()))
-                .toList();
-
-            return CategoryGroup(
-              parent: parent,
-              children: matchingChildren,
-              onCategoryTap: (category) {
-                if (category.editable) {
-                  Navigator.pushNamed(
-                    context,
-                    AppRoutes.createCategory,
-                    arguments: {'category': category},
-                  );
-                }
-              },
-              onParentTap: (parent) {
-                Navigator.pushNamed(
-                  context,
-                  AppRoutes.createCategory,
-                  arguments: {'category': parent},
-                );
-              },
-            );
-          },
-        );
-      },
     );
   }
 }

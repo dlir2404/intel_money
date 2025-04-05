@@ -93,26 +93,22 @@ class CategoryListTab extends StatelessWidget {
   }
 
   Widget _buildCategoryList(BuildContext context, List<Category> categories) {
-    // Separate parent categories for proper display
-    final parentCategories = categories.where((cat) => cat.parentId == 0 || cat.parentId == null).toList();
-
     return ListView.builder(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-      itemCount: parentCategories.length,
+      itemCount: categories.length,
       itemBuilder: (context, index) {
-        final parent = parentCategories[index];
-        final childCategories = categories.where((cat) => cat.parentId == parent.id).toList();
+        final parent = categories[index];
 
         return CategoryGroup(
-          parent: parent,
-          children: childCategories,
-          onCategoryTap: (category) {
+          category: parent,
+          showChildren: true,
+          onCategoryTap: (parent) {
+            _navigateToEditCategory(context, parent);
+          },
+          onChildrenTap: (category) {
             if (category.editable) {
               _navigateToEditCategory(context, category);
             }
-          },
-          onParentTap: (parent) {
-            _navigateToEditCategory(context, parent);
           },
         );
       },

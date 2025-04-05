@@ -5,25 +5,25 @@ import '../controller/category_controller.dart';
 import 'category_item.dart';
 
 class CategoryGroup extends StatelessWidget {
-  final Category parent;
-  final List<Category> children;
-  final Function(Category) onCategoryTap;
-  final Function(Category)? onParentTap;
-  final bool isSelectable;
+  final Category category;
+  final bool showChildren;
+  final Function(Category)? onCategoryTap;
+  final Function(Category) onChildrenTap;
+  final Widget? trailing;
 
   const CategoryGroup({
-    Key? key,
-    required this.parent,
-    required this.children,
-    required this.onCategoryTap,
-    this.onParentTap,
-    this.isSelectable = false,
-  }) : super(key: key);
+    super.key,
+    required this.category,
+    this.showChildren = true,
+    this.onCategoryTap,
+    required this.onChildrenTap,
+    this.trailing,
+  });
 
   @override
   Widget build(BuildContext context) {
     // If there are no children, use a regular Container instead of ExpansionTile
-    if (children.isEmpty) {
+    if (!showChildren || category.children.isEmpty) {
       return Container(
         margin: const EdgeInsets.only(bottom: 16),
         decoration: BoxDecoration(
@@ -43,8 +43,8 @@ class CategoryGroup extends StatelessWidget {
           child: InkWell(
             borderRadius: BorderRadius.circular(16),
             onTap: () {
-              if (parent.editable && onParentTap != null) {
-                onParentTap!(parent);
+              if (category.editable && onCategoryTap != null) {
+                onCategoryTap!(category);
               }
             },
             child: Padding(
@@ -54,26 +54,30 @@ class CategoryGroup extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: CategoryController.getCategoryColor(parent.icon).withOpacity(0.15),
+                      color: CategoryController.getIconColor(
+                        category.icon,
+                      ).withOpacity(0.15),
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
-                      CategoryController.getCategoryIcon(parent.icon),
-                      color: CategoryController.getCategoryColor(parent.icon),
+                      CategoryController.getCategoryIcon(category.icon),
+                      color: CategoryController.getIconColor(category.icon),
                       size: 24,
                     ),
                   ),
                   const SizedBox(width: 15),
                   Expanded(
                     child: Text(
-                      parent.name,
+                      category.name,
                       style: const TextStyle(
                         fontWeight: FontWeight.w600,
                         fontSize: 16,
                       ),
                     ),
                   ),
-                  if (!parent.editable)
+                  if (trailing != null)
+                    trailing!
+                  else if (!category.editable)
                     Icon(Icons.lock, color: Colors.grey[400], size: 20),
                 ],
               ),
@@ -115,18 +119,20 @@ class CategoryGroup extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: CategoryController.getCategoryColor(parent.icon).withOpacity(0.15),
+                    color: CategoryController.getIconColor(
+                      category.icon,
+                    ).withOpacity(0.15),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
-                    CategoryController.getCategoryIcon(parent.icon),
-                    color: CategoryController.getCategoryColor(parent.icon),
+                    CategoryController.getCategoryIcon(category.icon),
+                    color: CategoryController.getIconColor(category.icon),
                     size: 24,
                   ),
                 ),
                 const SizedBox(width: 15),
                 Text(
-                  parent.name,
+                  category.name,
                   style: const TextStyle(
                     fontWeight: FontWeight.w600,
                     fontSize: 16,
@@ -134,12 +140,17 @@ class CategoryGroup extends StatelessWidget {
                 ),
               ],
             ),
-            trailing: parent.editable
-                ? null
-                : Icon(Icons.lock, color: Colors.grey[400], size: 20),
+            trailing:
+                trailing ??
+                (category.editable
+                    ? null
+                    : Icon(Icons.lock, color: Colors.grey[400], size: 20)),
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
                 child: GridView.builder(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
@@ -149,13 +160,12 @@ class CategoryGroup extends StatelessWidget {
                     crossAxisSpacing: 6,
                     mainAxisSpacing: 6,
                   ),
-                  itemCount: children.length,
+                  itemCount: category.children.length,
                   itemBuilder: (context, index) {
-                    final child = children[index];
+                    final child = category.children[index];
                     return CategoryItem(
                       category: child,
-                      onCategoryTap: onCategoryTap,
-                      isSelectable: isSelectable,
+                      onCategoryTap: onChildrenTap,
                     );
                   },
                 ),

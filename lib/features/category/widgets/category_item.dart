@@ -6,21 +6,19 @@ import '../../../core/models/category.dart';
 class CategoryItem extends StatelessWidget {
   final Category category;
   final Function(Category) onCategoryTap;
-  final bool isSelectable;
 
   const CategoryItem({
-    Key? key,
+    super.key,
     required this.category,
     required this.onCategoryTap,
-    this.isSelectable = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       borderRadius: BorderRadius.circular(12),
       splashColor: Colors.transparent,
-      highlightColor: CategoryController.getCategoryColor(
+      highlightColor: CategoryController.getIconColor(
         category.icon,
       ).withOpacity(0.05),
       onTap: () => onCategoryTap(category),
@@ -33,14 +31,14 @@ class CategoryItem extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: CategoryController.getCategoryColor(
+                  color: CategoryController.getIconColor(
                     category.icon,
                   ).withOpacity(0.15),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
                   CategoryController.getCategoryIcon(category.icon),
-                  color: CategoryController.getCategoryColor(category.icon),
+                  color: CategoryController.getIconColor(category.icon),
                   size: 22,
                 ),
               ),

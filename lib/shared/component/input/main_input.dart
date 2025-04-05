@@ -14,7 +14,7 @@ class MainInput extends StatefulWidget {
   final bool showDecimals;
 
   const MainInput({
-    Key? key,
+    super.key,
     this.label,
     this.hint,
     required this.controller,
@@ -25,7 +25,7 @@ class MainInput extends StatefulWidget {
     this.initialValue,
     this.currency = '\$',
     this.showDecimals = false,
-  }) : super(key: key);
+  });
 
   @override
   State<MainInput> createState() => _MainInputState();
