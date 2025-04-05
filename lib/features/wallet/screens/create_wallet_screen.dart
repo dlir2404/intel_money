@@ -6,6 +6,7 @@ import 'package:intel_money/shared/helper/toast.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/services/ad_service.dart';
+import '../../../shared/component/input/form_input.dart';
 
 class CreateWalletScreen extends StatefulWidget {
   const CreateWalletScreen({Key? key}) : super(key: key);
@@ -15,6 +16,8 @@ class CreateWalletScreen extends StatefulWidget {
 }
 
 class _CreateWalletScreenState extends State<CreateWalletScreen> {
+  final _formKey = GlobalKey<FormState>();
+
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _amountController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
@@ -42,13 +45,25 @@ class _CreateWalletScreenState extends State<CreateWalletScreen> {
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Create Wallet'),
           elevation: 0,
+          backgroundColor: Theme.of(context).primaryColor,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+          title: Text(
+            'Create Wallet',
+            style: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w500,
+              fontSize: 18,
+            ),
+          ),
         ),
-        body: Container(
-          color: Theme.of(context).scaffoldBackgroundColor,
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(20.0),
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.all(20.0),
+          child: Form(
+            key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -74,21 +89,21 @@ class _CreateWalletScreenState extends State<CreateWalletScreen> {
                 _buildIconSelector(),
                 const SizedBox(height: 25),
 
-                // Wallet name
-                TextField(
-                  controller: _nameController,
-                  decoration: InputDecoration(
-                    labelText: 'Wallet Name',
-                    hintText: 'Enter wallet name',
-                    prefixIcon: const Icon(Icons.account_balance_wallet),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    filled: true,
-                    fillColor: Colors.grey[50],
-                  ),
+                const Text(
+                  'Category Name',
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
                 ),
-
+                const SizedBox(height: 10),
+                FormInput(
+                  controller: _nameController,
+                  placeholder: 'Enter category name',
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter a wallet name';
+                    }
+                    return null;
+                  },
+                ),
                 const SizedBox(height: 20),
 
                 // Initial amount
@@ -101,23 +116,14 @@ class _CreateWalletScreenState extends State<CreateWalletScreen> {
                     // Handle amount changes if needed
                   },
                 ),
-
                 const SizedBox(height: 20),
 
-                // Description
-                TextField(
+                FormInput(
+                  label: 'Description (Optional)',
                   controller: _descriptionController,
-                  decoration: InputDecoration(
-                    labelText: 'Description (Optional)',
-                    hintText: 'Add some notes about this wallet',
-                    prefixIcon: const Icon(Icons.description),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    filled: true,
-                    fillColor: Colors.grey[50],
-                  ),
+                  placeholder: 'Add some notes about this wallet',
                   maxLines: 3,
+                  prefixIcon: const Icon(Icons.description),
                 ),
 
                 const SizedBox(height: 40),
@@ -216,9 +222,7 @@ class _CreateWalletScreenState extends State<CreateWalletScreen> {
   }
 
   void _createWallet() {
-    // Validate inputs
-    if (_nameController.text.isEmpty) {
-      AppToast.showError(context, 'Please enter a wallet name');
+    if (!_formKey.currentState!.validate()) {
       return;
     }
 

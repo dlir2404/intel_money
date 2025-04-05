@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intel_money/core/services/category_service.dart';
 import 'package:intel_money/features/category/controller/category_controller.dart';
 import 'package:intel_money/features/category/widgets/icon_picker.dart';
+import 'package:intel_money/shared/component/input/form_input.dart';
 import 'package:provider/provider.dart';
 import 'package:intel_money/core/state/app_state.dart';
 import 'package:intel_money/core/models/category.dart';
@@ -246,21 +247,9 @@ class _CreateCategoryScreenState extends State<CreateCategoryScreen> {
                   style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
                 ),
                 const SizedBox(height: 10),
-                TextFormField(
+                FormInput(
                   controller: _nameController,
-                  decoration: InputDecoration(
-                    hintText: 'Enter category name',
-                    filled: true,
-                    fillColor: Colors.grey[100],
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(15),
-                      borderSide: BorderSide.none,
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 15,
-                    ),
-                  ),
+                  placeholder: 'Enter category name',
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter a category name';
