@@ -202,16 +202,15 @@ class _ReceiptScannerScreenState extends State<ReceiptScannerScreen> {
 
   @override
   Widget build(BuildContext context) {
+    double currentZoomLevel = 1.0;
+    double maxZoomLevel = 3.0;
+    double baseZoomLevel = 1.0;
+
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: const Text(
-          'Receipt Scanner',
-          style: TextStyle(color: Colors.white),
-        ),
-        centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.pop(context),
@@ -219,10 +218,26 @@ class _ReceiptScannerScreenState extends State<ReceiptScannerScreen> {
       ),
       body: Stack(
         children: [
-          _isCameraInitialized
-              ? CameraPreview(_cameraController!)
-              : const Center(child: CircularProgressIndicator()),
+          // Camera Preview with zoom functionality
+          if (_isCameraInitialized)
+            GestureDetector(
+              onScaleStart: (ScaleStartDetails details) {
+                baseZoomLevel = currentZoomLevel; // Store the initial zoom level
+              },
+              onScaleUpdate: (ScaleUpdateDetails details) async {
+                if (_cameraController != null) {
+                  // Adjust zoom level incrementally
+                  currentZoomLevel = (baseZoomLevel * details.scale)
+                      .clamp(1.0, maxZoomLevel);
+                  await _cameraController!.setZoomLevel(currentZoomLevel);
+                }
+              },
+              child: CameraPreview(_cameraController!),
+            )
+          else
+            const Center(child: CircularProgressIndicator()),
 
+          // Bottom Buttons
           Positioned(
             bottom: 32,
             left: 0,
@@ -243,14 +258,10 @@ class _ReceiptScannerScreenState extends State<ReceiptScannerScreen> {
                     padding: const EdgeInsets.all(20),
                     backgroundColor: Theme.of(context).primaryColor,
                   ),
-                  child: const Icon(
-                    Icons.camera_alt,
-                    color: Colors.white,
-                    size: 32,
-                  ),
+                  child: const Icon(Icons.camera_alt, color: Colors.white, size: 32),
                 ),
 
-                //this size box to make the button centered
+                //this sized box is used to center the button
                 const SizedBox(width: 56),
               ],
             ),
