@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intel_money/core/services/wallet_service.dart';
 import 'package:intel_money/core/state/app_state.dart';
+import 'package:intel_money/features/wallet/controller/wallet_controller.dart';
 import 'package:intel_money/shared/component/input/main_input.dart';
 import 'package:intel_money/shared/helper/toast.dart';
 import 'package:provider/provider.dart';
@@ -157,14 +158,7 @@ class _CreateWalletScreenState extends State<CreateWalletScreen> {
   }
 
   Widget _buildIconSelector() {
-    final icons = [
-      {'icon': Icons.account_balance_wallet, 'name': 'wallet'},
-      {'icon': Icons.savings, 'name': 'savings'},
-      {'icon': Icons.credit_card, 'name': 'card'},
-      {'icon': Icons.currency_exchange, 'name': 'exchange'},
-      {'icon': Icons.shopping_bag, 'name': 'shopping'},
-      {'icon': Icons.attach_money, 'name': 'money'},
-    ];
+    final icons = WalletController.iconOptions;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

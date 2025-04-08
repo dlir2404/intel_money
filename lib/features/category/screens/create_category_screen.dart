@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intel_money/core/services/category_service.dart';
 import 'package:intel_money/features/category/controller/category_controller.dart';
 import 'package:intel_money/features/category/widgets/icon_picker.dart';
+import 'package:intel_money/features/category/widgets/select_category_input.dart';
 import 'package:intel_money/shared/component/input/form_input.dart';
 import 'package:provider/provider.dart';
 import 'package:intel_money/core/state/app_state.dart';
@@ -26,8 +27,6 @@ class _CreateCategoryScreenState extends State<CreateCategoryScreen> {
   late final CategoryService _categoryService;
 
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _parentCategoryController =
-      TextEditingController();
   Category? _parentCategory;
   String _selectedIcon = 'category';
 
@@ -57,27 +56,6 @@ class _CreateCategoryScreenState extends State<CreateCategoryScreen> {
         );
       },
     );
-  }
-
-  void _navigateToSelectParentCategory() async {
-    final selectedCategory = await Navigator.push<Category>(
-      context,
-      MaterialPageRoute(
-        builder:
-            (context) => SelectCategoryScreen(
-              selectedCategory: _parentCategory,
-              categoryType: _categoryType,
-              showChildren: false,
-            ),
-      ),
-    );
-
-    if (selectedCategory != null) {
-      setState(() {
-        _parentCategory = selectedCategory;
-        _parentCategoryController.text = selectedCategory.name;
-      });
-    }
   }
 
   Future<void> _saveCategory() async {
@@ -267,34 +245,17 @@ class _CreateCategoryScreenState extends State<CreateCategoryScreen> {
                   style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
                 ),
                 const SizedBox(height: 10),
-                GestureDetector(
-                  onTap: _navigateToSelectParentCategory,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 20,
-                      vertical: 15,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[100],
-                      borderRadius: BorderRadius.circular(15),
-                      border: Border.all(color: Colors.grey[300]!),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          _parentCategory?.name ?? 'Select Parent Category',
-                          style: TextStyle(
-                            color:
-                                _parentCategory == null
-                                    ? Colors.grey
-                                    : Colors.black,
-                          ),
-                        ),
-                        Icon(Icons.arrow_forward_ios, color: Colors.grey[400]),
-                      ],
-                    ),
-                  ),
+                SelectCategoryInput(
+                  category: _parentCategory,
+                  placeholder: 'Select Parent Category',
+                  categoryType: _categoryType,
+                  onCategorySelected: (category) {
+                    if (category != null) {
+                      setState(() {
+                        _parentCategory = category;
+                      });
+                    }
+                  },
                 ),
 
                 const SizedBox(height: 40),

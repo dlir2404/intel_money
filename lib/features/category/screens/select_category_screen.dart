@@ -19,12 +19,10 @@ class SelectCategoryScreen extends StatefulWidget {
   });
 
   @override
-  _SelectCategoryScreenState createState() =>
-      _SelectCategoryScreenState();
+  _SelectCategoryScreenState createState() => _SelectCategoryScreenState();
 }
 
-class _SelectCategoryScreenState
-    extends State<SelectCategoryScreen> {
+class _SelectCategoryScreenState extends State<SelectCategoryScreen> {
   Category? _selectedCategory;
 
   @override
@@ -40,7 +38,7 @@ class _SelectCategoryScreenState
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Select Parent Category'),
+        title: const Text('Select Category'),
         backgroundColor: primaryColor,
         foregroundColor: Colors.white,
       ),
@@ -85,6 +83,7 @@ class _SelectCategoryScreenState
               return CategoryGroup(
                 category: category,
                 showChildren: widget.showChildren,
+                showLockIcon: false,
                 onCategoryTap: (parent) {
                   setState(() {
                     _selectedCategory = parent;

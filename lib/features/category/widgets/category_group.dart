@@ -10,6 +10,7 @@ class CategoryGroup extends StatelessWidget {
   final Function(Category)? onCategoryTap;
   final Function(Category) onChildrenTap;
   final Widget? trailing;
+  final bool showLockIcon;
 
   const CategoryGroup({
     super.key,
@@ -18,6 +19,7 @@ class CategoryGroup extends StatelessWidget {
     this.onCategoryTap,
     required this.onChildrenTap,
     this.trailing,
+    this.showLockIcon = true,
   });
 
   @override
@@ -43,7 +45,7 @@ class CategoryGroup extends StatelessWidget {
           child: InkWell(
             borderRadius: BorderRadius.circular(16),
             onTap: () {
-              if (category.editable && onCategoryTap != null) {
+              if (onCategoryTap != null) {
                 onCategoryTap!(category);
               }
             },
@@ -77,7 +79,7 @@ class CategoryGroup extends StatelessWidget {
                   ),
                   if (trailing != null)
                     trailing!
-                  else if (!category.editable)
+                  else if (!category.editable && showLockIcon)
                     Icon(Icons.lock, color: Colors.grey[400], size: 20),
                 ],
               ),
@@ -142,9 +144,9 @@ class CategoryGroup extends StatelessWidget {
             ),
             trailing:
                 trailing ??
-                (category.editable
-                    ? null
-                    : Icon(Icons.lock, color: Colors.grey[400], size: 20)),
+                (!category.editable && showLockIcon
+                    ? Icon(Icons.lock, color: Colors.grey[400], size: 20)
+                    : null),
             children: [
               Padding(
                 padding: const EdgeInsets.symmetric(

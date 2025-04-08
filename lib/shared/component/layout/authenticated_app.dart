@@ -5,6 +5,7 @@ import '../../../core/initialization/data_initializer.dart';
 import '../../../features/home/screens/home_screen.dart';
 import '../../../features/other/screens/other_screen.dart';
 import '../../../features/reports/screens/report_screen.dart';
+import '../../../features/transaction/screens/create_transaction_screen.dart';
 import '../../../features/wallet/screens/wallet_screen.dart';
 import 'main_layout.dart';
 
@@ -42,15 +43,10 @@ class _AuthenticatedAppState extends State<AuthenticatedApp> {
       screens: const [
         HomeScreen(),
         WalletScreen(),
-        SizedBox(), // This won't be visible (placeholder for the + button)
+        CreateTransactionScreen(),
         ReportScreen(),
         OtherScreen(),
-      ],
-      onAddPressed: () {
-        // Handle the center plus button tap
-        // Show a modal or navigate to add transaction screen
-        AppToast.showSuccess(context, "Test message");
-      },
+      ]
     );
   }
 }

@@ -19,6 +19,12 @@ class MainLayout extends StatefulWidget {
 class _MainLayoutState extends State<MainLayout> {
   int _selectedIndex = 0;
 
+  void _onAddPressed() {
+    setState(() {
+      _selectedIndex = 2;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,7 +38,7 @@ class _MainLayoutState extends State<MainLayout> {
         height: 56, // Set a fixed size for FAB
         width: 56,
         child: FloatingActionButton(
-          onPressed: widget.onAddPressed,
+          onPressed: _onAddPressed,
           elevation: 4.0,
           shape: const CircleBorder(),
           backgroundColor: Theme.of(context).colorScheme.primary,
