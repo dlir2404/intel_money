@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intel_money/features/transaction/screens/receipt_scanner_screen.dart';
 import 'package:intel_money/features/transaction/widgets/create_transaction_appbar.dart';
 import 'package:intel_money/features/wallet/widgets/select_wallet_input.dart';
 import 'package:intel_money/shared/component/input/date_input.dart';
@@ -65,109 +66,142 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
     });
   }
 
+  Future<void> _scanReceipt() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const ReceiptScannerScreen()),
+    );
+
+    if (result != null) {
+      setState(() {
+        // _expenses.add(result);
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Chi tiêu đã được thêm thành công')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: CreateTransactionAppbar(
-        isLoading: _isLoading,
-        selectedCategoryType: _selectedCategoryType,
-        onCategoryTypeChanged: (categoryType) {
-          setState(() {
-            _selectedCategoryType = categoryType;
-          });
-        },
-        onSave: _saveTransaction,
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              MainInput(
-                controller: _amountController,
-                label: 'Amount',
-                currency: '\$',
-              ),
-              const SizedBox(height: 16),
-
-              SelectCategoryInput(
-                category: _selectedCategory,
-                placeholder: 'Select Category',
-                categoryType: _selectedCategoryType,
-                onCategorySelected: (category) {
-                  setState(() {
-                    _selectedCategory = category;
-                  });
-                },
-              ),
-              const SizedBox(height: 16),
-
-              SelectWalletInput(
-                wallet: _sourceWallet,
-                placeholder: "Select Wallet",
-                onWalletSelected: (wallet) {
-                  setState(() {
-                    _sourceWallet = wallet;
-                  });
-                },
-              ),
-              const SizedBox(height: 16),
-
-              DateInput(
-                placeholder: 'Transaction Date',
-                onDateSelected: (DateTime date) {
-                  setState(() {
-                    _transactionDate = date;
-                  });
-                },
-              ),
-              const SizedBox(height: 16),
-
-              FormInput(
-                label: 'Description (Optional)',
-                controller: _descriptionController,
-                placeholder: 'Add some notes about this transaction',
-                maxLines: 3,
-                prefixIcon: const Icon(Icons.description),
-              ),
-              const SizedBox(height: 16),
-
-              // Save Button
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _isLoading ? null : _saveTransaction,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).primaryColor,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 15),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                  ),
-                  child:
-                      _isLoading
-                          ? const SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                Colors.white,
-                              ),
-                              strokeWidth: 2.0,
-                            ),
-                          )
-                          : const Text(
-                            'Save transaction',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 80),
+      child: Scaffold(
+        appBar: CreateTransactionAppbar(
+          isLoading: _isLoading,
+          selectedCategoryType: _selectedCategoryType,
+          onCategoryTypeChanged: (categoryType) {
+            setState(() {
+              _selectedCategoryType = categoryType;
+            });
+          },
+          onSave: _saveTransaction,
+        ),
+        floatingActionButton: SizedBox(
+          height: 56, // Set a fixed size for FAB
+          width: 56,
+          child: FloatingActionButton(
+            heroTag: 'scan_receipt',
+            onPressed: () => _scanReceipt(),
+            elevation: 4.0,
+            shape: const CircleBorder(),
+            backgroundColor: Theme.of(context).colorScheme.primary,
+            foregroundColor: Colors.white,
+            child: const Icon(Icons.camera_alt_outlined),
+          ),
+        ),
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                MainInput(
+                  controller: _amountController,
+                  label: 'Amount',
+                  currency: '\$',
                 ),
-              ),
-            ],
+                const SizedBox(height: 16),
+
+                SelectCategoryInput(
+                  category: _selectedCategory,
+                  placeholder: 'Select Category',
+                  categoryType: _selectedCategoryType,
+                  onCategorySelected: (category) {
+                    setState(() {
+                      _selectedCategory = category;
+                    });
+                  },
+                ),
+                const SizedBox(height: 16),
+
+                SelectWalletInput(
+                  wallet: _sourceWallet,
+                  placeholder: "Select Wallet",
+                  onWalletSelected: (wallet) {
+                    setState(() {
+                      _sourceWallet = wallet;
+                    });
+                  },
+                ),
+                const SizedBox(height: 16),
+
+                DateInput(
+                  placeholder: 'Transaction Date',
+                  onDateSelected: (DateTime date) {
+                    setState(() {
+                      _transactionDate = date;
+                    });
+                  },
+                ),
+                const SizedBox(height: 16),
+
+                FormInput(
+                  label: 'Description (Optional)',
+                  controller: _descriptionController,
+                  placeholder: 'Add some notes about this transaction',
+                  maxLines: 3,
+                  prefixIcon: const Icon(Icons.description),
+                ),
+                const SizedBox(height: 16),
+
+                // Save Button
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: _isLoading ? null : _saveTransaction,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Theme.of(context).primaryColor,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 15),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                    ),
+                    child:
+                        _isLoading
+                            ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  Colors.white,
+                                ),
+                                strokeWidth: 2.0,
+                              ),
+                            )
+                            : const Text(
+                              'Save transaction',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
