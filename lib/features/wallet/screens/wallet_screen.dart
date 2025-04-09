@@ -54,15 +54,13 @@ class _WalletScreenState extends State<WalletScreen> with SingleTickerProviderSt
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 80),
-      child: Scaffold(
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        appBar: const WalletAppbar(),
-        floatingActionButton: SizedBox(
-          height: 56, // Set a fixed size for FAB
-          width: 56,
-          child: FloatingActionButton(
+    return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      appBar: const WalletAppbar(),
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          FloatingActionButton(
             heroTag: 'create_wallet',
             onPressed: () => _showCreateWalletScreen(),
             elevation: 4.0,
@@ -71,34 +69,38 @@ class _WalletScreenState extends State<WalletScreen> with SingleTickerProviderSt
             foregroundColor: Colors.white,
             child: const Icon(Icons.add_card),
           ),
-        ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
-        body: Column(
-          children: [
-            TabBar(
+
+          const SizedBox(height: 76),
+        ],
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+      body: Column(
+        children: [
+          TabBar(
+            controller: _tabController,
+            labelColor: Theme.of(context).colorScheme.primary,
+            unselectedLabelColor: Colors.grey,
+            indicatorColor: Theme.of(context).colorScheme.primary,
+            tabs: const [
+              Tab(text: 'Wallet'),
+              Tab(text: 'Savings'),
+              Tab(text: 'Accumulate'),
+            ],
+          ),
+          Expanded(
+            child: TabBarView(
               controller: _tabController,
-              labelColor: Theme.of(context).colorScheme.primary,
-              unselectedLabelColor: Colors.grey,
-              indicatorColor: Theme.of(context).colorScheme.primary,
-              tabs: const [
-                Tab(text: 'Wallet'),
-                Tab(text: 'Savings'),
-                Tab(text: 'Accumulate'),
+              children: const [
+                WalletListTab(),
+                Center(child: Text('Savings')),
+                Center(child: Text('Accumulate')),
               ],
             ),
-            Expanded(
-              child: TabBarView(
-                controller: _tabController,
-                children: const [
-                  WalletListTab(),
-                  Center(child: Text('Savings')),
-                  Center(child: Text('Accumulate')),
-                ],
-              ),
-            )
-          ],
-        )
-      ),
+          ),
+
+          const SizedBox(height: 80),
+        ],
+      )
     );
   }
 }

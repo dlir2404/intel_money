@@ -33,7 +33,7 @@ class CategoryService {
     final response = await _apiClient.post('/category', {
       'name': name,
       'icon': icon,
-      'type': type.name,
+      'type': type.value,
       'parentId': parentId,
     });
 

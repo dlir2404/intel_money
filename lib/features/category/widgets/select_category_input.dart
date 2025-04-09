@@ -10,6 +10,7 @@ class SelectCategoryInput extends StatefulWidget {
   final CategoryType categoryType;
   final Category? category;
   final Function(Category?) onCategorySelected;
+  final bool? showChildren;
 
   const SelectCategoryInput({
     super.key,
@@ -17,6 +18,7 @@ class SelectCategoryInput extends StatefulWidget {
     this.category,
     required this.onCategorySelected,
     this.placeholder = '',
+    this.showChildren,
   });
 
   @override
@@ -32,7 +34,7 @@ class _SelectCategoryInputState extends State<SelectCategoryInput> {
             (context) => SelectCategoryScreen(
               selectedCategory: widget.category,
               categoryType: widget.categoryType,
-              showChildren: false,
+              showChildren: widget.showChildren ?? false,
             ),
       ),
     );

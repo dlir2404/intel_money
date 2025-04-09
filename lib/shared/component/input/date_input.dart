@@ -1,43 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class DateInput extends StatefulWidget {
-  final DateTime? initialDate;
-  final Function(DateTime) onDateSelected;
+class DateInput extends StatelessWidget {
   final String placeholder;
+  final Function(DateTime) onDateSelected;
+  final DateTime? selectedDate;
 
   const DateInput({
     super.key,
-    this.initialDate,
+    required this.placeholder,
     required this.onDateSelected,
-    this.placeholder = 'Select Date',
+    this.selectedDate,
   });
-
-  @override
-  _DateInputState createState() => _DateInputState();
-}
-
-class _DateInputState extends State<DateInput> {
-  DateTime? _selectedDate;
-
-  @override
-  void initState() {
-    super.initState();
-    _selectedDate = widget.initialDate;
-  }
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: _selectedDate ?? DateTime.now(),
+      initialDate: selectedDate ?? DateTime.now(),
       firstDate: DateTime(2000),
       lastDate: DateTime(2101),
     );
-    if (picked != null && picked != _selectedDate) {
-      setState(() {
-        _selectedDate = picked;
-      });
-      widget.onDateSelected(picked);
+    if (picked != null && picked != selectedDate) {
+      onDateSelected(picked);
     }
   }
 
@@ -47,7 +31,7 @@ class _DateInputState extends State<DateInput> {
       onTap: () => _selectDate(context),
       child: InputDecorator(
         decoration: InputDecoration(
-          labelText: widget.placeholder,
+          labelText: placeholder,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(15),
             borderSide: BorderSide(color: Colors.grey[300]!),
@@ -61,11 +45,11 @@ class _DateInputState extends State<DateInput> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              _selectedDate != null
-                  ? DateFormat.yMMMd().format(_selectedDate!)
-                  : widget.placeholder,
+              selectedDate != null
+                  ? DateFormat.yMMMd().format(selectedDate!)
+                  : placeholder,
               style: TextStyle(
-                color: _selectedDate != null ? Colors.black : Colors.grey,
+                color: selectedDate != null ? Colors.black : Colors.grey,
               ),
             ),
             Icon(Icons.calendar_today, color: Colors.grey[400]),

@@ -90,7 +90,12 @@ class _SelectCategoryScreenState extends State<SelectCategoryScreen> {
                   });
                   Navigator.pop(context, parent);
                 },
-                onChildrenTap: (category) {},
+                onChildrenTap: (category) {
+                  setState(() {
+                    _selectedCategory = category;
+                  });
+                  Navigator.pop(context, category);
+                },
                 trailing: _selectedCategory == category ? IconSelected() : null,
               );
             },

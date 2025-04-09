@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:intel_money/shared/const/enum/transaction_type.dart';
 
 import '../../../shared/const/enum/category_type.dart';
 
 class CreateTransactionAppbar extends StatefulWidget
     implements PreferredSizeWidget {
-  final CategoryType selectedCategoryType;
-  final Function(CategoryType categoryType) onCategoryTypeChanged;
+  final TransactionType selectedTransactionType;
+  final Function(TransactionType transactionType) onTransactionTypeChanged;
   final bool isLoading;
   final Function() onSave;
 
   const CreateTransactionAppbar({
     super.key,
-    required this.selectedCategoryType,
-    required this.onCategoryTypeChanged,
+    required this.selectedTransactionType,
+    required this.onTransactionTypeChanged,
     required this.isLoading,
     required this.onSave,
   });
@@ -53,11 +54,11 @@ class _CreateTransactionAppbarState extends State<CreateTransactionAppbar> {
               builder: (context) {
                 return ListView(
                   children:
-                      CategoryType.values.map((categoryType) {
+                      TransactionType.values.map((transactionType) {
                         return ListTile(
-                          title: Text(categoryType.name),
+                          title: Text(transactionType.name),
                           onTap: () {
-                            widget.onCategoryTypeChanged(categoryType);
+                            widget.onTransactionTypeChanged(transactionType);
                             Navigator.pop(context);
                           },
                         );
@@ -70,9 +71,7 @@ class _CreateTransactionAppbarState extends State<CreateTransactionAppbar> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                widget.selectedCategoryType == CategoryType.expense
-                    ? 'Expense'
-                    : 'Income',
+                widget.selectedTransactionType.name,
                 style: const TextStyle(color: Colors.white, fontSize: 16),
               ),
               const Icon(Icons.arrow_drop_down, color: Colors.white),

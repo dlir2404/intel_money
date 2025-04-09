@@ -34,7 +34,7 @@ class Category{
       'id': id,
       'name': name,
       'icon': icon,
-      'type': type.name,
+      'type': type.value,
       'parentId': parentId,
       'editable': editable,
     };
