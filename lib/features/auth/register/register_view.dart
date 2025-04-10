@@ -4,6 +4,7 @@ import 'package:intel_money/shared/helper/toast.dart';
 
 import '../../../core/config/routes.dart';
 import '../../../core/services/auth_service.dart';
+import '../../../core/services/google_auth.dart';
 import '../../../shared/helper/validation.dart';
 
 
@@ -38,6 +39,7 @@ class RegisterBodyWidget extends StatefulWidget {
 
 class _RegisterBodyWidgetState extends State<RegisterBodyWidget> {
   final AuthService _authService = AuthService();
+  final GoogleAuthService _googleAuthService = GoogleAuthService();
 
   final _formKey = GlobalKey<FormState>();
 
@@ -80,6 +82,29 @@ class _RegisterBodyWidgetState extends State<RegisterBodyWidget> {
         setState(() {
           _isLoading = false;
         });
+      });
+    }
+  }
+
+  Future<void> _handleGoogleSignUp(BuildContext context) async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      await _googleAuthService.signIn();
+
+      if (mounted){
+        AppToast.showSuccess(context, 'Sign up successfully');
+        AppRoutes.navigateToHome(context);
+      }
+    } catch (error) {
+      if (mounted){
+        AppToast.showError(context, 'Sign up failed: ${error.toString()}');
+      }
+    } finally {
+      setState(() {
+        _isLoading = false;
       });
     }
   }
@@ -284,28 +309,5 @@ class _RegisterBodyWidgetState extends State<RegisterBodyWidget> {
         ),
       ),
     );
-  }
-
-  Future<void> _handleGoogleSignUp(BuildContext context) async {
-    setState(() {
-      _isLoading = true;
-    });
-
-    try {
-      // Implement Google sign-up logic
-      await Future.delayed(const Duration(seconds: 2)); // Simulating network delay
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Google Sign-Up Successful')),
-      );
-    } catch (error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Sign up failed: ${error.toString()}')),
-      );
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
   }
 }

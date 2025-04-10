@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:intel_money/core/config/routes.dart';
 import 'package:intel_money/shared/helper/toast.dart';
 
 import '../../../core/services/auth_service.dart';
+import '../../../core/services/google_auth.dart';
 import '../../../shared/helper/validation.dart';
 import '../register/register_view.dart';
 
@@ -32,6 +32,8 @@ class BodyWidget extends StatefulWidget {
 
 class _BodyWidgetState extends State<BodyWidget> {
   final AuthService _authService = AuthService();
+  final GoogleAuthService _googleAuthService = GoogleAuthService();
+
 
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
@@ -68,6 +70,29 @@ class _BodyWidgetState extends State<BodyWidget> {
         setState(() {
           _isLoading = false;
         });
+      });
+    }
+  }
+
+  Future<void> _handleGoogleSignIn(BuildContext context) async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      await _googleAuthService.signIn();
+
+      if (mounted){
+        AppToast.showSuccess(context, 'Login successfully');
+        AppRoutes.navigateToHome(context);
+      }
+    } catch (error) {
+      if (mounted){
+        AppToast.showError(context, 'Sign in failed: ${error.toString()}');
+      }
+    } finally {
+      setState(() {
+        _isLoading = false;
       });
     }
   }
@@ -259,38 +284,5 @@ class _BodyWidgetState extends State<BodyWidget> {
         ),
       ),
     );
-  }
-
-  Future<void> _handleGoogleSignIn(BuildContext context) async {
-    setState(() {
-      _isLoading = true;
-    });
-
-    try {
-      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-      if (googleUser == null) {
-        throw Exception('Sign in aborted by user');
-      }
-
-      // Get authentication details from Google Sign In
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-
-      // You can now use googleAuth.idToken and googleAuth.accessToken
-      // to authenticate with your backend server or directly with Firebase
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Google Sign-In Successful')),
-      );
-
-      // Navigate to home screen or next appropriate screen
-    } catch (error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Sign in failed: ${error.toString()}')),
-      );
-    } finally {
-      setState(() {
-        _isLoading = false;
-      });
-    }
   }
 }

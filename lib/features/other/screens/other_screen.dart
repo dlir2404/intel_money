@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:intel_money/core/config/routes.dart';
+import 'package:intel_money/shared/helper/toast.dart';
 import 'package:provider/provider.dart';
 import 'package:intel_money/core/state/app_state.dart';
 
+import '../../../core/models/user.dart';
+import '../../../core/services/auth_service.dart';
 import '../../category/screens/category_screen.dart';
 
 class OtherScreen extends StatelessWidget {
@@ -27,10 +31,7 @@ class OtherScreen extends StatelessWidget {
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
-                    colors: [
-                      primaryColor,
-                      primaryColor.withOpacity(0.7),
-                    ],
+                    colors: [primaryColor, primaryColor.withOpacity(0.7)],
                   ),
                   borderRadius: const BorderRadius.only(
                     bottomLeft: Radius.circular(25),
@@ -94,7 +95,7 @@ class OtherScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildUserProfile(BuildContext context, user) {
+  Widget _buildUserProfile(BuildContext context, User? user) {
     return Row(
       children: [
         // Avatar with border
@@ -102,19 +103,22 @@ class OtherScreen extends StatelessWidget {
           padding: const EdgeInsets.all(3),
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            border: Border.all(
-              color: Colors.white,
-              width: 2,
-            ),
+            border: Border.all(color: Colors.white, width: 2),
           ),
           child: CircleAvatar(
             radius: 36,
             backgroundColor: Colors.white.withOpacity(0.3),
-            child: const Icon(
-              Icons.person,
-              size: 40,
-              color: Colors.white,
-            ),
+            child:
+                user?.picture != null
+                    ? ClipOval(
+                      child: Image.network(
+                        user!.picture!,
+                        fit: BoxFit.cover,
+                        width: 72,
+                        height: 72,
+                      ),
+                    )
+                    : const Icon(Icons.person, size: 40, color: Colors.white),
           ),
         ),
         const SizedBox(width: 16),
@@ -133,10 +137,7 @@ class OtherScreen extends StatelessWidget {
               const SizedBox(height: 4),
               Text(
                 user?.email ?? 'Not signed in',
-                style: const TextStyle(
-                  fontSize: 14,
-                  color: Colors.white70,
-                ),
+                style: const TextStyle(fontSize: 14, color: Colors.white70),
               ),
             ],
           ),
@@ -162,36 +163,16 @@ class OtherScreen extends StatelessWidget {
     final primaryColor = theme.primaryColor;
 
     final functionItems = [
-      {
-        'icon': Icons.category,
-        'title': 'Categories',
-        'color': Colors.orange,
-      },
+      {'icon': Icons.category, 'title': 'Categories', 'color': Colors.orange},
       {
         'icon': Icons.payment,
         'title': 'Payment Methods',
         'color': Colors.green,
       },
-      {
-        'icon': Icons.replay,
-        'title': 'Recurring',
-        'color': Colors.purple,
-      },
-      {
-        'icon': Icons.attach_money,
-        'title': 'Budget',
-        'color': Colors.blue,
-      },
-      {
-        'icon': Icons.pie_chart,
-        'title': 'Reports',
-        'color': Colors.red,
-      },
-      {
-        'icon': Icons.backup,
-        'title': 'Backup',
-        'color': Colors.teal,
-      },
+      {'icon': Icons.replay, 'title': 'Recurring', 'color': Colors.purple},
+      {'icon': Icons.attach_money, 'title': 'Budget', 'color': Colors.blue},
+      {'icon': Icons.pie_chart, 'title': 'Reports', 'color': Colors.red},
+      {'icon': Icons.backup, 'title': 'Backup', 'color': Colors.teal},
     ];
 
     return GridView.builder(
@@ -215,7 +196,12 @@ class OtherScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildGridItem(BuildContext context, IconData icon, String title, Color color) {
+  Widget _buildGridItem(
+    BuildContext context,
+    IconData icon,
+    String title,
+    Color color,
+  ) {
     return InkWell(
       onTap: () {
         // Handle navigation based on the function title
@@ -248,11 +234,7 @@ class OtherScreen extends StatelessWidget {
                 color: color.withOpacity(0.1),
                 shape: BoxShape.circle,
               ),
-              child: Icon(
-                icon,
-                size: 28,
-                color: color,
-              ),
+              child: Icon(icon, size: 28, color: color),
             ),
             const SizedBox(height: 8),
             Text(
@@ -276,21 +258,45 @@ class OtherScreen extends StatelessWidget {
         'icon': Icons.settings,
         'title': 'General Settings',
         'color': Colors.blue,
+        'onTap': () {
+          // Handle navigation to General Settings
+        },
       },
       {
         'icon': Icons.storage,
         'title': 'Data Settings',
         'color': Colors.green,
+        'onTap': () {
+          // Handle navigation to Data Settings
+        },
       },
       {
         'icon': Icons.feedback,
         'title': 'Feedback',
         'color': Colors.orange,
+        'onTap': () {
+          // Handle navigation to Feedback
+        },
       },
       {
         'icon': Icons.help,
         'title': 'Help & Information',
         'color': Colors.purple,
+        'onTap': () {
+          // Handle navigation to Help & Information
+        },
+      },
+      {
+        'icon': Icons.logout,
+        'title': 'Logout',
+        'color': Colors.teal,
+        'onTap': () {
+          final AuthService authService = AuthService();
+
+          authService.logout();
+          AppRoutes.navigateToLogin(context);
+          AppToast.showSuccess(context, "Logout successful");
+        },
       },
     ];
 
@@ -328,9 +334,7 @@ class OtherScreen extends StatelessWidget {
                 ),
                 title: Text(
                   item['title'] as String,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w500,
-                  ),
+                  style: const TextStyle(fontWeight: FontWeight.w500),
                 ),
                 trailing: Container(
                   height: 30,
@@ -346,7 +350,7 @@ class OtherScreen extends StatelessWidget {
                   ),
                 ),
                 onTap: () {
-                  // Navigate to the specific setting screen
+                  (item['onTap'] as Function).call();
                 },
               ),
               if (!isLast) const Divider(height: 1, indent: 70),
