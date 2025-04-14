@@ -1,5 +1,7 @@
 import 'package:intel_money/shared/const/enum/category_type.dart';
 
+import '../state/app_state.dart';
+
 class Category{
   final int id;
   final String name;
@@ -17,6 +19,24 @@ class Category{
     required this.parentId,
     required this.editable,
   });
+
+  factory Category.fromContext(int? id) {
+    final List<Category> nestedCategories = AppState().categories;
+    for (var i = 0; i < nestedCategories.length; i++) {
+      if (nestedCategories[i].id == id) {
+        return nestedCategories[i];
+      } else {
+        for (var j = 0; j < nestedCategories[i].children.length; j++) {
+          if (nestedCategories[i].children[j].id == id) {
+            return nestedCategories[i].children[j];
+          }
+        }
+      }
+    }
+
+    //fallback to first category
+    return AppState().expenseCategories[0];
+  }
 
   factory Category.fromJson(Map<String, dynamic> json) {
     return Category(

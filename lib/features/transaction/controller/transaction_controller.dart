@@ -1,33 +1,60 @@
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:image_cropper/image_cropper.dart';
+import 'package:intel_money/core/models/extract_transaction_info_response.dart';
+import 'package:intel_money/core/services/ai_service.dart';
 
+import '../../../core/models/category.dart';
 import '../../../core/models/scan_receipt_response.dart';
+import '../../../core/models/wallet.dart';
 
 class TransactionController {
-  static Future<TakePictureResponse> extractTransactionDataFromImage(CroppedFile image) async {
+  static Future<TakePictureResponse> extractTransactionDataFromImage(
+    CroppedFile image,
+  ) async {
+    //Scan text from image
     final inputImage = InputImage.fromFilePath(image.path);
-
     final textRecognizer = TextRecognizer();
-    final RecognizedText recognizedText = await textRecognizer.processImage(inputImage);
+    final RecognizedText recognizedText = await textRecognizer.processImage(
+      inputImage,
+    );
     final String scannedText = recognizedText.text;
 
-    final extractedData = extractTransactionDataFromText(scannedText);
+    //call AI to extract
+    final ExtractTransactionInfoResponse transInfo =
+        await extractTransactionDataFromText(scannedText);
+
+    final Category category = Category.fromContext(transInfo.categoryId);
+    final Wallet wallet = Wallet.fromContext(transInfo.walletId);
 
     return TakePictureResponse(
       receiptImage: File(image.path),
       extractedData: ExtractedData(
-        amount: extractedData['amount'],
-        // category: Category.fromString(extractedData['category']),
-        // sourceWallet: Wallet.fromString(extractedData['store']),
-        date: extractedData['date'],
-        description: extractedData['fullText'],
+        amount: transInfo.amount,
+        category: category,
+        sourceWallet: wallet,
+        date: transInfo.date,
+        description: transInfo.description ?? scannedText,
       ),
     );
   }
 
-  static Map<String, dynamic> extractTransactionDataFromText(String text){
+  static Future<ExtractTransactionInfoResponse> extractTransactionDataFromText(
+    String text,
+  ) async {
+    return extractTransactionOnline(text);
+  }
+
+  static Future<ExtractTransactionInfoResponse> extractTransactionOnline(
+    String text,
+  ) async {
+    final AIService aiService = AIService();
+    return await aiService.extractTransactionInfo(text);
+  }
+
+  static Map<String, dynamic> extractTransactionOffline(String text) {
     // This is a simple implementation - you'll need to improve this
     // based on the format of receipts you're expecting to scan
 

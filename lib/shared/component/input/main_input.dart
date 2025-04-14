@@ -9,7 +9,7 @@ class MainInput extends StatefulWidget {
   final String? Function(String?)? validator;
   final FocusNode? focusNode;
   final bool autofocus;
-  final String? initialValue;
+  final double? initialValue;
   final String currency;
   final bool showDecimals;
 
@@ -49,12 +49,24 @@ class _MainInputState extends State<MainInput> {
     });
 
     if (widget.initialValue != null) {
-      widget.controller.text = widget.initialValue!;
+      widget.controller.text = widget.initialValue.toString();
       _formatDisplayText();
     } else {
       // Initialize with 0 if no initial value
       widget.controller.text = '0';
       _formatDisplayText();
+    }
+  }
+
+
+  @override
+  void didUpdateWidget(covariant MainInput oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.initialValue != oldWidget.initialValue) {
+      setState(() {
+        widget.controller.text = widget.initialValue.toString();
+        _formatDisplayText();
+      });
     }
   }
 

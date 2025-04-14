@@ -6,6 +6,16 @@ import '../../shared/const/enum/category_type.dart';
 import '../models/category.dart';
 
 class AppState extends ChangeNotifier {
+  // Singleton instance
+  static final AppState _instance = AppState._internal();
+
+  // Factory constructor
+  factory AppState() => _instance;
+
+  // Private constructor
+  AppState._internal();
+
+
   User? _user;
   List<Wallet> _wallets = [];
   List<Category> _categories = [];

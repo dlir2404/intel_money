@@ -12,9 +12,11 @@ import 'package:intel_money/shared/component/input/main_input.dart';
 import 'package:intel_money/shared/const/enum/category_type.dart';
 import 'package:intel_money/shared/const/enum/transaction_type.dart';
 import 'package:intel_money/shared/helper/toast.dart';
+import 'package:provider/provider.dart';
 
 import '../../../core/models/category.dart';
 import '../../../core/models/wallet.dart';
+import '../../../core/state/app_state.dart';
 import '../../../shared/component/input/form_input.dart';
 import '../../category/widgets/select_category_input.dart';
 import '../controller/transaction_controller.dart';
@@ -31,6 +33,7 @@ class CreateTransactionScreen extends StatefulWidget {
 class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
   TransactionType _selectedTransactionType = TransactionType.expense;
   final TextEditingController _amountController = TextEditingController();
+  double _amount = 0;
   Category? _selectedCategory;
   Wallet? _sourceWallet;
   DateTime? _transactionDate;
@@ -86,22 +89,31 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
     );
 
     setState(() {
-      print('>>>>>>>>>>>>> before: $_image');
       //scan bill is only for expense transaction
       _selectedTransactionType = TransactionType.expense;
       _image = result.receiptImage;
 
-      print('>>>>>>>>>>>>> after: $_image');
-
-
       //if extracted data is not null
       if (result.extractedData != null){
-        _amountController.text = result.extractedData!.amount.toString();
+        _amount = result.extractedData?.amount ?? 0;
         _selectedCategory = result.extractedData!.category;
         _sourceWallet = result.extractedData!.sourceWallet;
         _transactionDate = result.extractedData!.date;
         _descriptionController.text = result.extractedData!.description ?? '';
       }
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Get arguments if provided
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final arguments =
+      ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+
+      final appState = Provider.of<AppState>(context, listen: false);
     });
   }
 
@@ -141,6 +153,7 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               MainInput(
+                initialValue: _amount,
                 controller: _amountController,
                 label: 'Amount',
                 currency: '\$',

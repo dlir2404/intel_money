@@ -1,3 +1,5 @@
+import '../state/app_state.dart';
+
 class Wallet {
   int id;
   String name;
@@ -12,6 +14,12 @@ class Wallet {
     required this.icon,
     required this.balance
   });
+
+
+  factory Wallet.fromContext(int? id) {
+    return AppState().wallets.firstWhere((wallet) => wallet.id == id);
+  }
+
 
   factory Wallet.fromJson(Map<String, dynamic> json) {
     return Wallet(
