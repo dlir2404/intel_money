@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:intel_money/core/models/transaction.dart';
 import 'package:intel_money/core/models/user.dart';
 import 'package:intel_money/core/models/wallet.dart';
 
@@ -21,6 +22,9 @@ class AppState extends ChangeNotifier {
   List<Category> _categories = [];
   List<Category> _expenseCategories = [];
   List<Category> _incomeCategories = [];
+
+  //transactions in decreasing order by date
+  List<Transaction> _transactions = [];
 
   User? get user => _user;
 
@@ -130,6 +134,23 @@ class AppState extends ChangeNotifier {
       _expenseCategories.removeWhere((element) => element.id == id);
     } else {
       _incomeCategories.removeWhere((element) => element.id == id);
+    }
+    notifyListeners();
+  }
+
+  void setTransactions(List<Transaction> transactions) {
+    _transactions = transactions;
+    notifyListeners();
+  }
+
+
+  //TODO: review later
+  void addTransaction(Transaction transaction) {
+    for (var i = 0; i < _transactions.length; i++) {
+      if (transaction.transactionDate.isBefore(_transactions[i].transactionDate)) {
+        _transactions.insert(i, transaction);
+        return;
+      }
     }
     notifyListeners();
   }

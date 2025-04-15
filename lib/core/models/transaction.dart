@@ -27,19 +27,21 @@ class Transaction {
   });
 
   factory Transaction.fromJson(Map<String, dynamic> json) {
+    final category = Category.fromContext(json['category']['id']);
+    final sourceWallet = Wallet.fromContext(json['sourceWallet']['id']);
+
     return Transaction(
       id: json['id'],
       type: TransactionType.values.firstWhere((e) => e.value == json['type']),
       amount: double.parse(json['amount'].toString()),
-      category: Category.fromJson(json['category']),
-      sourceWallet: Wallet.fromJson(json['sourceWallet']),
+      category: category,
+      sourceWallet: sourceWallet,
       transactionDate: DateTime.parse(json['transactionDate']),
       description: json['description'],
       notAddToReport: json['notAddToReport'] == true ? true : false,
-      images: List<String>.from(json['images'] ?? []),
+      images: json['images'] is List ? List<String>.from(json['images']) : [],
     );
   }
-
 
   Map<String, dynamic> toJson() {
     return {

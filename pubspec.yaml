@@ -50,6 +50,7 @@ dependencies:
   image_picker: ^1.0.7
   image_cropper: ^9.1.0
   permission_handler: ^11.3.0
+  cloudinary_public: ^0.23.1
 
 dev_dependencies:
   flutter_test:

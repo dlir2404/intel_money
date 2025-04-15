@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:intel_money/core/models/scan_receipt_response.dart';
+import 'package:intel_money/core/network/api_exception.dart';
 import 'package:intel_money/features/transaction/screens/take_picture_screen.dart';
 import 'package:intel_money/features/transaction/widgets/create_transaction_appbar.dart';
 import 'package:intel_money/features/transaction/widgets/transaction_image.dart';
@@ -16,6 +17,7 @@ import 'package:provider/provider.dart';
 
 import '../../../core/models/category.dart';
 import '../../../core/models/wallet.dart';
+import '../../../core/services/transaction_service.dart';
 import '../../../core/state/app_state.dart';
 import '../../../shared/component/input/form_input.dart';
 import '../../category/widgets/select_category_input.dart';
@@ -41,6 +43,7 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
   File? _image;
 
   bool _isLoading = false;
+  late final TransactionService _transactionService = TransactionService();
 
   Future<void> _saveTransaction() async {
     if (_amountController.text.isEmpty) {
@@ -64,28 +67,50 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
       _isLoading = true;
     });
 
-    // Call your transaction service to save the transaction here
-    Future.delayed(const Duration(seconds: 2), () {
-      // Simulate a network call
+    try {
+      final List<File> images = [];
+      if (_image != null) {
+        images.add(_image!);
+      }
+
+      await _transactionService.createTransaction(
+        _selectedTransactionType,
+        _amount,
+        _selectedCategory!.id,
+        _descriptionController.text,
+        _transactionDate ?? DateTime.now(),
+        _sourceWallet!.id,
+        false,
+        images,
+      );
+
+      AppToast.showSuccess(context, 'Saved');
+    } catch (e) {
+      if (e is ApiException) {
+        AppToast.showError(context, e.message);
+      } else {
+        AppToast.showError(context, 'An error occurred while saving the transaction');
+      }
+    } finally {
       setState(() {
         _isLoading = false;
       });
-      AppToast.showSuccess(context, 'Transaction created successfully');
-    });
-
-    setState(() {
-      _isLoading = false;
-    });
+    }
   }
 
   Future<void> _scanReceipt() async {
     final TakePictureResponse result = await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => TakePictureScreen(
-        processImage: (CroppedFile image) async {
-          return await TransactionController.extractTransactionDataFromImage(image);
-        },
-      )),
+      MaterialPageRoute(
+        builder:
+            (context) => TakePictureScreen(
+              processImage: (CroppedFile image) async {
+                return await TransactionController.extractTransactionDataFromImage(
+                  image,
+                );
+              },
+            ),
+      ),
     );
 
     setState(() {
@@ -94,7 +119,7 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
       _image = result.receiptImage;
 
       //if extracted data is not null
-      if (result.extractedData != null){
+      if (result.extractedData != null) {
         _amount = result.extractedData?.amount ?? 0;
         _selectedCategory = result.extractedData!.category;
         _sourceWallet = result.extractedData!.sourceWallet;
@@ -111,7 +136,7 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
     // Get arguments if provided
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final arguments =
-      ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+          ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
 
       final appState = Provider.of<AppState>(context, listen: false);
     });
@@ -155,6 +180,11 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
               MainInput(
                 initialValue: _amount,
                 controller: _amountController,
+                onChanged: (String newValue) {
+                  setState(() {
+                    _amount = double.tryParse(newValue) ?? 0;
+                  });
+                },
                 label: 'Amount',
                 currency: '\$',
               ),
