@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/models/app_icon.dart';
+import '../../../shared/const/icons/category_icon.dart';
 import '../controller/category_controller.dart';
 
 class IconPicker extends StatelessWidget {
-  final List<Map<String, dynamic>> iconOptions;
-  final String? selectedIcon;
-  final Function(String) onItemTap;
+  final List<AppIcon> icons;
+  final AppIcon? selectedIcon;
+  final Function(AppIcon icon) onItemTap;
 
   const IconPicker({
     super.key,
-    required this.iconOptions,
+    required this.icons,
     this.selectedIcon,
     required this.onItemTap,
   });
@@ -36,14 +38,14 @@ class IconPicker extends StatelessWidget {
                 crossAxisSpacing: 15,
                 mainAxisSpacing: 15,
               ),
-              itemCount: iconOptions.length,
+              itemCount: icons.length,
               itemBuilder: (context, index) {
-                final iconData = iconOptions[index];
-                final isSelected = selectedIcon == iconData['name'];
+                final icon = icons[index];
+                final isSelected = selectedIcon == icon.name;
 
                 return InkWell(
                   onTap: () {
-                    onItemTap(iconData['name']);
+                    onItemTap(icon);
                     Navigator.pop(context);
                   },
                   child: Column(
@@ -54,30 +56,26 @@ class IconPicker extends StatelessWidget {
                         decoration: BoxDecoration(
                           color:
                               isSelected
-                                  ? CategoryController.getIconColor(
-                                    iconData['name'],
-                                  )
-                                  : CategoryController.getIconColor(
-                                    iconData['name'],
-                                  ).withOpacity(0.15),
+                                  ? icon.color
+                                  : icon.color.withOpacity(0.15),
                           shape: BoxShape.circle,
                           border:
                               isSelected
                                   ? Border.all(
                                     color: CategoryController.getIconColor(
-                                      iconData['name'],
+                                      icon.name,
                                     ),
                                     width: 2,
                                   )
                                   : null,
                         ),
                         child: Icon(
-                          iconData['icon'],
+                          icon.icon,
                           color:
                               isSelected
                                   ? Colors.white
                                   : CategoryController.getIconColor(
-                                    iconData['name'],
+                                    icon.name,
                                   ),
                         ),
                       ),

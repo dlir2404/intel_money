@@ -9,7 +9,9 @@ import 'package:intel_money/core/state/app_state.dart';
 import 'package:intel_money/core/models/category.dart';
 import 'package:intel_money/shared/const/enum/category_type.dart';
 
+import '../../../core/models/app_icon.dart';
 import '../../../core/services/ad_service.dart';
+import '../../../shared/const/icons/category_icon.dart';
 import '../../../shared/helper/toast.dart';
 import 'select_category_screen.dart';
 
@@ -28,7 +30,7 @@ class _CreateCategoryScreenState extends State<CreateCategoryScreen> {
 
   final TextEditingController _nameController = TextEditingController();
   Category? _parentCategory;
-  String _selectedIcon = 'category';
+  AppIcon _selectedIcon = CategoryIcon.defaultIcon();
 
   bool _isLoading = false;
 
@@ -46,11 +48,11 @@ class _CreateCategoryScreenState extends State<CreateCategoryScreen> {
       ),
       builder: (context) {
         return IconPicker(
-          iconOptions: CategoryController.iconOptions,
+          icons: CategoryIcon.icons,
           selectedIcon: _selectedIcon,
-          onItemTap: (iconName) {
+          onItemTap: (icon) {
             setState(() {
-              _selectedIcon = iconName;
+              _selectedIcon = icon;
             });
           },
         );
@@ -70,7 +72,7 @@ class _CreateCategoryScreenState extends State<CreateCategoryScreen> {
     try {
       await _categoryService.createCategory(
         _nameController.text.trim(),
-        _selectedIcon,
+        _selectedIcon.name,
         _categoryType,
         parentId: _parentCategory?.id,
       );
@@ -188,16 +190,12 @@ class _CreateCategoryScreenState extends State<CreateCategoryScreen> {
                           width: 80,
                           height: 80,
                           decoration: BoxDecoration(
-                            color: CategoryController.getIconColor(
-                              _selectedIcon,
-                            ).withOpacity(0.15),
+                            color: _selectedIcon.color.withOpacity(0.15),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
-                            CategoryController.getCategoryIcon(_selectedIcon),
-                            color: CategoryController.getIconColor(
-                              _selectedIcon,
-                            ),
+                            _selectedIcon.icon,
+                            color: _selectedIcon.color,
                             size: 40,
                           ),
                         ),
