@@ -10,7 +10,7 @@ import '../../../core/services/ad_service.dart';
 import '../../../shared/component/input/form_input.dart';
 
 class CreateWalletScreen extends StatefulWidget {
-  const CreateWalletScreen({Key? key}) : super(key: key);
+  const CreateWalletScreen({super.key});
 
   @override
   State<CreateWalletScreen> createState() => _CreateWalletScreenState();
@@ -19,8 +19,8 @@ class CreateWalletScreen extends StatefulWidget {
 class _CreateWalletScreenState extends State<CreateWalletScreen> {
   final _formKey = GlobalKey<FormState>();
 
+  double initialAmount = 0;
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _amountController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   String _selectedIcon = "wallet"; // Default icon
   late final WalletService _walletService;
@@ -35,7 +35,6 @@ class _CreateWalletScreenState extends State<CreateWalletScreen> {
   @override
   void dispose() {
     _nameController.dispose();
-    _amountController.dispose();
     _descriptionController.dispose();
     super.dispose();
   }
@@ -110,11 +109,11 @@ class _CreateWalletScreenState extends State<CreateWalletScreen> {
                 // Initial amount
                 MainInput(
                   label: 'Initial Amount',
-                  hint: 'Enter initial amount',
-                  controller: _amountController,
                   currency: '\$',
                   onChanged: (value) {
-                    // Handle amount changes if needed
+                    setState(() {
+                      initialAmount = value;
+                    });
                   },
                 ),
                 const SizedBox(height: 20),
@@ -219,14 +218,6 @@ class _CreateWalletScreenState extends State<CreateWalletScreen> {
     if (!_formKey.currentState!.validate()) {
       return;
     }
-
-    if (_amountController.text.isEmpty) {
-      AppToast.showError(context, 'Please enter an initial amount');
-      return;
-    }
-
-    // Parse initial amount
-    double initialAmount = double.tryParse(_amountController.text) ?? 0;
 
     _walletService.create(
       _nameController.text,

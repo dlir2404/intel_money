@@ -1,30 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../../helper/toast.dart';
+
 class MainInput extends StatefulWidget {
   final String? label;
-  final String? hint;
-  final TextEditingController controller;
-  final Function(String)? onChanged;
-  final String? Function(String?)? validator;
+  final Function(double)? onChanged;
   final FocusNode? focusNode;
   final bool autofocus;
   final double? initialValue;
   final String currency;
-  final bool showDecimals;
 
   const MainInput({
     super.key,
     this.label,
-    this.hint,
-    required this.controller,
     this.onChanged,
-    this.validator,
     this.focusNode,
     this.autofocus = false,
     this.initialValue,
     this.currency = '\$',
-    this.showDecimals = false,
   });
 
   @override
@@ -34,10 +28,12 @@ class MainInput extends StatefulWidget {
 class _MainInputState extends State<MainInput> {
   late FocusNode _focusNode;
   OverlayEntry? _overlayEntry;
-  String _displayText = '';
   String _calculationBuffer = '';
   bool _isCalculating = false;
   String _currentOperation = '';
+
+  double _value = 0;
+  String _displayText = '0';
 
   @override
   void initState() {
@@ -48,25 +44,12 @@ class _MainInputState extends State<MainInput> {
       _focusNode.addListener(_handleFocusChange);
     });
 
-    if (widget.initialValue != null) {
-      widget.controller.text = widget.initialValue.toString();
-      _formatDisplayText();
-    } else {
-      // Initialize with 0 if no initial value
-      widget.controller.text = '0';
-      _formatDisplayText();
-    }
-  }
+    if (widget.initialValue != null && widget.initialValue! > 0) {
+      _value = widget.initialValue!;
 
-
-  @override
-  void didUpdateWidget(covariant MainInput oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (widget.initialValue != oldWidget.initialValue) {
-      setState(() {
-        widget.controller.text = widget.initialValue.toString();
-        _formatDisplayText();
-      });
+      _displayText = _getDisplayText(_value.toString());
+      //try parse again in case of too much decimal places
+      _value = _getValueFromDisplayText(_displayText);
     }
   }
 
@@ -88,41 +71,77 @@ class _MainInputState extends State<MainInput> {
     super.dispose();
   }
 
-  void _formatDisplayText() {
-    if (widget.controller.text.isEmpty) {
-      _displayText = '';
-      return;
+  double _getValueFromDisplayText(String displayText) {
+    bool isNegative = false;
+    if (displayText.contains("-")) {
+      isNegative = true;
+      displayText = displayText.replaceAll("-", "");
     }
 
-    try {
-      // If the text contains a decimal point, handle it specially
-      if (widget.controller.text.contains(".")) {
-        // Split the number into parts
-        List<String> parts = widget.controller.text.split('.');
-        String integerPart = NumberFormat('#,###').format(int.parse(parts[0]));
+    // Remove thousand separators & replace decimal point
+    String sanitizedText = displayText.replaceAll('.', '').replaceAll(',', '.');
 
-        // Get decimal part
-        String decimalPart = parts.length > 1 ? parts[1] : '';
+    if (isNegative) {
+      sanitizedText = "-$sanitizedText";
+    }
 
-        // Combine parts
-        _displayText = integerPart;
-        if (decimalPart.isNotEmpty || widget.controller.text.endsWith('.')) {
-          _displayText += '.' + decimalPart;
-        }
+    // Parse the sanitized text to double
+    return double.tryParse(sanitizedText) ?? 0;
+  }
 
-        setState(() {});
-        return;
+  String _getDisplayText(String value) {
+    //remove thousand separators
+    value = value.replaceAll('.', '');
+    if (value == '0') {
+      return '0';
+    }
+
+    bool isNegative = false;
+    if (value.contains("-")) {
+      isNegative = true;
+      value = value.replaceAll("-", "");
+    }
+
+    if (value.contains(",")) {
+      List<String> parts = value.split(',');
+      String integerPart = parts[0];
+      String decimalPart = parts[1];
+
+      integerPart = _formatWithThousandSeparator(integerPart);
+      if (decimalPart.length > 2) {
+        //cut to 2 decimal places
+        decimalPart = decimalPart.substring(0, 2);
       }
 
-      // No decimal point in the input
-      double value = double.parse(widget.controller.text);
-      _displayText = NumberFormat('#,###').format(value);
-    } catch (e) {
-      _displayText = widget.controller.text;
-      debugPrint("Formatting error: $e");
+      if (isNegative) {
+        integerPart = "-$integerPart";
+      }
+
+      return '$integerPart,$decimalPart';
+    } else {
+      //no contain decimal point
+      String integerPart = _formatWithThousandSeparator(value);
+
+      if (isNegative) {
+        integerPart = "-$integerPart";
+      }
+      return integerPart;
+    }
+  }
+
+  String _formatWithThousandSeparator(String value) {
+    int count = value.length;
+
+    int numberOfCommas = (count - 1) ~/ 3;
+
+    for (var i = 0; i < numberOfCommas; i++) {
+      int index = count - (i + 1) * 3;
+      if (index > 0) {
+        value = value.replaceRange(index, index, '.');
+      }
     }
 
-    setState(() {});
+    return value;
   }
 
   void _showOverlay() {
@@ -130,45 +149,47 @@ class _MainInputState extends State<MainInput> {
     if (!mounted) return;
 
     final overlay = Overlay.of(context);
-    if (overlay == null) return;
 
-    _overlayEntry = _isCalculating ? _createCalculatorOverlay() : _createOverlay();
+    _overlayEntry =
+        _isCalculating ? _createCalculatorOverlay() : _createOverlay();
     overlay.insert(_overlayEntry!);
   }
 
   OverlayEntry _createOverlay() {
     return OverlayEntry(
-      builder: (context) => Positioned(
-        width: MediaQuery.of(context).size.width,
-        bottom: MediaQuery.of(context).viewInsets.bottom,
-        left: 0,
-        child: Material(
-          elevation: 4.0,
-          child: EnhancedMoneyKeyboard(
-            onKeyPressed: _handleKeyPress,
-            showEquals: false,
-            operation: _currentOperation,
+      builder:
+          (context) => Positioned(
+            width: MediaQuery.of(context).size.width,
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+            left: 0,
+            child: Material(
+              elevation: 4.0,
+              child: EnhancedMoneyKeyboard(
+                onKeyPressed: _handleKeyPress,
+                showEquals: false,
+                operation: _currentOperation,
+              ),
+            ),
           ),
-        ),
-      ),
     );
   }
 
   OverlayEntry _createCalculatorOverlay() {
     return OverlayEntry(
-      builder: (context) => Positioned(
-        width: MediaQuery.of(context).size.width,
-        bottom: MediaQuery.of(context).viewInsets.bottom,
-        left: 0,
-        child: Material(
-          elevation: 4.0,
-          child: EnhancedMoneyKeyboard(
-            onKeyPressed: _handleKeyPress,
-            showEquals: true,
-            operation: _currentOperation,
+      builder:
+          (context) => Positioned(
+            width: MediaQuery.of(context).size.width,
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+            left: 0,
+            child: Material(
+              elevation: 4.0,
+              child: EnhancedMoneyKeyboard(
+                onKeyPressed: _handleKeyPress,
+                showEquals: true,
+                operation: _currentOperation,
+              ),
+            ),
           ),
-        ),
-      ),
     );
   }
 
@@ -180,99 +201,124 @@ class _MainInputState extends State<MainInput> {
   void _handleKeyPress(String key) {
     if (key == 'C') {
       // Clear everything and set to 0
-      widget.controller.text = '0';
+      _displayText = '0';
       _calculationBuffer = '';
       _isCalculating = false;
       _currentOperation = '';
+
+      _overlayEntry?.remove();
+      _overlayEntry = _createOverlay();
+      Overlay.of(context).insert(_overlayEntry!);
     } else if (key == 'backspace') {
-      if (widget.controller.text.length <= 1) {
+      if (_displayText.length <= 1) {
         // If only one digit or empty, set to 0
-        widget.controller.text = '0';
+        _displayText = '0';
       } else {
         // Remove last character
-        widget.controller.text = widget.controller.text.substring(
-            0, widget.controller.text.length - 1);
+        _displayText = _displayText.substring(0, _displayText.length - 1);
       }
     } else if (key == 'Done') {
       _performCalculation(); // Calculate any pending operation
       _focusNode.unfocus(); // Close the keyboard
     } else if (['+', '-', '×', '÷'].contains(key)) {
-      // Start calculation mode
-      if (widget.controller.text.isNotEmpty) {
-        _calculationBuffer = widget.controller.text;
-        _currentOperation = key;
-        _isCalculating = true;
-        widget.controller.text = '0'; // Reset input for next number
-
-        // Change "Done" button to "="
-        _overlayEntry?.remove();
-        _overlayEntry = _createCalculatorOverlay();
-        Overlay.of(context).insert(_overlayEntry!);
+      if (_isCalculating){
+        _performCalculation();
       }
+
+      // Start calculation mode
+      _calculationBuffer = _displayText;
+      _currentOperation = key;
+      _isCalculating = true;
+      _displayText = '0'; // Reset input for next number
+
+      // Change "Done" button to "="
+      _overlayEntry?.remove();
+      _overlayEntry = _createCalculatorOverlay();
+      Overlay.of(context).insert(_overlayEntry!);
     } else if (key == '=') {
       _performCalculation();
       _focusNode.unfocus(); // Close keyboard after calculation
     } else if (key == '+/-') {
       // Toggle sign of current input
-      if (widget.controller.text.isNotEmpty && widget.controller.text != '0') {
-        try {
-          double value = double.parse(widget.controller.text);
-          value = -value;
-          widget.controller.text = value.toString();
-        } catch (e) {
-          // Handle parsing error
-          debugPrint("Error toggling sign: $e");
+      if (_displayText != '0' && _displayText != '0,') {
+        _value = -_value;
+
+        String valueText = _value.toString();
+        if (valueText.endsWith('.0')) {
+          valueText = valueText.substring(0, valueText.length - 2);
         }
+
+        valueText = valueText.replaceAll(".", ",");
+        _displayText = _getDisplayText(valueText);
       }
     } else if (key == '000') {
-      if (widget.controller.text == '0') {
-        // If current value is 0, keep it 0
-        widget.controller.text = '0';
+      if (_displayText == '0' || !_checkLimit(_displayText)){
+        //do nothing
+      } else if (_displayText.endsWith(",")) {
+        _displayText = '${_displayText}00';
       } else {
-        // Append 000
-        widget.controller.text = widget.controller.text + '000';
+        if (_displayText.length + 3 > 16) {
+          int needed = 16 - _displayText.length;
+          _displayText = _displayText + '0' * needed;
+        } else {
+          // Add three zeros
+          _displayText = '${_displayText}000';
+        }
       }
     } else if (key == ',') {
       // Add decimal point if not already present
-      if (!widget.controller.text.contains('.')) {
-        widget.controller.text = widget.controller.text + '.';
-        _formatDisplayText();
-        if (widget.onChanged != null) {
-          widget.onChanged!(widget.controller.text);
-        }
-        return;
+      if (!_displayText.contains(',')) {
+        //insert comma
+        _displayText = '$_displayText,';
+      } else if (_displayText.endsWith(',')) {
+        // If it ends with a comma, remove it
+        _displayText = _displayText.substring(0, _displayText.length - 1);
       }
-    }
-    else {
+    } else {
       // Handle numeric input
-      if (widget.controller.text == '0') {
+      if (_displayText == '0') {
         // Replace 0 with the new digit
-        widget.controller.text = key;
+        _displayText = key;
+      } else if (!_checkLimit(_displayText)){
+        return;
       } else {
         // Check if adding would exceed decimal limit
-        if (widget.controller.text.contains('.')) {
-          List<String> parts = widget.controller.text.split('.');
-          if (parts.length > 1 && parts[1].length >= 6) {
-            // Already at max decimal digits, don't add more
+        if (_displayText.contains(',')) {
+          List<String> parts = _displayText.split(',');
+          if (parts.length > 1 && parts[1].length >= 2) {
             return;
           }
         }
         // Append the digit
-        widget.controller.text = widget.controller.text + key;
+        _displayText = _displayText + key;
       }
     }
 
-    _formatDisplayText();
+    _displayText = _getDisplayText(_displayText);
+    _value = _getValueFromDisplayText(_displayText);
     if (widget.onChanged != null) {
-      widget.onChanged!(widget.controller.text);
+      widget.onChanged!(_value);
     }
   }
 
+  /// return true if limit is reached
+  bool _checkLimit(String value) {
+    if (value.contains(",")){
+      value = value.split(",")[0];
+    }
+
+    if (value.length > 16) {
+      return false;
+    }
+
+    return true;
+  }
+
   void _performCalculation() {
-    if (_isCalculating && _calculationBuffer.isNotEmpty) {
+    if (_isCalculating) {
       try {
-        double firstNum = double.parse(_calculationBuffer);
-        double secondNum = double.parse(widget.controller.text);
+        double firstNum = _getValueFromDisplayText(_calculationBuffer);
+        double secondNum = _getValueFromDisplayText(_displayText);
         double result = 0;
 
         switch (_currentOperation) {
@@ -290,15 +336,27 @@ class _MainInputState extends State<MainInput> {
               result = firstNum / secondNum;
             } else {
               // Handle division by zero
-              result = 0;
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Cannot divide by zero')),
-              );
+              AppToast.showError(context, 'Cannot divide by zero');
             }
             break;
         }
 
-        widget.controller.text = result.toString();
+        String resultText = result.toString();
+        String integerPart = resultText.split(".")[0];
+        String decimalPart = resultText.split(".")[1];
+        if (decimalPart.length == 1 && decimalPart == "0"){
+          resultText = integerPart;
+        } else if (decimalPart.length >= 2){
+          decimalPart = decimalPart.substring(0, 2);
+
+          if (decimalPart == "00"){
+            resultText = integerPart;
+          } else {
+            resultText = "$integerPart,$decimalPart";
+          }
+        }
+        
+        _displayText = _getDisplayText(resultText);
         _calculationBuffer = '';
         _isCalculating = false;
         _currentOperation = '';
@@ -319,10 +377,7 @@ class _MainInputState extends State<MainInput> {
             padding: const EdgeInsets.only(bottom: 8.0),
             child: Text(
               widget.label!,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-              ),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
             ),
           ),
         GestureDetector(
@@ -339,7 +394,7 @@ class _MainInputState extends State<MainInput> {
               children: [
                 Expanded(
                   child: Text(
-                    _displayText.isEmpty ? (widget.hint ?? 'Enter amount') : _displayText,
+                    _displayText,
                     style: TextStyle(
                       color: _displayText.isEmpty ? Colors.grey : Colors.black,
                       fontSize: 16,
@@ -349,13 +404,11 @@ class _MainInputState extends State<MainInput> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(left: 8.0), // Add margin between text and currency
+                  padding: const EdgeInsets.only(left: 8.0),
+                  // Add margin between text and currency
                   child: Text(
                     widget.currency,
-                    style: const TextStyle(
-                      color: Colors.grey,
-                      fontSize: 16,
-                    ),
+                    style: const TextStyle(color: Colors.grey, fontSize: 16),
                   ),
                 ),
               ],
@@ -373,11 +426,11 @@ class EnhancedMoneyKeyboard extends StatelessWidget {
   final String operation;
 
   const EnhancedMoneyKeyboard({
-    Key? key,
+    super.key,
     required this.onKeyPressed,
     this.showEquals = false,
     this.operation = '',
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -399,64 +452,70 @@ class EnhancedMoneyKeyboard extends StatelessWidget {
 
   Widget buildKeyboardRow(List<String> keys) {
     return Row(
-      children: keys.map((key) {
-        Color backgroundColor = Colors.white;
-        Color textColor = Colors.black87;
-        IconData? icon;
+      children:
+          keys.map((key) {
+            Color backgroundColor = Colors.white;
+            Color textColor = Colors.black87;
+            IconData? icon;
 
-        // Style different types of keys
-        if (key == 'backspace') {
-          icon = Icons.backspace_outlined;
-          backgroundColor = Colors.grey.shade300;
-        } else if (key == 'Done' || key == '=') {
-          backgroundColor = Colors.blue;
-          textColor = Colors.white;
-        } else if (key == 'C') {
-          backgroundColor = Colors.red.shade100;
-          textColor = Colors.red.shade700;
-        } else if (['+', '-', '×', '÷', '+/-'].contains(key)) {
-          bool isActive = key == operation;
-          backgroundColor = isActive ? Colors.blue : Colors.blue.shade100;
-          textColor = isActive ? Colors.white : Colors.blue.shade800;
-        }
+            // Style different types of keys
+            if (key == 'backspace') {
+              icon = Icons.backspace_outlined;
+              backgroundColor = Colors.grey.shade300;
+            } else if (key == 'Done' || key == '=') {
+              backgroundColor = Colors.blue;
+              textColor = Colors.white;
+            } else if (key == 'C') {
+              backgroundColor = Colors.red.shade100;
+              textColor = Colors.red.shade700;
+            } else if (['+', '-', '×', '÷', '+/-'].contains(key)) {
+              bool isActive = key == operation;
+              backgroundColor = isActive ? Colors.blue : Colors.blue.shade100;
+              textColor = isActive ? Colors.white : Colors.blue.shade800;
+            }
 
-        return Expanded(
-          child: Container(
-            height: 60,
-            margin: const EdgeInsets.all(2.0),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(4),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 1,
-                  offset: const Offset(0, 1),
+            return Expanded(
+              child: Container(
+                height: 60,
+                margin: const EdgeInsets.all(2.0),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(4),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      blurRadius: 1,
+                      offset: const Offset(0, 1),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-            child: Material(
-              color: backgroundColor,
-              borderRadius: BorderRadius.circular(4),
-              child: InkWell(
-                borderRadius: BorderRadius.circular(4),
-                onTap: () => onKeyPressed(key),
-                child: Center(
-                  child: icon != null
-                      ? Icon(icon, color: textColor)
-                      : Text(
-                    key,
-                    style: TextStyle(
-                      fontSize: (key == 'Done' || key == '=') ? 16 : 20,
-                      fontWeight: (key == 'Done' || key == '=') ? FontWeight.bold : FontWeight.normal,
-                      color: textColor,
+                child: Material(
+                  color: backgroundColor,
+                  borderRadius: BorderRadius.circular(4),
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(4),
+                    onTap: () => onKeyPressed(key),
+                    child: Center(
+                      child:
+                          icon != null
+                              ? Icon(icon, color: textColor)
+                              : Text(
+                                key,
+                                style: TextStyle(
+                                  fontSize:
+                                      (key == 'Done' || key == '=') ? 16 : 20,
+                                  fontWeight:
+                                      (key == 'Done' || key == '=')
+                                          ? FontWeight.bold
+                                          : FontWeight.normal,
+                                  color: textColor,
+                                ),
+                              ),
                     ),
                   ),
                 ),
               ),
-            ),
-          ),
-        );
-      }).toList(),
+            );
+          }).toList(),
     );
   }
 }

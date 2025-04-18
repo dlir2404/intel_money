@@ -34,7 +34,6 @@ class CreateTransactionScreen extends StatefulWidget {
 
 class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
   TransactionType _selectedTransactionType = TransactionType.expense;
-  final TextEditingController _amountController = TextEditingController();
   double _amount = 0;
   Category? _selectedCategory;
   Wallet? _sourceWallet;
@@ -46,8 +45,8 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
   late final TransactionService _transactionService = TransactionService();
 
   Future<void> _saveTransaction() async {
-    if (_amountController.text.isEmpty) {
-      AppToast.showError(context, 'Please enter an amount');
+    if (_amount <= 0) {
+      AppToast.showError(context, 'Amount must be greater than 0');
       return;
     }
     if (_selectedCategory == null) {
@@ -178,11 +177,9 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               MainInput(
-                initialValue: _amount,
-                controller: _amountController,
-                onChanged: (String newValue) {
+                onChanged: (double newValue) {
                   setState(() {
-                    _amount = double.tryParse(newValue) ?? 0;
+                    _amount = newValue;
                   });
                 },
                 label: 'Amount',
