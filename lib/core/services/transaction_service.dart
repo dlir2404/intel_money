@@ -88,7 +88,12 @@ class TransactionService {
       'notAddToReport': notAddToReport,
       'images': images,
     });
-    return Transaction.fromJson(response);
+    final transaction = Transaction.fromJson(response);
+
+    _appState.addTransaction(transaction);
+    _appState.increaseUserBalance(amount);
+    _appState.increaseWalletBalance(sourceWalletId, amount);
+    return transaction;
   }
 
   Future<Transaction> createExpenseTransaction(
@@ -112,6 +117,8 @@ class TransactionService {
     final transaction = Transaction.fromJson(response);
 
     _appState.addTransaction(transaction);
+    _appState.decreaseUserBalance(amount);
+    _appState.decreateWalletBalance(sourceWalletId, amount);
     return transaction;
   }
 }

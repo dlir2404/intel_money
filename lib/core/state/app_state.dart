@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:intel_money/core/models/transaction.dart';
 import 'package:intel_money/core/models/user.dart';
 import 'package:intel_money/core/models/wallet.dart';
+import 'package:intel_money/shared/const/enum/transaction_type.dart';
 
 import '../../shared/const/enum/category_type.dart';
 import '../models/category.dart';
@@ -152,6 +153,28 @@ class AppState extends ChangeNotifier {
         return;
       }
     }
+    notifyListeners();
+  }
+
+  void decreaseUserBalance(double amount) {
+    _user!.totalBalance -= amount;
+    notifyListeners();
+  }
+
+  void increaseUserBalance(double amount) {
+    _user!.totalBalance += amount;
+    notifyListeners();
+  }
+
+  void decreateWalletBalance(int walletId, double amount) {
+    final index = _wallets.indexWhere((element) => element.id == walletId);
+    _wallets[index].balance -= amount;
+    notifyListeners();
+  }
+
+  void increaseWalletBalance(int walletId, double amount) {
+    final index = _wallets.indexWhere((element) => element.id == walletId);
+    _wallets[index].balance += amount;
     notifyListeners();
   }
 

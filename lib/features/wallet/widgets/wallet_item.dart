@@ -133,7 +133,7 @@ class WalletItem extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 16,
                           color:
-                              wallet.balance > 0
+                              wallet.balance >= 0
                                   ? Colors.green[600]
                                   : Colors.red[600],
                         ),

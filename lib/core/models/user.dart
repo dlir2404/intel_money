@@ -6,9 +6,9 @@ class User {
   final String email;
   final String? phone;
   final String? picture;
-  final double? totalBalance;
-  final double? totalLoan;
-  final double? totalBorrowed;
+  double totalBalance;
+  double totalLoan;
+  double totalBorrowed;
 
   User({
     required this.id,
@@ -16,9 +16,9 @@ class User {
     required this.email,
     this.phone,
     this.picture,
-    this.totalBalance,
-    this.totalLoan,
-    this.totalBorrowed,
+    this.totalBalance = 0.0,
+    this.totalLoan = 0.0,
+    this.totalBorrowed = 0.0,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {

@@ -6,7 +6,6 @@ import 'package:intel_money/core/models/scan_receipt_response.dart';
 import 'package:intel_money/core/network/api_exception.dart';
 import 'package:intel_money/features/transaction/screens/take_picture_screen.dart';
 import 'package:intel_money/features/transaction/widgets/create_transaction_appbar.dart';
-import 'package:intel_money/features/transaction/widgets/transaction_image.dart';
 import 'package:intel_money/features/wallet/widgets/select_wallet_input.dart';
 import 'package:intel_money/shared/component/input/date_input.dart';
 import 'package:intel_money/shared/component/input/main_input.dart';
@@ -37,7 +36,7 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
   double _amount = 0;
   Category? _selectedCategory;
   Wallet? _sourceWallet;
-  DateTime? _transactionDate;
+  DateTime? _transactionDate = DateTime.now();
   final TextEditingController _descriptionController = TextEditingController();
   File? _image;
 
