@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:intel_money/features/wallet/controller/wallet_controller.dart';
 
+import '../../../core/models/app_icon.dart';
 import '../../../core/models/wallet.dart';
+import '../../../shared/const/icons/wallet_icon.dart';
 import '../screens/select_wallet_screen.dart';
 
 class SelectWalletInput extends StatefulWidget {
   final String placeholder;
-  final Wallet? wallet;
   final Function(Wallet?) onWalletSelected;
 
   const SelectWalletInput({
     super.key,
     required this.placeholder,
-    this.wallet,
     required this.onWalletSelected,
   });
 
@@ -21,24 +21,28 @@ class SelectWalletInput extends StatefulWidget {
 }
 
 class _SelectWalletInputState extends State<SelectWalletInput> {
+  Wallet? _wallet;
+
   void _navigateToSelectWallet() async {
-    final selectedCategory = await Navigator.push<Wallet>(
+    final selectedWallet = await Navigator.push<Wallet>(
       context,
       MaterialPageRoute(
-        builder:
-            (context) => SelectWalletScreen(
-          selectedWallet: widget.wallet,
-        ),
+        builder: (context) => SelectWalletScreen(selectedWallet: _wallet),
       ),
     );
 
-    if (selectedCategory != null) {
-      widget.onWalletSelected(selectedCategory);
+    if (selectedWallet != null) {
+      setState(() {
+        _wallet = selectedWallet;
+      });
+      widget.onWalletSelected(selectedWallet);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    AppIcon icon = WalletIcon.getIcon(_wallet?.icon ?? "");
+
     return GestureDetector(
       onTap: _navigateToSelectWallet,
       child: Container(
@@ -53,23 +57,21 @@ class _SelectWalletInputState extends State<SelectWalletInput> {
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: WalletController.getIconColor(
-                  widget.wallet?.icon ?? '',
-                ).withOpacity(0.15),
+                color: _wallet != null ? icon.color.withOpacity(0.15) : Colors.grey.withOpacity(0.15),
                 shape: BoxShape.circle,
               ),
               child: Icon(
-                WalletController.getWalletIcon(widget.wallet?.icon ?? ''),
-                color: WalletController.getIconColor(widget.wallet?.icon ?? ''),
+                icon.icon,
+                color: _wallet != null ? icon.color : Colors.grey,
                 size: 24,
               ),
             ),
             const SizedBox(width: 10),
             Expanded(
               child: Text(
-                widget.wallet?.name ?? widget.placeholder,
+                _wallet?.name ?? widget.placeholder,
                 style: TextStyle(
-                  color: widget.wallet == null ? Colors.grey : Colors.black,
+                  color: _wallet == null ? Colors.grey : Colors.black,
                 ),
               ),
             ),
@@ -77,6 +79,7 @@ class _SelectWalletInputState extends State<SelectWalletInput> {
           ],
         ),
       ),
-    );;
+    );
+    ;
   }
 }

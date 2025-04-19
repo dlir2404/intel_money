@@ -6,8 +6,10 @@ import 'package:intel_money/shared/component/input/main_input.dart';
 import 'package:intel_money/shared/helper/toast.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/models/app_icon.dart';
 import '../../../core/services/ad_service.dart';
 import '../../../shared/component/input/form_input.dart';
+import '../../../shared/const/icons/wallet_icon.dart';
 
 class CreateWalletScreen extends StatefulWidget {
   const CreateWalletScreen({super.key});
@@ -22,7 +24,7 @@ class _CreateWalletScreenState extends State<CreateWalletScreen> {
   double initialAmount = 0;
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-  String _selectedIcon = "wallet"; // Default icon
+  AppIcon _selectedIcon = WalletIcon.defaultIcon(); // Default icon
   late final WalletService _walletService;
 
   @override
@@ -90,13 +92,13 @@ class _CreateWalletScreenState extends State<CreateWalletScreen> {
                 const SizedBox(height: 25),
 
                 const Text(
-                  'Category Name',
+                  'Wallet Name',
                   style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
                 ),
                 const SizedBox(height: 10),
                 FormInput(
                   controller: _nameController,
-                  placeholder: 'Enter category name',
+                  placeholder: 'Enter wallet name',
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter a wallet name';
@@ -157,7 +159,7 @@ class _CreateWalletScreenState extends State<CreateWalletScreen> {
   }
 
   Widget _buildIconSelector() {
-    final icons = WalletController.iconOptions;
+    final icons = WalletIcon.icons;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -175,12 +177,12 @@ class _CreateWalletScreenState extends State<CreateWalletScreen> {
           height: 70,
           child: ListView(
             scrollDirection: Axis.horizontal,
-            children: icons.map((iconData) {
-              final bool isSelected = _selectedIcon == iconData['name'];
+            children: icons.map((icon) {
+              final bool isSelected = _selectedIcon == icon;
               return GestureDetector(
                 onTap: () {
                   setState(() {
-                    _selectedIcon = iconData['name'] as String;
+                    _selectedIcon = icon;
                   });
                 },
                 child: Container(
@@ -199,7 +201,7 @@ class _CreateWalletScreenState extends State<CreateWalletScreen> {
                     ),
                   ),
                   child: Icon(
-                    iconData['icon'] as IconData,
+                    icon.icon,
                     color: isSelected
                         ? Theme.of(context).primaryColor
                         : Colors.grey[600],
@@ -222,7 +224,7 @@ class _CreateWalletScreenState extends State<CreateWalletScreen> {
     _walletService.create(
       _nameController.text,
       _descriptionController.text,
-      _selectedIcon, // Use the selected icon instead of "test icon"
+      _selectedIcon.name, // Use the selected icon instead of "test icon"
       initialAmount,
     ).then((_) {
       if (mounted) {

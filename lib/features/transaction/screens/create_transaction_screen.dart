@@ -204,7 +204,6 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
               const SizedBox(height: 16),
 
               SelectWalletInput(
-                wallet: _sourceWallet,
                 placeholder: "Select Wallet",
                 onWalletSelected: (wallet) {
                   setState(() {
