@@ -27,6 +27,61 @@ class CreateTransactionAppbar extends StatefulWidget
 }
 
 class _CreateTransactionAppbarState extends State<CreateTransactionAppbar> {
+  void _showChooseTransactionTypeBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.only(top: 16.0), // Add top padding
+          child: Wrap(
+            children: [
+              Column(
+                mainAxisSize: MainAxisSize.min, // Adjust height to fit children
+                children:
+                    TransactionType.values.map((transactionType) {
+                      final isLast =
+                          transactionType == TransactionType.values.last;
+                      return Column(
+                        children: [
+                          ListTile(
+                            title: Text(transactionType.name),
+                            onTap: () {
+                              widget.onTransactionTypeChanged(transactionType);
+                              Navigator.pop(context);
+                            },
+                            leading: Container(
+                              padding: const EdgeInsets.all(8.0),
+                              decoration: ShapeDecoration(
+                                shape: const CircleBorder(),
+                                color: transactionType.color,
+                              ),
+                              child: Icon(
+                                transactionType.icon,
+                                color: Colors.white,
+                              ),
+                            ),
+                            trailing:
+                                transactionType ==
+                                        widget.selectedTransactionType
+                                    ? const Icon(
+                                      Icons.check,
+                                      color: Colors.green,
+                                    )
+                                    : null,
+                          ),
+                          !isLast ? const Divider() : const SizedBox(height: 8),
+                          // Add divider only if not the last item
+                        ],
+                      );
+                    }).toList(),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return AppBar(
@@ -48,25 +103,7 @@ class _CreateTransactionAppbarState extends State<CreateTransactionAppbar> {
               ),
             ),
           ),
-          onPressed: () {
-            showModalBottomSheet(
-              context: context,
-              builder: (context) {
-                return ListView(
-                  children:
-                      TransactionType.values.map((transactionType) {
-                        return ListTile(
-                          title: Text(transactionType.name),
-                          onTap: () {
-                            widget.onTransactionTypeChanged(transactionType);
-                            Navigator.pop(context);
-                          },
-                        );
-                      }).toList(),
-                );
-              },
-            );
-          },
+          onPressed: () => _showChooseTransactionTypeBottomSheet(),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
