@@ -179,8 +179,17 @@ class ApiClient {
         );
       }
     } else {
+      String message = 'Request failed';
+      if (responseBody != null) {
+        if (responseBody?['message'] is String) {
+          message = responseBody['message'];
+        } else if (responseBody?['message'] is List) {
+          message = responseBody['message'][0];
+        }
+      }
+
       throw ApiException(
-          message: responseBody?['message'] ?? 'Request failed',
+          message: message,
           statusCode: statusCode,
           error: responseBody?['error']
       );

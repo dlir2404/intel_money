@@ -16,16 +16,17 @@ class TransactionService {
 
   Future<void> getTransactions() async {}
 
-  Future<void> createTransaction(
-    TransactionType transactionType,
-    double amount,
-    int categoryId,
+  Future<void> createTransaction({
+    required TransactionType transactionType,
+    required double amount,
+    int? categoryId,
     String? description,
-    DateTime transactionDate,
-    int sourceWalletId,
+    required DateTime transactionDate,
+    required int sourceWalletId,
+    int? destinationWalletId,
     bool? notAddToReport,
-    List<File> images,
-  ) async {
+    required List<File> images,
+  }) async {
     List<String> imageUrls = [];
     for (var image in images) {
       final imageUrl = await CloudinaryService().uploadImage(image.path);
@@ -56,8 +57,16 @@ class TransactionService {
         );
         break;
       case TransactionType.transfer:
-        // TODO: Handle this case.
-        throw UnimplementedError();
+        await createTransferTransaction(
+          amount,
+          description,
+          transactionDate,
+          sourceWalletId,
+          destinationWalletId!,
+          imageUrls,
+          notAddToReport: notAddToReport ?? false,
+        );
+        break;
       case TransactionType.lend:
         // TODO: Handle this case.
         throw UnimplementedError();
@@ -70,9 +79,35 @@ class TransactionService {
     }
   }
 
+  Future<Transaction> createTransferTransaction(
+      double amount,
+      String? description,
+      DateTime transactionDate,
+      int sourceWalletId,
+      int destinationWalletId,
+      List<String> images, {
+        bool notAddToReport = false,
+      }) async {
+    final response = await _apiClient.post('/transaction/transfer/create', {
+      'amount': amount,
+      'description': description,
+      'transactionDate': transactionDate.toIso8601String(),
+      'sourceWalletId': sourceWalletId,
+      'destinationWalletId': destinationWalletId,
+      'notAddToReport': notAddToReport,
+      'images': images,
+    });
+    final transaction = Transaction.fromJson(response);
+
+    _appState.addTransaction(transaction);
+    _appState.decreateWalletBalance(sourceWalletId, amount);
+    _appState.increaseWalletBalance(destinationWalletId, amount);
+    return transaction;
+  }
+
   Future<Transaction> createIncomeTransaction(
     double amount,
-    int categoryId,
+    int? categoryId,
     String? description,
     DateTime transactionDate,
     int sourceWalletId,
@@ -98,7 +133,7 @@ class TransactionService {
 
   Future<Transaction> createExpenseTransaction(
     double amount,
-    int categoryId,
+    int? categoryId,
     String? description,
     DateTime transactionDate,
     int sourceWalletId,

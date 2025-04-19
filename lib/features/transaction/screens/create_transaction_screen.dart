@@ -36,6 +36,7 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
   double _amount = 0;
   Category? _selectedCategory;
   Wallet? _sourceWallet;
+  Wallet? _destinationWallet;
   DateTime? _transactionDate = DateTime.now();
   final TextEditingController _descriptionController = TextEditingController();
   File? _image;
@@ -48,7 +49,7 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
       AppToast.showError(context, 'Amount must be greater than 0');
       return;
     }
-    if (_selectedCategory == null) {
+    if ((_selectedTransactionType == TransactionType.expense || _selectedTransactionType == TransactionType.income) && _selectedCategory == null) {
       AppToast.showError(context, 'Please select a category');
       return;
     }
@@ -58,6 +59,15 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
     }
     if (_transactionDate == null) {
       AppToast.showError(context, 'Please select a transaction date');
+      return;
+    }
+
+    if (_selectedTransactionType == TransactionType.transfer && _destinationWallet == null){
+      AppToast.showError(context, "Please choose a destination wallet");
+      return;
+    }
+    if (_selectedTransactionType == TransactionType.transfer && _sourceWallet == _destinationWallet){
+      AppToast.showError(context, "Source wallet and destination wallet can not be the same");
       return;
     }
 
@@ -72,14 +82,15 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
       }
 
       await _transactionService.createTransaction(
-        _selectedTransactionType,
-        _amount,
-        _selectedCategory!.id,
-        _descriptionController.text,
-        _transactionDate ?? DateTime.now(),
-        _sourceWallet!.id,
-        false,
-        images,
+        transactionType: _selectedTransactionType,
+        amount: _amount,
+        categoryId: _selectedCategory?.id,
+        description: _descriptionController.text,
+        transactionDate: _transactionDate ?? DateTime.now(),
+        sourceWalletId: _sourceWallet!.id,
+        destinationWalletId: _destinationWallet?.id,
+        notAddToReport: false,
+        images: images,
       );
 
       AppToast.showSuccess(context, 'Saved');
@@ -87,7 +98,10 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
       if (e is ApiException) {
         AppToast.showError(context, e.message);
       } else {
-        AppToast.showError(context, 'An error occurred while saving the transaction');
+        AppToast.showError(
+          context,
+          'An error occurred while saving the transaction',
+        );
       }
     } finally {
       setState(() {
@@ -124,19 +138,6 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
         _transactionDate = result.extractedData!.date;
         _descriptionController.text = result.extractedData!.description ?? '';
       }
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-
-    // Get arguments if provided
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final arguments =
-          ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
-
-      final appState = Provider.of<AppState>(context, listen: false);
     });
   }
 
@@ -186,24 +187,30 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
               ),
               const SizedBox(height: 16),
 
-              SelectCategoryInput(
-                category: _selectedCategory,
-                placeholder: 'Select Category',
-                categoryType:
-                    _selectedTransactionType == TransactionType.expense
-                        ? CategoryType.expense
-                        : CategoryType.income,
-                onCategorySelected: (category) {
-                  setState(() {
-                    _selectedCategory = category;
-                  });
-                },
-                showChildren: true,
-              ),
-              const SizedBox(height: 16),
+              if (_selectedTransactionType == TransactionType.income ||
+                  _selectedTransactionType == TransactionType.expense)
+                Column(
+                  children: [
+                    SelectCategoryInput(
+                      category: _selectedCategory,
+                      placeholder: 'Select Category',
+                      categoryType:
+                          _selectedTransactionType == TransactionType.expense
+                              ? CategoryType.expense
+                              : CategoryType.income,
+                      onCategorySelected: (category) {
+                        setState(() {
+                          _selectedCategory = category;
+                        });
+                      },
+                      showChildren: true,
+                    ),
+                    const SizedBox(height: 16),
+                  ],
+                ),
 
               SelectWalletInput(
-                placeholder: "Select Wallet",
+                placeholder: "Select Source Wallet",
                 onWalletSelected: (wallet) {
                   setState(() {
                     _sourceWallet = wallet;
@@ -211,6 +218,21 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
                 },
               ),
               const SizedBox(height: 16),
+
+              if (_selectedTransactionType == TransactionType.transfer)
+                Column(
+                  children: [
+                    SelectWalletInput(
+                      placeholder: "Select Destination Wallet",
+                      onWalletSelected: (wallet) {
+                        setState(() {
+                          _destinationWallet = wallet;
+                        });
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                  ],
+                ),
 
               DateInput(
                 selectedDate: _transactionDate,

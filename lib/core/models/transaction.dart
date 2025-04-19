@@ -7,7 +7,7 @@ class Transaction {
   int id;
   TransactionType type;
   double amount;
-  Category category;
+  Category? category;
   Wallet sourceWallet;
   DateTime transactionDate;
   String? description;
@@ -18,7 +18,7 @@ class Transaction {
     required this.id,
     required this.type,
     required this.amount,
-    required this.category,
+    this.category,
     required this.sourceWallet,
     required this.transactionDate,
     this.description,
@@ -27,7 +27,10 @@ class Transaction {
   });
 
   factory Transaction.fromJson(Map<String, dynamic> json) {
-    final category = Category.fromContext(json['category']['id']);
+    Category? category;
+    if (json['category'] != null) {
+      category = Category.fromJson(json['categoryId']);
+    }
     final sourceWallet = Wallet.fromContext(json['sourceWallet']['id']);
 
     return Transaction(
@@ -48,7 +51,7 @@ class Transaction {
       'id': id,
       'type': type.value,
       'amount': amount,
-      'category': category.toJson(),
+      'category': category?.toJson(),
       'sourceWallet': sourceWallet.toJson(),
       'transactionDate': transactionDate.toIso8601String(),
       'description': description,
