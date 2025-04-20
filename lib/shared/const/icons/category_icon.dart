@@ -48,6 +48,7 @@ class CategoryIcon {
     AppIcon(name: 'watch', icon: Icons.watch, label: 'Watch', color: Colors.blueGrey),
     AppIcon(name: 'gamepad-variant', icon: MdiIcons.gamepadVariant, label: 'Game', color: Colors.orangeAccent),
     AppIcon(name: 'hamburger', icon: MdiIcons.hamburger, label: 'Burger', color: Colors.red),
+    AppIcon(name: 'receipt', icon: Icons.receipt, label: 'Receipt', color: Colors.blue),
     AppIcon(name: 'headset', icon: Icons.headset, label: 'Headset', color: Colors.blueAccent),
     AppIcon(name: 'trending_up', icon: Icons.trending_up, label: 'Investment', color: Colors.green),
     AppIcon(name: 'flower', icon: MdiIcons.flower, label: 'Flower', color: Colors.pink),
@@ -90,6 +91,11 @@ class CategoryIcon {
     AppIcon(name: 'truck-delivery-outlined', icon: Icons.local_shipping_outlined, label: 'Delivery', color: Colors.blue),
     AppIcon(name: 'fridge', icon: MdiIcons.fridge, label: 'Fridge', color: Colors.blueGrey),
     AppIcon(name: 'hand-heart', icon: MdiIcons.handHeart, label: 'Heart', color: Colors.redAccent),
+    AppIcon(name: 'cell_wifi_outlined', icon: Icons.cell_wifi_outlined, label: 'WiFi', color: Colors.blue),
+    AppIcon(name: "water_drop", icon: Icons.water_drop, label: 'Water', color: Colors.blueAccent),
+    AppIcon(name: 'broom', icon: MdiIcons.broom, label: 'Broom', color: Colors.brown),
+    AppIcon(name: 'cash-minus', icon: MdiIcons.cashMinus, label: 'Cash Minus', color: Colors.grey),
+    AppIcon(name: 'cash-plus', icon: MdiIcons.cashPlus, label: 'Cash Plus', color: Colors.grey),
     AppIcon(name: 'default', icon: Icons.category, label: 'Default', color: Colors.grey),
   ];
 

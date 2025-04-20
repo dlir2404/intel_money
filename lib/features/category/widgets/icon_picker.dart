@@ -41,7 +41,7 @@ class IconPicker extends StatelessWidget {
               itemCount: icons.length,
               itemBuilder: (context, index) {
                 final icon = icons[index];
-                final isSelected = selectedIcon == icon.name;
+                final isSelected = selectedIcon == icon;
 
                 return InkWell(
                   onTap: () {
