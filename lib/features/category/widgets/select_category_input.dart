@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/models/category.dart';
 import '../../../shared/const/enum/category_type.dart';
+import '../../../shared/const/icons/category_icon.dart';
 import '../controller/category_controller.dart';
 import '../screens/select_category_screen.dart';
 
@@ -60,14 +61,15 @@ class _SelectCategoryInputState extends State<SelectCategoryInput> {
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: CategoryController.getIconColor(
-                  widget.category?.icon ?? '',
-                ).withOpacity(0.15),
+                color: widget.category?.icon.color.withOpacity(0.15) ??
+                    CategoryIcon.defaultIcon().color.withOpacity(0.15),
                 shape: BoxShape.circle,
               ),
               child: Icon(
-                CategoryController.getCategoryIcon(widget.category?.icon ?? ''),
-                color: CategoryController.getIconColor(widget.category?.icon ?? ''),
+                widget.category?.icon.icon ?? CategoryIcon.defaultIcon().icon,
+                color:
+                    widget.category?.icon.color ??
+                    CategoryIcon.defaultIcon().color,
                 size: 24,
               ),
             ),

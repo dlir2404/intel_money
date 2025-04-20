@@ -56,14 +56,12 @@ class CategoryGroup extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: CategoryController.getIconColor(
-                        category.icon,
-                      ).withOpacity(0.15),
+                      color: category.icon.color.withOpacity(0.15),
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
-                      CategoryController.getCategoryIcon(category.icon),
-                      color: CategoryController.getIconColor(category.icon),
+                      category.icon.icon,
+                      color: category.icon.color,
                       size: 24,
                     ),
                   ),
@@ -121,14 +119,12 @@ class CategoryGroup extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: CategoryController.getIconColor(
-                      category.icon,
-                    ).withOpacity(0.15),
+                    color: category.icon.color.withOpacity(0.15),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
-                    CategoryController.getCategoryIcon(category.icon),
-                    color: CategoryController.getIconColor(category.icon),
+                    category.icon.icon,
+                    color: category.icon.color,
                     size: 24,
                   ),
                 ),

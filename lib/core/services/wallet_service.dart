@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:intel_money/core/network/api_client.dart';
 import 'package:intel_money/core/state/app_state.dart';
 import 'package:intel_money/core/models/wallet.dart';
+import 'package:intel_money/shared/const/icons/wallet_icon.dart';
 
 class WalletService {
   final AppState _appState;
@@ -56,7 +57,7 @@ class WalletService {
     final wallet = Wallet(
       id: id,
       name: name,
-      icon: icon,
+      icon: WalletIcon.getIcon(icon),
       balance: balance,
       description: description,
     );

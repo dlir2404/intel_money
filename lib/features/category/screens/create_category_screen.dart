@@ -13,7 +13,6 @@ import '../../../core/models/app_icon.dart';
 import '../../../core/services/ad_service.dart';
 import '../../../shared/const/icons/category_icon.dart';
 import '../../../shared/helper/toast.dart';
-import 'select_category_screen.dart';
 
 class CreateCategoryScreen extends StatefulWidget {
   const CreateCategoryScreen({super.key});

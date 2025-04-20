@@ -41,8 +41,6 @@ class _SelectWalletInputState extends State<SelectWalletInput> {
 
   @override
   Widget build(BuildContext context) {
-    AppIcon icon = WalletIcon.getIcon(_wallet?.icon ?? "");
-
     return GestureDetector(
       onTap: _navigateToSelectWallet,
       child: Container(
@@ -57,12 +55,12 @@ class _SelectWalletInputState extends State<SelectWalletInput> {
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: _wallet != null ? icon.color.withOpacity(0.15) : Colors.grey.withOpacity(0.15),
+                color: _wallet?.icon.color.withOpacity(0.15) ?? Colors.grey.withOpacity(0.15),
                 shape: BoxShape.circle,
               ),
               child: Icon(
-                icon.icon,
-                color: _wallet != null ? icon.color : Colors.grey,
+                _wallet?.icon.icon ?? WalletIcon.defaultIcon().icon,
+                color: _wallet?.icon.color ?? Colors.grey,
                 size: 24,
               ),
             ),

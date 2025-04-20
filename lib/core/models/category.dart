@@ -1,11 +1,13 @@
 import 'package:intel_money/shared/const/enum/category_type.dart';
 
+import '../../shared/const/icons/category_icon.dart';
 import '../state/app_state.dart';
+import 'app_icon.dart';
 
 class Category{
   final int id;
   final String name;
-  final String icon;
+  final AppIcon icon;
   final CategoryType type;
   final int? parentId;
   final bool editable;
@@ -42,7 +44,7 @@ class Category{
     return Category(
       id: json['id'],
       name: json['name'],
-      icon: json['icon'],
+      icon: CategoryIcon.getIcon(json['icon']),
       type: json['type'] == 'EXPENSE' ? CategoryType.expense : json['type'] == 'INCOME' ? CategoryType.income : CategoryType.expense,
       parentId: json['parentId'],
       editable: json['editable'] == 1 ? true : false,

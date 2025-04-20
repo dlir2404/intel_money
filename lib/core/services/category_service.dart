@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:intel_money/core/network/api_client.dart';
 import 'package:intel_money/shared/const/enum/category_type.dart';
 
+import '../../shared/const/icons/category_icon.dart';
 import '../state/app_state.dart';
 import '../models/category.dart';
 
@@ -58,7 +59,7 @@ class CategoryService {
     final category = Category(
       id: id,
       name: name,
-      icon: icon,
+      icon: CategoryIcon.getIcon(icon),
       type: type,
       parentId: parentId ?? 0,
       editable: true,

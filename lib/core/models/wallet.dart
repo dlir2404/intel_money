@@ -1,10 +1,13 @@
+import 'package:intel_money/shared/const/icons/wallet_icon.dart';
+
 import '../state/app_state.dart';
+import 'app_icon.dart';
 
 class Wallet {
   int id;
   String name;
   String? description;
-  String icon;
+  AppIcon icon;
   double balance;
 
   Wallet({
@@ -26,7 +29,7 @@ class Wallet {
       id: json['id'],
       name: json['name'],
       description: json['description'],
-      icon: json['icon'],
+      icon: WalletIcon.getIcon(json['icon']),
       balance: double.parse(json['balance'].toString())
     );
   }

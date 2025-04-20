@@ -77,8 +77,6 @@ class WalletItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final icon = WalletIcon.getIcon(wallet.icon);
-
     return Container(
       margin: EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
@@ -108,10 +106,10 @@ class WalletItem extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: icon.color.withOpacity(0.1),
+                    color: wallet.icon.color.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Icon(icon.icon, color: icon.color, size: 24),
+                  child: Icon(wallet.icon.icon, color: wallet.icon.color, size: 24),
                 ),
                 const SizedBox(width: 16),
 

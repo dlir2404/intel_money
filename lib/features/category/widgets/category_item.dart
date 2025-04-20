@@ -18,9 +18,7 @@ class CategoryItem extends StatelessWidget {
     return InkWell(
       borderRadius: BorderRadius.circular(12),
       splashColor: Colors.transparent,
-      highlightColor: CategoryController.getIconColor(
-        category.icon,
-      ).withOpacity(0.05),
+      highlightColor: category.icon.color.withOpacity(0.05),
       onTap: () => onCategoryTap(category),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -31,14 +29,12 @@ class CategoryItem extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: CategoryController.getIconColor(
-                    category.icon,
-                  ).withOpacity(0.15),
+                  color: category.icon.color.withOpacity(0.15),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
-                  CategoryController.getCategoryIcon(category.icon),
-                  color: CategoryController.getIconColor(category.icon),
+                  category.icon.icon,
+                  color: category.icon.color,
                   size: 22,
                 ),
               ),

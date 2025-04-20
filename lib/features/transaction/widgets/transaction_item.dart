@@ -14,8 +14,8 @@ class TransactionItem extends StatelessWidget {
     IconData icon;
     Color iconColor;
     if (transaction.category != null) {
-      icon = CategoryIcon.getIcon(transaction.category!.icon).icon;
-      iconColor = CategoryIcon.getIcon(transaction.category!.icon).color;
+      icon = transaction.category!.icon.icon;
+      iconColor = transaction.category!.icon.color;
     } else {
       TransactionType type = transaction.type;
       icon = type.icon;
