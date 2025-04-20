@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:intel_money/features/auth/login/login_view.dart';
 import 'package:intel_money/features/auth/register/register_view.dart';
+import 'package:intel_money/features/transaction/screens/transaction_history_screen.dart';
 import 'package:intel_money/shared/component/layout/authenticated_app.dart';
 
 import '../../features/category/screens/create_category_screen.dart';
@@ -13,6 +14,7 @@ class AppRoutes {
   static const String home = '/home';
   static const String createWallet = '/wallets/create';
   static const String createCategory = '/categories/create';
+  static const String transactionHistory = '/transaction/history';
 
   static Map<String, WidgetBuilder> getRoutes() {
     return {
@@ -22,6 +24,8 @@ class AppRoutes {
 
       createWallet: (context) => const CreateWalletScreen(),
       createCategory: (context) => const CreateCategoryScreen(),
+
+      transactionHistory: (context) => const TransactionHistoryScreen(),
     };
   }
 
@@ -36,5 +40,9 @@ class AppRoutes {
 
   static void navigateToRegister(BuildContext context) {
     Navigator.pushNamed(context, register);
+  }
+
+  static void navigateToTransactionHistory(BuildContext context) {
+    Navigator.pushNamed(context, transactionHistory);
   }
 }

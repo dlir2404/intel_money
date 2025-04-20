@@ -3,6 +3,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:pie_chart/pie_chart.dart';
 
+import '../../../core/config/routes.dart';
+
 class ExpenseIncomeChart extends StatefulWidget {
   const ExpenseIncomeChart({super.key});
 
@@ -188,7 +190,7 @@ class _ExpenseIncomeChartState extends State<ExpenseIncomeChart> {
           const SizedBox(height: 16),
           GestureDetector(
             onTap: () {
-              // Navigate to transaction history
+              AppRoutes.navigateToTransactionHistory(context);
             },
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
