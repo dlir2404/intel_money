@@ -149,12 +149,19 @@ class AppState extends ChangeNotifier {
 
   //TODO: review later
   void addTransaction(Transaction transaction) {
+    bool isInserted = false;
     for (var i = 0; i < _transactions.length; i++) {
       if (transaction.transactionDate.isBefore(_transactions[i].transactionDate)) {
-        _transactions.insert(i, transaction);
-        return;
+        _transactions.insert(i + 1, transaction);
+        isInserted = true;
       }
     }
+
+    //no transaction date is after the new transaction date
+    if (!isInserted) {
+      _transactions.insert(0, transaction);
+    }
+
     notifyListeners();
   }
 

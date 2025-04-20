@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:intel_money/features/transaction/widgets/select_data_source_type_button.dart';
 import 'package:intel_money/features/transaction/widgets/transaction_group_by_day.dart';
 import 'package:intel_money/shared/const/enum/transaction_data_source_type.dart';
+import 'package:provider/provider.dart';
 
 import '../../../core/models/transaction.dart';
 import '../../../core/state/app_state.dart';
@@ -19,9 +20,7 @@ class TransactionHistoryScreen extends StatefulWidget {
 class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
   TransactionDataSourceType type = TransactionDataSourceType.thisMonth;
 
-  List<Widget> _buildTransactionList() {
-    final transactions = AppState().transactions;
-
+  List<Widget> _buildTransactionList(List<Transaction> transactions) {
     // Group transactions by date
     Map<String, List<Transaction>> groupedTransactions = {};
     for (var transaction in transactions) {
@@ -77,27 +76,32 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
           ),
         ],
       ),
-      body: Container(
-        color: Colors.grey[200],
-        child: Column(
-          children: [
-            SelectDataSourceTypeButton(type: type),
+      body: Consumer<AppState>(
+        builder: (context, appState, _) {
+          final transactions = appState.transactions;
 
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    const SizedBox(height: 12),
-                    TotalInOut(transactions: []),
-                    const SizedBox(height: 12),
+          return Container(
+            color: Colors.grey[200],
+            child: Column(
+              children: [
+                SelectDataSourceTypeButton(type: type),
+                const SizedBox(height: 12),
+                TotalInOut(transactions: transactions),
+                const SizedBox(height: 12),
 
-                    ..._buildTransactionList(),
-                  ],
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        ..._buildTransactionList(transactions),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
-          ],
-        ),
+          );
+        }
       ),
     );
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intel_money/shared/const/enum/transaction_type.dart';
 
 import '../../../core/models/transaction.dart';
 import '../../../shared/helper/formatter.dart';
@@ -10,8 +11,15 @@ class TotalInOut extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final totalIncome = Formatter.formatCurrency(200000);
-    final totalExpense = Formatter.formatCurrency(40000);
+    double totalIncome = 0;
+    double totalExpense = 0;
+    for (var transaction in transactions) {
+      if (transaction.type == TransactionType.income){
+        totalIncome += transaction.amount;
+      } else if (transaction.type == TransactionType.expense) {
+        totalExpense += transaction.amount;
+      }
+    }
 
     return Container(
       color: Colors.white,
@@ -27,7 +35,7 @@ class TotalInOut extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    totalIncome,
+                    Formatter.formatCurrency(totalIncome),
                     style: TextStyle(
                       color: Colors.green,
                       fontWeight: FontWeight.w500,
@@ -52,7 +60,7 @@ class TotalInOut extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      totalExpense,
+                      Formatter.formatCurrency(totalExpense),
                       style: TextStyle(
                         color: Colors.red,
                         fontWeight: FontWeight.w500,
