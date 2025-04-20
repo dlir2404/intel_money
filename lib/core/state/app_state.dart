@@ -37,6 +37,8 @@ class AppState extends ChangeNotifier {
 
   List<Category> get incomeCategories => _incomeCategories;
 
+  List<Transaction> get transactions => _transactions;
+
   void setUser(User user) {
     _user = user;
     notifyListeners();

@@ -14,7 +14,15 @@ class TransactionService {
   TransactionService({ApiClient? apiClient})
     : _apiClient = apiClient ?? ApiClient.instance;
 
-  Future<void> getTransactions() async {}
+  Future<void> getTransactions() async {
+    final response = await _apiClient.get('/transaction/all/test-only');
+
+    final transactions = (response as List)
+        .map((transaction) => Transaction.fromJson(transaction))
+        .toList();
+
+    _appState.setTransactions(transactions);
+  }
 
   Future<void> createTransaction({
     required TransactionType transactionType,

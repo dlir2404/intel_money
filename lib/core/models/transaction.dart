@@ -28,10 +28,10 @@ class Transaction {
 
   factory Transaction.fromJson(Map<String, dynamic> json) {
     Category? category;
-    if (json['category'] != null) {
-      category = Category.fromJson(json['categoryId']);
+    if (json['categoryId'] != null) {
+      category = Category.fromContext(json['categoryId']);
     }
-    final sourceWallet = Wallet.fromContext(json['sourceWallet']['id']);
+    final sourceWallet = Wallet.fromContext(json['sourceWalletId']);
 
     return Transaction(
       id: json['id'],

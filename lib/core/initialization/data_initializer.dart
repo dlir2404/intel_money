@@ -7,6 +7,8 @@ import 'package:intel_money/core/services/wallet_service.dart';
 import 'package:intel_money/core/services/category_service.dart';
 import 'package:intel_money/core/services/auth_service.dart';
 
+import '../services/transaction_service.dart';
+
 /// Handles loading all limited data sets when the app starts (after authentication)
 class DataInitializer {
   static final DataInitializer _instance = DataInitializer._internal();
@@ -30,6 +32,9 @@ class DataInitializer {
         _loadWallets(appState),
         _loadCategories(appState),
       ]);
+
+      // Load transactions separately as it might be heavy and have references to wallets, categories, etc.
+      await _loadTransactions();
 
       debugPrint('>>>>>>>>> All app data loaded successfully');
     } catch (e) {
@@ -71,6 +76,17 @@ class DataInitializer {
       debugPrint('Categories loaded successfully');
     } catch (e) {
       debugPrint('Error loading categories: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> _loadTransactions() async {
+    try {
+      final transactionService = TransactionService();
+      await transactionService.getTransactions();
+      debugPrint('Transactions loaded successfully');
+    } catch (e) {
+      debugPrint('Error loading transactions: $e');
       rethrow;
     }
   }

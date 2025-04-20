@@ -1,15 +1,11 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intel_money/features/transaction/widgets/select_data_source_type_button.dart';
 import 'package:intel_money/features/transaction/widgets/transaction_group_by_day.dart';
-import 'package:intel_money/features/transaction/widgets/transaction_item.dart';
 import 'package:intel_money/shared/const/enum/transaction_data_source_type.dart';
 
-import '../../../core/models/category.dart';
 import '../../../core/models/transaction.dart';
-import '../../../core/models/wallet.dart';
-import '../../../shared/const/enum/transaction_type.dart';
+import '../../../core/state/app_state.dart';
 import '../widgets/total_in_out.dart';
 
 class TransactionHistoryScreen extends StatefulWidget {
@@ -23,83 +19,38 @@ class TransactionHistoryScreen extends StatefulWidget {
 class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
   TransactionDataSourceType type = TransactionDataSourceType.thisMonth;
 
+  List<Widget> _buildTransactionList() {
+    final transactions = AppState().transactions;
+
+    // Group transactions by date
+    Map<String, List<Transaction>> groupedTransactions = {};
+    for (var transaction in transactions) {
+      String dateKey = transaction.transactionDate.toString().split(' ')[0];
+      if (groupedTransactions[dateKey] == null) {
+        groupedTransactions[dateKey] = [];
+      }
+      groupedTransactions[dateKey]!.add(transaction);
+    }
+
+    // Sort the grouped transactions by date in descending order
+    final sortedKeys =
+        groupedTransactions.keys.toList()
+          ..sort((a, b) => DateTime.parse(b).compareTo(DateTime.parse(a)));
+
+    // Build the list of widgets
+    List<Widget> widgets = [];
+    for (var date in sortedKeys) {
+      widgets.add(
+        TransactionGroupByDay(transactions: groupedTransactions[date]!),
+      );
+      widgets.add(const SizedBox(height: 12));
+    }
+
+    return widgets;
+  }
+
   @override
   Widget build(BuildContext context) {
-    Category category = Category.fromContext(15);
-    Wallet wallet = Wallet.fromContext(3);
-    List<Transaction> mockTransactions = [
-      Transaction(
-        id: 1,
-        amount: 100.0,
-        transactionDate: DateTime.now(),
-        type: TransactionType.expense,
-        category: category,
-        sourceWallet: wallet,
-      ),
-      Transaction(
-        id: 2,
-        amount: 200.0,
-        transactionDate: DateTime.now(),
-        type: TransactionType.expense,
-        category: category,
-        sourceWallet: wallet,
-      ),
-      Transaction(
-        id: 3,
-        amount: 700.0,
-        transactionDate: DateTime.now(),
-        type: TransactionType.expense,
-        category: category,
-        sourceWallet: wallet,
-      ),
-
-      Transaction(
-        id: 3,
-        amount: 700.0,
-        transactionDate: DateTime.now(),
-        type: TransactionType.expense,
-        category: category,
-        sourceWallet: wallet,
-      ),
-
-      Transaction(
-        id: 3,
-        amount: 700.0,
-        transactionDate: DateTime.now(),
-        type: TransactionType.expense,
-        category: category,
-        sourceWallet: wallet,
-      ),
-
-      Transaction(
-        id: 3,
-        amount: 700.0,
-        transactionDate: DateTime.now(),
-        type: TransactionType.expense,
-        category: category,
-        sourceWallet: wallet,
-      ),
-    ];
-
-    List<Transaction> mockTransactions2 = [
-      Transaction(
-        id: 1,
-        amount: 100.0,
-        transactionDate: DateTime.now().subtract(const Duration(days: 1)),
-        type: TransactionType.expense,
-        category: category,
-        sourceWallet: wallet,
-      ),
-      Transaction(
-        id: 1,
-        amount: 100.0,
-        transactionDate: DateTime.now().subtract(const Duration(days: 1)),
-        type: TransactionType.expense,
-        category: category,
-        sourceWallet: wallet,
-      ),
-    ];
-
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
@@ -131,15 +82,20 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
         child: Column(
           children: [
             SelectDataSourceTypeButton(type: type),
-            const SizedBox(height: 12),
 
-            TotalInOut(transactions: []),
-            const SizedBox(height: 12),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    const SizedBox(height: 12),
+                    TotalInOut(transactions: []),
+                    const SizedBox(height: 12),
 
-            TransactionGroupByDay(transactions: mockTransactions),
-            const SizedBox(height: 12),
-
-            TransactionGroupByDay(transactions: mockTransactions2),
+                    ..._buildTransactionList(),
+                  ],
+                ),
+              ),
+            ),
           ],
         ),
       ),
