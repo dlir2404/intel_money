@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/models/wallet.dart';
 import '../../../shared/const/icons/wallet_icon.dart';
+import '../../../shared/helper/formatter.dart';
 
 class WalletItem extends StatelessWidget {
   final Wallet wallet;
@@ -129,7 +130,7 @@ class WalletItem extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                       ),
                       Text(
-                        wallet.balance.toString(),
+                        Formatter.formatCurrency(wallet.balance),
                         style: TextStyle(
                           fontSize: 16,
                           color:
