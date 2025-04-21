@@ -62,6 +62,13 @@ class Category{
     };
   }
 
+  void addChildren(List<Category> categories) {
+    clearChildren();
+    for (var category in categories) {
+      children.add(category);
+    }
+  }
+
   void addChild(Category category){
     children.add(category);
   }

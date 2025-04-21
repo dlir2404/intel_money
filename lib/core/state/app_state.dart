@@ -122,22 +122,30 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateCategory(Category category) {
-    final index = _categories.indexWhere(
-      (element) => element.id == category.id,
-    );
-    _categories[index] = category;
 
-    if (category.type == CategoryType.expense) {
-      final index = _expenseCategories.indexWhere(
-        (element) => element.id == category.id,
-      );
-      _expenseCategories[index] = category;
+  //done
+  void updateCategory(Category category) {
+    if (category.parentId != null && category.parentId != 0) {
+      final parent = _categories.firstWhere((element) => element.id == category.parentId);
+      final index = parent.children.indexWhere((element) => element.id == category.id);
+      parent.children[index] = category;
     } else {
-      final index = _incomeCategories.indexWhere(
-        (element) => element.id == category.id,
+      final index = _categories.indexWhere(
+            (element) => element.id == category.id,
       );
-      _incomeCategories[index] = category;
+      _categories[index] = category;
+
+      if (category.type == CategoryType.expense) {
+        final index = _expenseCategories.indexWhere(
+              (element) => element.id == category.id,
+        );
+        _expenseCategories[index] = category;
+      } else {
+        final index = _incomeCategories.indexWhere(
+              (element) => element.id == category.id,
+        );
+        _incomeCategories[index] = category;
+      }
     }
     notifyListeners();
   }

@@ -3,25 +3,25 @@ import 'package:intel_money/core/services/category_service.dart';
 import 'package:intel_money/features/category/widgets/icon_picker.dart';
 import 'package:intel_money/features/category/widgets/select_category_input.dart';
 import 'package:intel_money/shared/component/input/form_input.dart';
+import 'package:intel_money/core/state/app_state.dart';
 import 'package:intel_money/core/models/category.dart';
-import 'package:intel_money/shared/const/enum/category_type.dart';
 
 import '../../../core/models/app_icon.dart';
 import '../../../core/services/ad_service.dart';
 import '../../../shared/const/icons/category_icon.dart';
 import '../../../shared/helper/toast.dart';
 
-class CreateCategoryScreen extends StatefulWidget {
-  const CreateCategoryScreen({super.key});
+class EditCategoryScreen extends StatefulWidget {
+  const EditCategoryScreen({super.key});
 
   @override
-  State<CreateCategoryScreen> createState() => _CreateCategoryScreenState();
+  State<EditCategoryScreen> createState() => _EditCategoryScreenState();
 }
 
-class _CreateCategoryScreenState extends State<CreateCategoryScreen> {
-  final _formKey = GlobalKey<FormState>();
-  CategoryType _categoryType = CategoryType.expense;
+class _EditCategoryScreenState extends State<EditCategoryScreen> {
+  Category category = AppState().categories[0];
 
+  final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
   Category? _parentCategory;
   AppIcon _selectedIcon = CategoryIcon.defaultIcon();
@@ -37,14 +37,21 @@ class _CreateCategoryScreenState extends State<CreateCategoryScreen> {
       final arguments =
           ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
 
-      if (arguments != null) {
-        setState(() {
-          // Set category type if provided (required)
-          if (arguments.containsKey('categoryType')) {
-            _categoryType = arguments['categoryType'] as CategoryType;
-          }
-        });
+      if (arguments == null ||
+          arguments.isEmpty ||
+          !arguments.containsKey('category')) {
+        AppToast.showError(context, "Error occur, no category selected");
       }
+
+      setState(() {
+        category = arguments!['category'] as Category;
+        _nameController.text = category.name;
+        _selectedIcon = category.icon;
+
+        if (category.parentId != null && category.parentId != 0) {
+          _parentCategory = Category.fromContext(category.parentId);
+        }
+      });
     });
   }
 
@@ -84,10 +91,11 @@ class _CreateCategoryScreenState extends State<CreateCategoryScreen> {
     });
 
     try {
-      await CategoryService().createCategory(
+      await CategoryService().updateCategory(
+        category,
         _nameController.text.trim(),
         _selectedIcon.name,
-        _categoryType,
+        category.type,
         parentId: _parentCategory?.id,
       );
 
@@ -116,23 +124,16 @@ class _CreateCategoryScreenState extends State<CreateCategoryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final primaryColor = theme.primaryColor;
-
-    // Determine screen title based on category type
-    final screenTitle =
-        'Create ${_categoryType == CategoryType.income ? 'Income' : 'Expense'} Category';
-
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: primaryColor,
+        backgroundColor: Theme.of(context).primaryColor,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
-          screenTitle,
+          'Edit Category',
           style: const TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.w500,
@@ -197,7 +198,7 @@ class _CreateCategoryScreenState extends State<CreateCategoryScreen> {
                         child: Text(
                           'Change Icon',
                           style: TextStyle(
-                            color: primaryColor,
+                            color: Theme.of(context).primaryColor,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -232,10 +233,11 @@ class _CreateCategoryScreenState extends State<CreateCategoryScreen> {
                   style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
                 ),
                 const SizedBox(height: 10),
+
                 SelectCategoryInput(
                   category: _parentCategory,
                   placeholder: 'Select Parent Category',
-                  categoryType: _categoryType,
+                  categoryType: category.type,
                   onCategorySelected: (category) {
                     if (category != null) {
                       setState(() {
@@ -252,7 +254,7 @@ class _CreateCategoryScreenState extends State<CreateCategoryScreen> {
                   child: ElevatedButton(
                     onPressed: _isLoading ? null : _saveCategory,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: primaryColor,
+                      backgroundColor: Theme.of(context).primaryColor,
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 15),
                       shape: RoundedRectangleBorder(
@@ -272,7 +274,7 @@ class _CreateCategoryScreenState extends State<CreateCategoryScreen> {
                               ),
                             )
                             : const Text(
-                              'Create Category',
+                              'Save',
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,

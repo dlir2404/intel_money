@@ -43,27 +43,30 @@ class CategoryService {
   }
 
   Future<void> updateCategory(
-    int id,
+    Category oldCategory,
     String name,
     String icon,
     CategoryType type, {
     int? parentId,
   }) async {
-    await _apiClient.put('/category/$id', {
+    await _apiClient.put('/category/${oldCategory.id}', {
       'name': name,
       'icon': icon,
-      'type': type,
       'parentId': parentId,
     });
 
     final category = Category(
-      id: id,
+      id: oldCategory.id,
       name: name,
       icon: CategoryIcon.getIcon(icon),
       type: type,
       parentId: parentId ?? 0,
       editable: true,
     );
+
+    if (oldCategory.children.isNotEmpty){
+      category.addChildren(oldCategory.children);
+    }
     _appState.updateCategory(category);
   }
 
