@@ -11,7 +11,7 @@ import '../widgets/category_group.dart';
 class CategoryListTab extends StatelessWidget {
   final CategoryType categoryType;
 
-  const CategoryListTab({Key? key, required this.categoryType}) : super(key: key);
+  const CategoryListTab({super.key, required this.categoryType});
 
   @override
   Widget build(BuildContext context) {
@@ -23,9 +23,7 @@ class CategoryListTab extends StatelessWidget {
 
         return RefreshIndicator(
           onRefresh: () async {
-            final appState = Provider.of<AppState>(context, listen: false);
-            final categoryService = CategoryService(appState: appState);
-            await categoryService.getCategories();
+            await CategoryService().getCategories();
           },
           child: categories.isEmpty
               ? _buildEmptyState(context)

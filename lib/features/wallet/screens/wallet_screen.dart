@@ -16,7 +16,6 @@ class WalletScreen extends StatefulWidget {
 
 class _WalletScreenState extends State<WalletScreen> with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  late WalletService _walletService;
 
   @override
   void initState() {
@@ -25,21 +24,6 @@ class _WalletScreenState extends State<WalletScreen> with SingleTickerProviderSt
       length: 3,
       vsync: this,
     );
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final appState = Provider.of<AppState>(context, listen: false);
-      _walletService = WalletService(appState: appState);
-      _loadWallets();
-    });
-  }
-
-  Future<void> _loadWallets() async {
-    try {
-      await _walletService.getWallets();
-    } catch (e) {
-      // Handle error (you might want to show a snackbar or dialog)
-      debugPrint('Error fetching wallets: $e');
-    }
   }
 
   @override

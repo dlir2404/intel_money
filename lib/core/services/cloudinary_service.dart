@@ -9,7 +9,6 @@ class CloudinaryService {
 
   static final CloudinaryService _instance = CloudinaryService._internal();
   factory CloudinaryService() => _instance;
-
   CloudinaryService._internal();
 
   Future<String> uploadImage(String filePath) async {

@@ -7,12 +7,12 @@ import '../state/app_state.dart';
 import '../models/category.dart';
 
 class CategoryService {
-  final AppState _appState;
-  final ApiClient _apiClient;
+  final AppState _appState = AppState();
+  final ApiClient _apiClient = ApiClient.instance;
 
-  CategoryService({required AppState appState, ApiClient? apiClient})
-      : _appState = appState,
-        _apiClient = apiClient ?? ApiClient.instance;
+  static final CategoryService _instance = CategoryService._internal();
+  factory CategoryService() => _instance;
+  CategoryService._internal();
 
   Future<void> getCategories() async {
     final response = await _apiClient.get('/category');

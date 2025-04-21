@@ -5,12 +5,12 @@ import 'package:intel_money/core/models/wallet.dart';
 import 'package:intel_money/shared/const/icons/wallet_icon.dart';
 
 class WalletService {
-  final AppState _appState;
-  final ApiClient _apiClient;
+  final AppState _appState = AppState();
+  final ApiClient _apiClient = ApiClient.instance;
 
-  WalletService({required AppState appState, ApiClient? apiClient})
-    : _appState = appState,
-      _apiClient = apiClient ?? ApiClient.instance;
+  static final WalletService _instance = WalletService._internal();
+  factory WalletService() => _instance;
+  WalletService._internal();
 
   Future<void> create(
     String name,

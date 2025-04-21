@@ -5,9 +5,11 @@ import '../models/user.dart';
 import '../network/api_client.dart';
 
 class AuthService {
-  final ApiClient _apiClient;
+  final ApiClient _apiClient = ApiClient.instance;
 
-  AuthService({ApiClient? apiClient}) : _apiClient = apiClient ?? ApiClient.instance;
+  static final AuthService _instance = AuthService._internal();
+  factory AuthService() => _instance;
+  AuthService._internal();
 
   Future<void> login(String email, String password) async {
     final response = await _apiClient.post('/auth/login', {

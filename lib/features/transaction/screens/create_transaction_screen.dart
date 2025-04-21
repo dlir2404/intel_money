@@ -42,7 +42,6 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
   File? _image;
 
   bool _isLoading = false;
-  late final TransactionService _transactionService = TransactionService();
 
   Future<void> _saveTransaction() async {
     if (_amount <= 0) {
@@ -81,7 +80,7 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
         images.add(_image!);
       }
 
-      await _transactionService.createTransaction(
+      await TransactionService().createTransaction(
         transactionType: _selectedTransactionType,
         amount: _amount,
         categoryId: _selectedCategory?.id,

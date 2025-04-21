@@ -9,10 +9,11 @@ import 'cloudinary_service.dart';
 
 class TransactionService {
   final AppState _appState = AppState();
-  final ApiClient _apiClient;
+  final ApiClient _apiClient = ApiClient.instance;
 
-  TransactionService({ApiClient? apiClient})
-    : _apiClient = apiClient ?? ApiClient.instance;
+  static final TransactionService _instance = TransactionService._internal();
+  factory TransactionService() => _instance;
+  TransactionService._internal();
 
   Future<void> getTransactions() async {
     final response = await _apiClient.get('/transaction/all/test-only');

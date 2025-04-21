@@ -25,14 +25,6 @@ class _CreateWalletScreenState extends State<CreateWalletScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   AppIcon _selectedIcon = WalletIcon.defaultIcon(); // Default icon
-  late final WalletService _walletService;
-
-  @override
-  void initState() {
-    super.initState();
-    final appState = Provider.of<AppState>(context, listen: false);
-    _walletService = WalletService(appState: appState);
-  }
 
   @override
   void dispose() {
@@ -220,7 +212,7 @@ class _CreateWalletScreenState extends State<CreateWalletScreen> {
       return;
     }
 
-    _walletService.create(
+    WalletService().create(
       _nameController.text,
       _descriptionController.text,
       _selectedIcon.name, // Use the selected icon instead of "test icon"

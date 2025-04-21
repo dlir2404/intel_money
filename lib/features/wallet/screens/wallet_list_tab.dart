@@ -18,9 +18,7 @@ class WalletListTab extends StatelessWidget {
 
         return RefreshIndicator(
           onRefresh: () async {
-            final appState = Provider.of<AppState>(context, listen: false);
-            final walletService = WalletService(appState: appState);
-            await walletService.getWallets();
+            await WalletService().getWallets();
           },
           child: WalletList(
             wallets: wallets,

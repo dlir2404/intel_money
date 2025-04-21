@@ -11,11 +11,7 @@ class AdService {
   int _numAttempts = 0;
 
   static final AdService _instance = AdService._internal();
-
-  factory AdService() {
-    return _instance;
-  }
-
+  factory AdService() => _instance;
   AdService._internal();
 
   bool get isAdLoaded => _isAdLoaded;

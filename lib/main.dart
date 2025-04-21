@@ -25,12 +25,11 @@ Future<void> main() async {
 }
 
 class MyApp extends StatelessWidget {
-  final _authService = AuthService();
-  MyApp({super.key});
+  const MyApp({super.key});
 
   Future<bool> _checkAuth() async {
     //can set app state here to reduce 1 api call, maybe check later
-    final user = await _authService.getMe();
+    final user = await AuthService().getMe();
     return user != null;
   }
 

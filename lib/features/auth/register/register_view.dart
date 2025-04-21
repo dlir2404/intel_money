@@ -38,11 +38,7 @@ class RegisterBodyWidget extends StatefulWidget {
 }
 
 class _RegisterBodyWidgetState extends State<RegisterBodyWidget> {
-  final AuthService _authService = AuthService();
-  final GoogleAuthService _googleAuthService = GoogleAuthService();
-
   final _formKey = GlobalKey<FormState>();
-
   bool _isObscure = true;
   bool _isLoading = false;
   final _nameController = TextEditingController();
@@ -63,7 +59,7 @@ class _RegisterBodyWidgetState extends State<RegisterBodyWidget> {
         _isLoading = true;
       });
 
-      _authService.register(
+      AuthService().register(
           _nameController.text,
           _emailController.text,
           _passwordController.text
@@ -92,7 +88,7 @@ class _RegisterBodyWidgetState extends State<RegisterBodyWidget> {
     });
 
     try {
-      await _googleAuthService.signIn();
+      await GoogleAuthService().signIn();
 
       if (mounted){
         AppToast.showSuccess(context, 'Sign up successfully');

@@ -29,8 +29,8 @@ class DataInitializer {
       // Load data in parallel for better performance
       await Future.wait([
         _loadUserData(appState),
-        _loadWallets(appState),
-        _loadCategories(appState),
+        _loadWallets(),
+        _loadCategories(),
       ]);
 
       // Load transactions separately as it might be heavy and have references to wallets, categories, etc.
@@ -45,8 +45,7 @@ class DataInitializer {
 
   Future<void> _loadUserData(AppState appState) async {
     try {
-      final authService = AuthService();
-      final user = await authService.getMe();
+      final user = await AuthService().getMe();
       if (user != null) {
         appState.setUser(user);
         debugPrint('User data loaded successfully');
@@ -57,10 +56,9 @@ class DataInitializer {
     }
   }
 
-  Future<void> _loadWallets(AppState appState) async {
+  Future<void> _loadWallets() async {
     try {
-      final walletService = WalletService(appState: appState);
-      await walletService.getWallets();
+      await WalletService().getWallets();
       debugPrint('Wallets loaded successfully');
     } catch (e) {
       debugPrint('Error loading wallets: $e');
@@ -68,10 +66,9 @@ class DataInitializer {
     }
   }
 
-  Future<void> _loadCategories(AppState appState) async {
+  Future<void> _loadCategories() async {
     try {
-      final categoryService = CategoryService(appState: appState);
-      await categoryService.getCategories();
+      await CategoryService().getCategories();
 
       debugPrint('Categories loaded successfully');
     } catch (e) {
@@ -82,8 +79,7 @@ class DataInitializer {
 
   Future<void> _loadTransactions() async {
     try {
-      final transactionService = TransactionService();
-      await transactionService.getTransactions();
+      await TransactionService().getTransactions();
       debugPrint('Transactions loaded successfully');
     } catch (e) {
       debugPrint('Error loading transactions: $e');
@@ -92,14 +88,12 @@ class DataInitializer {
   }
 
   /// Refresh individual data types as needed
-  Future<void> refreshWallets(BuildContext context) async {
-    final appState = Provider.of<AppState>(context, listen: false);
-    await _loadWallets(appState);
+  Future<void> refreshWallets() async {
+    await _loadWallets();
   }
 
-  Future<void> refreshCategories(BuildContext context) async {
-    final appState = Provider.of<AppState>(context, listen: false);
-    await _loadCategories(appState);
+  Future<void> refreshCategories() async {
+    await _loadCategories();
   }
 
   Future<void> refreshUserData(BuildContext context) async {

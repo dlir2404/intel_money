@@ -31,10 +31,6 @@ class BodyWidget extends StatefulWidget {
 }
 
 class _BodyWidgetState extends State<BodyWidget> {
-  final AuthService _authService = AuthService();
-  final GoogleAuthService _googleAuthService = GoogleAuthService();
-
-
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -54,7 +50,7 @@ class _BodyWidgetState extends State<BodyWidget> {
         _isLoading = true;
       });
 
-      _authService.login(
+      AuthService().login(
           _emailController.text,
           _passwordController.text
       ).then((value) {
@@ -80,7 +76,7 @@ class _BodyWidgetState extends State<BodyWidget> {
     });
 
     try {
-      await _googleAuthService.signIn();
+      await GoogleAuthService().signIn();
 
       if (mounted){
         AppToast.showSuccess(context, 'Login successfully');

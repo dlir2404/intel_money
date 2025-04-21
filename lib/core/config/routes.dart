@@ -6,7 +6,6 @@ import 'package:intel_money/features/transaction/screens/transaction_history_scr
 import 'package:intel_money/shared/component/layout/authenticated_app.dart';
 
 import '../../features/category/screens/create_category_screen.dart';
-import '../../features/category/screens/edit_category_screen.dart';
 import '../../features/wallet/screens/create_wallet_screen.dart';
 
 class AppRoutes {

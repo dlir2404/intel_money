@@ -25,7 +25,6 @@ class _CreateCategoryScreenState extends State<CreateCategoryScreen> {
   final _formKey = GlobalKey<FormState>();
   CategoryType _categoryType = CategoryType.expense;
 
-  late final CategoryService _categoryService;
 
   final TextEditingController _nameController = TextEditingController();
   Category? _parentCategory;
@@ -69,7 +68,7 @@ class _CreateCategoryScreenState extends State<CreateCategoryScreen> {
     });
 
     try {
-      await _categoryService.createCategory(
+      await CategoryService().createCategory(
         _nameController.text.trim(),
         _selectedIcon.name,
         _categoryType,
@@ -116,9 +115,6 @@ class _CreateCategoryScreenState extends State<CreateCategoryScreen> {
           }
         });
       }
-
-      final appState = Provider.of<AppState>(context, listen: false);
-      _categoryService = CategoryService(appState: appState);
     });
   }
 

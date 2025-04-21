@@ -296,9 +296,7 @@ class OtherScreen extends StatelessWidget {
         'title': 'Logout',
         'color': Colors.teal,
         'onTap': () {
-          final AuthService authService = AuthService();
-
-          authService.logout();
+          AuthService().logout();
           AppRoutes.navigateToLogin(context);
           AppToast.showSuccess(context, "Logout successful");
         },

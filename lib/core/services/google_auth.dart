@@ -3,12 +3,12 @@ import 'package:google_sign_in/google_sign_in.dart';
 import '../network/api_client.dart';
 
 class GoogleAuthService {
-  final ApiClient _apiClient;
-
+  final ApiClient _apiClient = ApiClient.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn(scopes: ['email']);
 
-  GoogleAuthService({ApiClient? apiClient})
-    : _apiClient = apiClient ?? ApiClient.instance;
+  static final GoogleAuthService _instance = GoogleAuthService._internal();
+  factory GoogleAuthService() => _instance;
+  GoogleAuthService._internal();
 
   signIn() async {
     final GoogleSignInAccount? account = await _googleSignIn.signIn();

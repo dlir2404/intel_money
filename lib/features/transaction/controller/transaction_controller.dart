@@ -50,8 +50,7 @@ class TransactionController {
   static Future<ExtractTransactionInfoResponse> extractTransactionOnline(
     String text,
   ) async {
-    final AIService aiService = AIService();
-    return await aiService.extractTransactionInfo(text);
+    return await AIService().extractTransactionInfo(text);
   }
 
   static Map<String, dynamic> extractTransactionOffline(String text) {
