@@ -64,9 +64,9 @@ extension CategoryTypeExtension on TransactionType {
       case TransactionType.transfer:
         return Colors.grey;
       case TransactionType.lend:
-        return Colors.grey;
+        return Colors.redAccent;
       case TransactionType.borrow:
-        return Colors.blue;
+        return Colors.greenAccent;
       case TransactionType.modifyBalance:
         return Colors.blue;
     }

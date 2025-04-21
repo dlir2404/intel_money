@@ -10,7 +10,7 @@ class CategoryIcon {
     AppIcon(name: 'tshirt-crew', icon: MdiIcons.tshirtCrew, label: 'Clothes', color: Colors.pinkAccent),
     AppIcon(name: 'card_giftcard', icon: Icons.card_giftcard, label: 'Gift', color: Colors.deepPurple),
     AppIcon(name: 'cash', icon: MdiIcons.cash, label: 'Cash', color: Colors.amber),
-    AppIcon(name: 'cashMultiple', icon: MdiIcons.cashMultiple, label: 'Cash', color: Colors.orangeAccent),
+    AppIcon(name: 'cashMultiple', icon: MdiIcons.cashMultiple, label: 'Cash', color: Colors.green),
     AppIcon(name: 'gift', icon: MdiIcons.gift, label: 'Gift', color: Colors.lightGreen),
     AppIcon(name: 'mic_sharp', icon: Icons.mic_sharp, label: 'Music', color: Colors.deepOrange),
     AppIcon(name: 'check_room', icon: Icons.checkroom, label: 'Clothes', color: Colors.cyan),
@@ -94,8 +94,8 @@ class CategoryIcon {
     AppIcon(name: 'cell_wifi_outlined', icon: Icons.cell_wifi_outlined, label: 'WiFi', color: Colors.blue),
     AppIcon(name: "water_drop", icon: Icons.water_drop, label: 'Water', color: Colors.blueAccent),
     AppIcon(name: 'broom', icon: MdiIcons.broom, label: 'Broom', color: Colors.brown),
-    AppIcon(name: 'cash-minus', icon: MdiIcons.cashMinus, label: 'Cash Minus', color: Colors.grey),
-    AppIcon(name: 'cash-plus', icon: MdiIcons.cashPlus, label: 'Cash Plus', color: Colors.grey),
+    AppIcon(name: 'cash-minus', icon: MdiIcons.cashMinus, label: 'Cash Minus', color: Colors.redAccent),
+    AppIcon(name: 'cash-plus', icon: MdiIcons.cashPlus, label: 'Cash Plus', color: Colors.greenAccent),
     AppIcon(name: 'default', icon: Icons.category, label: 'Default', color: Colors.grey),
   ];
 

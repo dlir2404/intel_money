@@ -126,7 +126,7 @@ class CategoryListTab extends StatelessWidget {
   void _navigateToEditCategory(BuildContext context, Category category) {
     Navigator.pushNamed(
       context,
-      AppRoutes.createCategory,
+      AppRoutes.editCategory,
       arguments: {'category': category},
     );
   }

@@ -6,6 +6,7 @@ import 'package:intel_money/features/transaction/screens/transaction_history_scr
 import 'package:intel_money/shared/component/layout/authenticated_app.dart';
 
 import '../../features/category/screens/create_category_screen.dart';
+import '../../features/category/screens/edit_category_screen.dart';
 import '../../features/wallet/screens/create_wallet_screen.dart';
 
 class AppRoutes {
@@ -15,6 +16,7 @@ class AppRoutes {
   static const String createWallet = '/wallets/create';
   static const String createCategory = '/categories/create';
   static const String transactionHistory = '/transaction/history';
+  static const String editCategory = '/categories/edit';
 
   static Map<String, WidgetBuilder> getRoutes() {
     return {
@@ -23,7 +25,9 @@ class AppRoutes {
       home: (context) => const AuthenticatedApp(),
 
       createWallet: (context) => const CreateWalletScreen(),
+
       createCategory: (context) => const CreateCategoryScreen(),
+      // editCategory: (context) => const EditCategoryScreen(),
 
       transactionHistory: (context) => const TransactionHistoryScreen(),
     };
