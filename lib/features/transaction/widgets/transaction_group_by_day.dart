@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intel_money/features/transaction/widgets/transaction_item.dart';
+import 'package:intel_money/shared/component/typos/currency_double_text.dart';
 
 import '../../../core/models/transaction.dart';
 import '../../../shared/const/enum/transaction_type.dart';
@@ -56,8 +57,8 @@ class TransactionGroupByDay extends StatelessWidget {
             children: [
               Container(
                 color: Theme.of(context).primaryColor,
-                child: const SizedBox(height: 60, width: 6,),
-              )
+                child: const SizedBox(height: 60, width: 6),
+              ),
             ],
           ),
         ),
@@ -82,31 +83,26 @@ class TransactionGroupByDay extends StatelessWidget {
 
         Expanded(child: Container()),
 
-        Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            if (totalIncome > 0)
-              Text(
-                Formatter.formatCurrency(totalIncome),
-                style: TextStyle(
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              if (totalIncome > 0)
+                CurrencyDoubleText(
+                  value: totalIncome,
                   color: Colors.green,
                   fontSize: 20,
-                  fontWeight: FontWeight.w500,
                 ),
-              ),
 
-            if (totalIncome > 0 && totalExpense > 0) const SizedBox(width: 8),
-
-            if (totalExpense > 0)
-              Text(
-                Formatter.formatCurrency(totalExpense),
-                style: TextStyle(
+              if (totalExpense > 0)
+                CurrencyDoubleText(
+                  value: totalExpense,
                   color: Colors.red,
                   fontSize: 20,
-                  fontWeight: FontWeight.w500,
                 ),
-              ),
-          ],
+            ],
+          ),
         ),
         const SizedBox(width: 12),
       ],
@@ -115,7 +111,7 @@ class TransactionGroupByDay extends StatelessWidget {
 
   Widget _buildTransactionList() {
     return Padding(
-        padding: const EdgeInsets.only(left: 20),
+      padding: const EdgeInsets.only(left: 20),
       child: ListView.builder(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
@@ -132,23 +128,20 @@ class TransactionGroupByDay extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       color: Colors.white,
-      child: Column(children: [
-        _buildGroupHeader(context),
+      child: Column(
+        children: [
+          _buildGroupHeader(context),
 
-        Row(
-          children: [
-            const SizedBox(width: 20),
-            Expanded(
-              child: Container(
-                height: 0.5,
-                color: Colors.grey[300],
-              ),
-            )
-          ],
-        ),
+          Row(
+            children: [
+              const SizedBox(width: 20),
+              Expanded(child: Container(height: 0.5, color: Colors.grey[300])),
+            ],
+          ),
 
-        _buildTransactionList(),
-      ])
+          _buildTransactionList(),
+        ],
+      ),
     );
   }
 }

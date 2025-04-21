@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intel_money/shared/component/typos/currency_double_text.dart';
 import 'package:intel_money/shared/const/enum/transaction_type.dart';
 
 import '../../../core/models/transaction.dart';
@@ -14,7 +15,7 @@ class TotalInOut extends StatelessWidget {
     double totalIncome = 0;
     double totalExpense = 0;
     for (var transaction in transactions) {
-      if (transaction.type == TransactionType.income){
+      if (transaction.type == TransactionType.income) {
         totalIncome += transaction.amount;
       } else if (transaction.type == TransactionType.expense) {
         totalExpense += transaction.amount;
@@ -34,13 +35,11 @@ class TotalInOut extends StatelessWidget {
                     style: TextStyle(fontWeight: FontWeight.w500),
                   ),
                   const SizedBox(height: 4),
-                  Text(
-                    Formatter.formatCurrency(totalIncome),
-                    style: TextStyle(
-                      color: Colors.green,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 17,
-                    ),
+                  CurrencyDoubleText(
+                    value: totalIncome,
+                    color: Colors.green,
+                    fontSize: 17,
+                    fontWeight: FontWeight.w500,
                   ),
                 ],
               ),
@@ -59,13 +58,11 @@ class TotalInOut extends StatelessWidget {
                       style: TextStyle(fontWeight: FontWeight.w500),
                     ),
                     const SizedBox(height: 4),
-                    Text(
-                      Formatter.formatCurrency(totalExpense),
-                      style: TextStyle(
-                        color: Colors.red,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 17,
-                      ),
+                    CurrencyDoubleText(
+                      value: totalIncome,
+                      color: Colors.red,
+                      fontSize: 17,
+                      fontWeight: FontWeight.w500,
                     ),
                   ],
                 ),

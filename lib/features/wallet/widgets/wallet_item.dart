@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intel_money/shared/component/typos/currency_double_text.dart';
 
 import '../../../core/models/wallet.dart';
 import '../../../shared/const/icons/wallet_icon.dart';
@@ -127,16 +128,11 @@ class WalletItem extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      Text(
-                        Formatter.formatCurrency(wallet.balance),
-                        style: TextStyle(
-                          fontSize: 16,
-                          color:
-                              wallet.balance >= 0
-                                  ? Colors.green[600]
-                                  : Colors.red[600],
-                        ),
-                      ),
+                      CurrencyDoubleText(
+                        value: wallet.balance,
+                        color: wallet.balance >= 0 ? Colors.green[600] : Colors.red[600],
+                        fontSize: 16,
+                      )
                     ],
                   ),
                 ),

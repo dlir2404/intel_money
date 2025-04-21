@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:intel_money/shared/component/typos/currency_double_text.dart';
 import 'package:pie_chart/pie_chart.dart';
 
 import '../../../core/config/routes.dart';
@@ -107,13 +108,7 @@ class _ExpenseIncomeChartState extends State<ExpenseIncomeChart> {
                               ),
                             ],
                           ),
-                          Text(
-                            '\$$_income',
-                            style: const TextStyle(
-                              color: Colors.green,
-                              fontSize: 18,
-                            ),
-                          ),
+                          CurrencyDoubleText(value: _income, color: Colors.green, fontSize: 18,)
                         ],
                       ),
                       Row(
@@ -136,13 +131,7 @@ class _ExpenseIncomeChartState extends State<ExpenseIncomeChart> {
                               ),
                             ],
                           ),
-                          Text(
-                            '\$$_expense',
-                            style: const TextStyle(
-                              color: Colors.red,
-                              fontSize: 18,
-                            ),
-                          ),
+                          CurrencyDoubleText(value: _expense, color: Colors.red, fontSize: 18,)
                         ],
                       ),
 
@@ -150,13 +139,7 @@ class _ExpenseIncomeChartState extends State<ExpenseIncomeChart> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          Text(
-                            '\$${_income - _expense}',
-                            style: const TextStyle(
-                              color: Colors.black,
-                              fontSize: 18,
-                            ),
-                          ),
+                          CurrencyDoubleText(value: _income - _expense, fontSize: 18,)
                         ],
                       ),
                     ],

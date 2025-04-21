@@ -1,3 +1,4 @@
+import 'package:currency_picker/currency_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intel_money/core/models/transaction.dart';
 import 'package:intel_money/core/models/user.dart';
@@ -17,6 +18,9 @@ class AppState extends ChangeNotifier {
   // Private constructor
   AppState._internal();
 
+  //system config
+  Currency? _currency = CurrencyService().findByCode("VND");
+
 
   User? _user;
   List<Wallet> _wallets = [];
@@ -26,6 +30,14 @@ class AppState extends ChangeNotifier {
 
   //transactions in decreasing order by date
   List<Transaction> _transactions = [];
+
+  Currency? get currency => _currency;
+
+  void setCurrency(Currency? currency) {
+    _currency = currency;
+    notifyListeners();
+  }
+
 
   User? get user => _user;
 

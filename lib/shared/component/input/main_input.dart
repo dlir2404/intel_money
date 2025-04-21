@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intel_money/shared/component/typos/currency_text.dart';
 import 'package:intl/intl.dart';
 
 import '../../helper/toast.dart';
@@ -9,7 +10,6 @@ class MainInput extends StatefulWidget {
   final FocusNode? focusNode;
   final bool autofocus;
   final double? initialValue;
-  final String currency;
 
   const MainInput({
     super.key,
@@ -18,7 +18,6 @@ class MainInput extends StatefulWidget {
     this.focusNode,
     this.autofocus = false,
     this.initialValue,
-    this.currency = '\$',
   });
 
   @override
@@ -392,25 +391,8 @@ class _MainInputState extends State<MainInput> {
             ),
             child: Row(
               children: [
-                Expanded(
-                  child: Text(
-                    _displayText,
-                    style: TextStyle(
-                      color: _displayText.isEmpty ? Colors.grey : Colors.black,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                    ),
-                    textAlign: TextAlign.right, // Align text to the right
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 8.0),
-                  // Add margin between text and currency
-                  child: Text(
-                    widget.currency,
-                    style: const TextStyle(color: Colors.grey, fontSize: 16),
-                  ),
-                ),
+                Expanded(child: Container(),),
+                CurrencyText(text: _displayText, fontSize: 16, fontWeight: FontWeight.w500,)
               ],
             ),
           ),

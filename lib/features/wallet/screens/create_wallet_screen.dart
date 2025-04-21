@@ -111,7 +111,6 @@ class _CreateWalletScreenState extends State<CreateWalletScreen> {
                 // Initial amount
                 MainInput(
                   label: 'Initial Amount',
-                  currency: '\$',
                   onChanged: (value) {
                     setState(() {
                       initialAmount = value;

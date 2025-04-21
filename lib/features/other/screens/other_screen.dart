@@ -7,6 +7,7 @@ import 'package:intel_money/core/state/app_state.dart';
 import '../../../core/models/user.dart';
 import '../../../core/services/auth_service.dart';
 import '../../category/screens/category_screen.dart';
+import 'general_setting_screen.dart';
 
 class OtherScreen extends StatelessWidget {
   const OtherScreen({super.key});
@@ -259,7 +260,11 @@ class OtherScreen extends StatelessWidget {
         'title': 'General Settings',
         'color': Colors.blue,
         'onTap': () {
-          // Handle navigation to General Settings
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => const GeneralSettingScreen(),
+            ),
+          );
         },
       },
       {

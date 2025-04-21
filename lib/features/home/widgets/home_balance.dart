@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:intel_money/shared/component/typos/currency_text.dart';
+
+import '../../../shared/component/typos/currency_double_text.dart';
 
 class HomeBalance extends StatefulWidget {
   final double? totalBalance;
+
   const HomeBalance({super.key, required this.totalBalance});
 
   @override
@@ -19,7 +23,7 @@ class _HomeBalanceState extends State<HomeBalance> {
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(16)
+          borderRadius: BorderRadius.circular(16),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -33,10 +37,7 @@ class _HomeBalanceState extends State<HomeBalance> {
                     children: [
                       Text(
                         'Total Balance',
-                        style: TextStyle(
-                          color: Colors.grey[600],
-                          fontSize: 14,
-                        ),
+                        style: TextStyle(color: Colors.grey[600], fontSize: 14),
                       ),
                       const SizedBox(width: 4),
                       Icon(
@@ -47,13 +48,16 @@ class _HomeBalanceState extends State<HomeBalance> {
                     ],
                   ),
                   const SizedBox(height: 6),
-                  Text(
-                    _showBalance ? "\$${widget.totalBalance}" : '******',
-                    style: const TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  _showBalance
+                      ? CurrencyDoubleText(
+                        value: widget.totalBalance,
+                        color: Colors.grey[600],
+                        fontSize: 24,
+                      )
+                      : Text(
+                        "******",
+                        style: TextStyle(color: Colors.grey[600], fontSize: 24),
+                      ),
                 ],
               ),
             ),
@@ -69,7 +73,7 @@ class _HomeBalanceState extends State<HomeBalance> {
                   _showBalance = !_showBalance;
                 });
               },
-            )
+            ),
           ],
         ),
       ),

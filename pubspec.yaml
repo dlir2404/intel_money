@@ -52,6 +52,8 @@ dependencies:
   permission_handler: ^11.3.0
   cloudinary_public: ^0.23.1
   material_design_icons_flutter: ^6.0.7096
+  currency_picker: ^2.0.21
+  material_dialogs: ^1.1.5
 
 dev_dependencies:
   flutter_test:

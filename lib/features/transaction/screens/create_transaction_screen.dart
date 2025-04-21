@@ -183,7 +183,6 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
                   });
                 },
                 label: 'Amount',
-                currency: '\$',
               ),
               const SizedBox(height: 16),
 

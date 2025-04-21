@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intel_money/shared/component/typos/currency_double_text.dart';
 import 'package:intel_money/shared/const/enum/transaction_type.dart';
 import 'package:intel_money/shared/const/icons/category_icon.dart';
 
@@ -49,8 +50,6 @@ class TransactionItem extends StatelessWidget {
   }
 
   Widget _buildValue() {
-    String value = Formatter.formatCurrency(transaction.amount);
-
     Color color = Colors.black;
     if (transaction.type == TransactionType.expense) {
       color = Colors.red;
@@ -58,7 +57,7 @@ class TransactionItem extends StatelessWidget {
       color = Colors.green;
     }
 
-    return Text(value, style: TextStyle(color: color));
+    return CurrencyDoubleText(value: transaction.amount, color: color);
   }
 
   @override
