@@ -3,10 +3,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:intel_money/core/models/transaction.dart';
 import 'package:intel_money/core/models/user.dart';
 import 'package:intel_money/core/models/wallet.dart';
-import 'package:intel_money/shared/const/enum/transaction_type.dart';
 
 import '../../shared/const/enum/category_type.dart';
 import '../models/category.dart';
+import '../models/statistic_data.dart';
 
 class AppState extends ChangeNotifier {
   // Singleton instance
@@ -204,6 +204,15 @@ class AppState extends ChangeNotifier {
   void increaseWalletBalance(int walletId, double amount) {
     final index = _wallets.indexWhere((element) => element.id == walletId);
     _wallets[index].balance += amount;
+    notifyListeners();
+  }
+
+
+  StatisticData? _todayStatisticData;
+
+  StatisticData? get todayStatisticData => _todayStatisticData;
+  void setTodayStatisticData(StatisticData statisticData) {
+    _todayStatisticData = statisticData;
     notifyListeners();
   }
 

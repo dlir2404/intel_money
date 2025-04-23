@@ -14,15 +14,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final double _income = 5000; // Mock income
-  final double _expense = 3000; // Mock expense
-  final Map<String, double> _expenseCategories = {
-    "Food": 40,
-    "Transport": 30,
-    "Entertainment": 20,
-    "Others": 10,
-  }; // Mock expense categories
-
   @override
   Widget build(BuildContext context) {
     final appState = Provider.of<AppState>(context);
@@ -61,7 +52,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ExpenseIncomeChart(),
                 ],
               ),
-            )
+            ),
           ],
         ),
       ),

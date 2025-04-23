@@ -78,6 +78,5 @@ class _SelectWalletInputState extends State<SelectWalletInput> {
         ),
       ),
     );
-    ;
   }
 }

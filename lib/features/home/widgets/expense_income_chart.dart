@@ -2,9 +2,13 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:intel_money/shared/component/typos/currency_double_text.dart';
+import 'package:intel_money/shared/helper/formatter.dart';
 import 'package:pie_chart/pie_chart.dart';
+import 'package:provider/provider.dart';
 
 import '../../../core/config/routes.dart';
+import '../../../core/models/statistic_data.dart';
+import '../../../core/state/app_state.dart';
 
 class ExpenseIncomeChart extends StatefulWidget {
   const ExpenseIncomeChart({super.key});
@@ -15,6 +19,7 @@ class ExpenseIncomeChart extends StatefulWidget {
 
 class _ExpenseIncomeChartState extends State<ExpenseIncomeChart> {
   String _selectedTimeRange = 'Today';
+  StatisticData? _statisticData;
 
   final List<String> _timeRanges = [
     'Today',
@@ -24,20 +29,158 @@ class _ExpenseIncomeChartState extends State<ExpenseIncomeChart> {
     'This year',
   ];
 
-  final double _income = 5000; // Mock income value
-  final double _expense = 3000; // Mock expense value
-
   Map<String, double> expenseRate = {
     "Food (28,6%)": 500000,
     "Shopping (68,6%)": 1200000,
     "Coffee (2,8%)": 50000,
   };
 
+  Widget _columnChart(
+    double incomeHeight,
+    double expenseHeight,
+    double income,
+    double expense,
+  ) {
+    return SizedBox(
+      height: 140,
+      width: double.infinity,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          SizedBox(
+            width: 50,
+            child: Container(height: incomeHeight, color: Colors.green),
+          ),
+          const SizedBox(width: 16),
+          SizedBox(
+            width: 50,
+            child: Container(height: expenseHeight, color: Colors.red),
+          ),
+          const SizedBox(width: 32),
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          width: 8,
+                          height: 8,
+                          decoration: BoxDecoration(
+                            color: Colors.green,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        const Text('Income', style: TextStyle(fontSize: 16)),
+                      ],
+                    ),
+                    CurrencyDoubleText(
+                      value: income,
+                      color: Colors.green,
+                      fontSize: 18,
+                    ),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          width: 8,
+                          height: 8,
+                          decoration: BoxDecoration(
+                            color: Colors.red,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Text('Expense', style: const TextStyle(fontSize: 16)),
+                      ],
+                    ),
+                    CurrencyDoubleText(
+                      value: expense,
+                      color: Colors.red,
+                      fontSize: 18,
+                    ),
+                  ],
+                ),
+
+                Divider(color: Colors.grey[100]),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    CurrencyDoubleText(value: income - expense, fontSize: 18),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _pieChart(Map<String, double> expenseRate) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      height: 150,
+      width: double.infinity,
+      child: PieChart(
+        dataMap: expenseRate,
+        animationDuration: Duration(milliseconds: 800),
+        chartType: ChartType.ring,
+        ringStrokeWidth: 32,
+        legendOptions: LegendOptions(
+          showLegendsInRow: false,
+          legendPosition: LegendPosition.right,
+          showLegends: true,
+          legendShape: BoxShape.circle,
+          legendTextStyle: TextStyle(fontWeight: FontWeight.w400),
+        ),
+        chartValuesOptions: ChartValuesOptions(showChartValues: false),
+      ),
+    );
+  }
+
+  List<Widget> _buildChart(StatisticData statisticData) {
+    final income = statisticData.totalIncome;
+    final expense = statisticData.totalExpense;
+
+    double incomeHeight = 0;
+    double expenseHeight = 0;
+
+    final double maxVal = max(income, expense);
+    if (maxVal != 0) {
+      incomeHeight = (income / maxVal) * 140;
+      expenseHeight = (expense / maxVal) * 140;
+    }
+
+    Map<String, double> expenseRate = {};
+    for (var data in statisticData.byCategoryExpense) {
+      expenseRate["${data.category.name} (${Formatter.formatCurrency(data.amount * 100 / expense)}%)"] = data.amount;
+    }
+
+    List<Widget> chartWidgets = [];
+
+    chartWidgets.add(
+      _columnChart(incomeHeight, expenseHeight, income, expense),
+    );
+    chartWidgets.add(const SizedBox(height: 40));
+    chartWidgets.add(_pieChart(expenseRate));
+
+    return chartWidgets;
+  }
+
   @override
   Widget build(BuildContext context) {
-    final incomeHeight = (_income / max(_income, _expense)) * 140;
-    final expenseHeight = (_expense / max(_income, _expense)) * 140;
-
+    final appState = Provider.of<AppState>(context);
+    final statisticData = appState.todayStatisticData;
+    
     return Container(
       color: Colors.white,
       width: double.infinity,
@@ -68,108 +211,15 @@ class _ExpenseIncomeChartState extends State<ExpenseIncomeChart> {
               style: const TextStyle(color: Colors.grey),
             ),
           ),
-          SizedBox(
-            height: 140,
-            width: double.infinity,
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                SizedBox(
-                  width: 50,
-                  child: Container(height: incomeHeight, color: Colors.green),
-                ),
-                const SizedBox(width: 16),
-                SizedBox(
-                  width: 50,
-                  child: Container(height: expenseHeight, color: Colors.red),
-                ),
-                const SizedBox(width: 32),
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              Container(
-                                width: 8,
-                                height: 8,
-                                decoration: BoxDecoration(
-                                  color: Colors.green,
-                                  shape: BoxShape.circle,
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              const Text(
-                                'Income',
-                                style: TextStyle(fontSize: 16),
-                              ),
-                            ],
-                          ),
-                          CurrencyDoubleText(value: _income, color: Colors.green, fontSize: 18,)
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              Container(
-                                width: 8,
-                                height: 8,
-                                decoration: BoxDecoration(
-                                  color: Colors.red,
-                                  shape: BoxShape.circle,
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              Text(
-                                'Expense',
-                                style: const TextStyle(fontSize: 16),
-                              ),
-                            ],
-                          ),
-                          CurrencyDoubleText(value: _expense, color: Colors.red, fontSize: 18,)
-                        ],
-                      ),
 
-                      Divider(color: Colors.grey[100]),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          CurrencyDoubleText(value: _income - _expense, fontSize: 18,)
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+          if (statisticData != null && statisticData.totalIncome != 0 && statisticData.totalExpense != 0) ..._buildChart(statisticData),
+
+          if (statisticData == null || !(statisticData.totalIncome != 0 && statisticData.totalExpense != 0))
+            SizedBox(
+              height: 160,
+              child: Center(child: const Text("No record found")),
             ),
-          ),
-          const SizedBox(height: 40),
-          Container(
-            padding: const EdgeInsets.all(16),
-            height: 150,
-            width: double.infinity,
-            child: PieChart(
-              dataMap: expenseRate,
-              animationDuration: Duration(milliseconds: 800),
-              chartType: ChartType.ring,
-              ringStrokeWidth: 32,
-              legendOptions: LegendOptions(
-                showLegendsInRow: false,
-                legendPosition: LegendPosition.right,
-                showLegends: true,
-                legendShape: BoxShape.circle,
-                legendTextStyle: TextStyle(fontWeight: FontWeight.w400),
-              ),
-              chartValuesOptions: ChartValuesOptions(
-                showChartValues: false,
-              ),
-            ),
-          ),
+
           const SizedBox(height: 16),
           GestureDetector(
             onTap: () {
@@ -193,7 +243,7 @@ class _ExpenseIncomeChartState extends State<ExpenseIncomeChart> {
                 ),
               ],
             ),
-          )
+          ),
         ],
       ),
     );
