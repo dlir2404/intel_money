@@ -90,7 +90,13 @@ class DataInitializer {
   }
 
   Future<void> _loadTodayStatistics() async {
-    await StatisticService().getTodayStatisticData();
+    try {
+      await StatisticService().getTodayStatisticData();
+      debugPrint('Today statistics loaded successfully');
+    } catch (e) {
+      debugPrint('Error loading today statistics: $e');
+      rethrow;
+    }
   }
 
   /// Refresh individual data types as needed

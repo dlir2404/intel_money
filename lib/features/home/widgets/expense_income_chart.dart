@@ -212,9 +212,9 @@ class _ExpenseIncomeChartState extends State<ExpenseIncomeChart> {
             ),
           ),
 
-          if (statisticData != null && statisticData.totalIncome != 0 && statisticData.totalExpense != 0) ..._buildChart(statisticData),
+          if (statisticData != null && (statisticData.totalIncome != 0 || statisticData.totalExpense != 0)) ..._buildChart(statisticData),
 
-          if (statisticData == null || !(statisticData.totalIncome != 0 && statisticData.totalExpense != 0))
+          if (statisticData == null || (statisticData.totalIncome == 0 && statisticData.totalExpense == 0))
             SizedBox(
               height: 160,
               child: Center(child: const Text("No record found")),
