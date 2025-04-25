@@ -209,10 +209,38 @@ class AppState extends ChangeNotifier {
 
 
   StatisticData? _todayStatisticData;
+  StatisticData? _thisWeekStatisticData;
+  StatisticData? _thisMonthStatisticData;
+  StatisticData? _thisQuarterStatisticData;
+  StatisticData? _thisYearStatisticData;
 
   StatisticData? get todayStatisticData => _todayStatisticData;
   void setTodayStatisticData(StatisticData statisticData) {
     _todayStatisticData = statisticData;
+    notifyListeners();
+  }
+
+  StatisticData? get thisWeekStatisticData => _thisWeekStatisticData;
+  void setThisWeekStatisticData(StatisticData statisticData) {
+    _thisWeekStatisticData = statisticData;
+    notifyListeners();
+  }
+
+  StatisticData? get thisMonthStatisticData => _thisMonthStatisticData;
+  void setThisMonthStatisticData(StatisticData statisticData) {
+    _thisMonthStatisticData = statisticData;
+    notifyListeners();
+  }
+
+  StatisticData? get thisQuarterStatisticData => _thisQuarterStatisticData;
+  void setThisQuarterStatisticData(StatisticData statisticData) {
+    _thisQuarterStatisticData = statisticData;
+    notifyListeners();
+  }
+
+  StatisticData? get thisYearStatisticData => _thisYearStatisticData;
+  void setThisYearStatisticData(StatisticData statisticData) {
+    _thisYearStatisticData = statisticData;
     notifyListeners();
   }
 

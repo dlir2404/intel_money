@@ -10,6 +10,7 @@ import '../../../core/config/routes.dart';
 import '../../../core/models/statistic_data.dart';
 import '../../../core/state/app_state.dart';
 import '../../../shared/component/charts/donut_chart.dart';
+import '../../../shared/const/enum/statistic_type.dart';
 
 class ExpenseIncomeChart extends StatefulWidget {
   const ExpenseIncomeChart({super.key});
@@ -19,16 +20,7 @@ class ExpenseIncomeChart extends StatefulWidget {
 }
 
 class _ExpenseIncomeChartState extends State<ExpenseIncomeChart> {
-  String _selectedTimeRange = 'Today';
-  StatisticData? _statisticData;
-
-  final List<String> _timeRanges = [
-    'Today',
-    'This week',
-    'This month',
-    'This quarter',
-    'This year',
-  ];
+  StatisticThisTime type = StatisticThisTime.today;
 
   Widget _columnChart(
     double incomeHeight,
@@ -146,7 +138,8 @@ class _ExpenseIncomeChartState extends State<ExpenseIncomeChart> {
 
     Map<String, double> expenseRate = {};
     for (var data in statisticData.byCategoryExpense) {
-      expenseRate["${data.category.name} (${Formatter.formatCurrency(data.amount * 100 / expense)}%)"] = data.amount;
+      expenseRate["${data.category.name} (${Formatter.formatCurrency(data.amount * 100 / expense)}%)"] =
+          data.amount;
     }
 
     List<Widget> chartWidgets = [];
@@ -160,11 +153,26 @@ class _ExpenseIncomeChartState extends State<ExpenseIncomeChart> {
     return chartWidgets;
   }
 
+  StatisticData? _getStatisticData(AppState appState) {
+    switch (type) {
+      case StatisticThisTime.today:
+        return appState.todayStatisticData;
+      case StatisticThisTime.thisWeek:
+        return appState.thisWeekStatisticData;
+      case StatisticThisTime.thisMonth:
+        return appState.thisMonthStatisticData;
+      case StatisticThisTime.thisQuarter:
+        return appState.thisQuarterStatisticData;
+      case StatisticThisTime.thisYear:
+        return appState.thisYearStatisticData;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final appState = Provider.of<AppState>(context);
-    final statisticData = appState.todayStatisticData;
-    
+    final statisticData = _getStatisticData(appState);
+
     return Container(
       color: Colors.white,
       width: double.infinity,
@@ -174,21 +182,21 @@ class _ExpenseIncomeChartState extends State<ExpenseIncomeChart> {
         children: [
           const Text("Expense vs Income", style: TextStyle(fontSize: 20)),
           DropdownButtonHideUnderline(
-            child: DropdownButton<String>(
-              value: _selectedTimeRange,
+            child: DropdownButton<StatisticThisTime>(
+              value: type,
               items:
-                  _timeRanges.map((String timeRange) {
-                    return DropdownMenuItem<String>(
-                      value: timeRange,
+                  StatisticThisTime.values.map((StatisticThisTime time) {
+                    return DropdownMenuItem<StatisticThisTime>(
+                      value: time,
                       child: Text(
-                        timeRange,
+                        time.name,
                         style: const TextStyle(color: Colors.grey),
                       ),
                     );
                   }).toList(),
-              onChanged: (String? newValue) {
+              onChanged: (StatisticThisTime? newValue) {
                 setState(() {
-                  _selectedTimeRange = newValue!;
+                  type = newValue!;
                 });
               },
               icon: const Icon(Icons.arrow_drop_down, color: Colors.grey),
@@ -196,9 +204,14 @@ class _ExpenseIncomeChartState extends State<ExpenseIncomeChart> {
             ),
           ),
 
-          if (statisticData != null && (statisticData.totalIncome != 0 || statisticData.totalExpense != 0)) ..._buildChart(statisticData),
+          if (statisticData != null &&
+              (statisticData.totalIncome != 0 ||
+                  statisticData.totalExpense != 0))
+            ..._buildChart(statisticData),
 
-          if (statisticData == null || (statisticData.totalIncome == 0 && statisticData.totalExpense == 0))
+          if (statisticData == null ||
+              (statisticData.totalIncome == 0 &&
+                  statisticData.totalExpense == 0))
             SizedBox(
               height: 160,
               child: Center(child: const Text("No record found")),
