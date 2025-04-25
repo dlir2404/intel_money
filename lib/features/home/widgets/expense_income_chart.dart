@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import '../../../core/config/routes.dart';
 import '../../../core/models/statistic_data.dart';
 import '../../../core/state/app_state.dart';
+import '../../../shared/component/charts/donut_chart.dart';
 
 class ExpenseIncomeChart extends StatefulWidget {
   const ExpenseIncomeChart({super.key});
@@ -28,12 +29,6 @@ class _ExpenseIncomeChartState extends State<ExpenseIncomeChart> {
     'This quarter',
     'This year',
   ];
-
-  Map<String, double> expenseRate = {
-    "Food (28,6%)": 500000,
-    "Shopping (68,6%)": 1200000,
-    "Coffee (2,8%)": 50000,
-  };
 
   Widget _columnChart(
     double incomeHeight,
@@ -126,24 +121,13 @@ class _ExpenseIncomeChartState extends State<ExpenseIncomeChart> {
   }
 
   Widget _pieChart(Map<String, double> expenseRate) {
-    return Container(
-      padding: const EdgeInsets.all(16),
+    return AppDonutChart(
+      dataMap: expenseRate,
+      width: 150,
       height: 150,
-      width: double.infinity,
-      child: PieChart(
-        dataMap: expenseRate,
-        animationDuration: Duration(milliseconds: 800),
-        chartType: ChartType.ring,
-        ringStrokeWidth: 32,
-        legendOptions: LegendOptions(
-          showLegendsInRow: false,
-          legendPosition: LegendPosition.right,
-          showLegends: true,
-          legendShape: BoxShape.circle,
-          legendTextStyle: TextStyle(fontWeight: FontWeight.w400),
-        ),
-        chartValuesOptions: ChartValuesOptions(showChartValues: false),
-      ),
+      ringStrokeWidth: 32,
+      showLegends: true,
+      showLegendsInRow: true,
     );
   }
 
