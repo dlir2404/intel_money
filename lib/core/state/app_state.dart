@@ -8,64 +8,22 @@ import '../../shared/const/enum/transaction_type.dart';
 import '../models/statistic_data.dart';
 
 class AppState extends ChangeNotifier {
-  // Singleton instance
   static final AppState _instance = AppState._internal();
-
-  // Factory constructor
   factory AppState() => _instance;
-
-  // Private constructor
   AppState._internal();
 
   //system config
   Currency? _currency = CurrencyService().findByCode("VND");
-
-
-  User? _user;
-
-  //transactions in decreasing order by date
-  List<Transaction> _transactions = [];
-
   Currency? get currency => _currency;
-
   void setCurrency(Currency? currency) {
     _currency = currency;
     notifyListeners();
   }
 
-
+  User? _user;
   User? get user => _user;
-
-
-
-  List<Transaction> get transactions => _transactions;
-
   void setUser(User user) {
     _user = user;
-    notifyListeners();
-  }
-
-  void setTransactions(List<Transaction> transactions) {
-    _transactions = transactions;
-    notifyListeners();
-  }
-
-
-  //TODO: review later
-  void addTransaction(Transaction transaction) {
-    bool isInserted = false;
-    for (var i = 0; i < _transactions.length; i++) {
-      if (transaction.transactionDate.isBefore(_transactions[i].transactionDate)) {
-        _transactions.insert(i + 1, transaction);
-        isInserted = true;
-      }
-    }
-
-    //no transaction date is after the new transaction date
-    if (!isInserted) {
-      _transactions.insert(0, transaction);
-    }
-
     notifyListeners();
   }
 

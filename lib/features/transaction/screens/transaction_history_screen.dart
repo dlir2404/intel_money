@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 
 import '../../../core/models/transaction.dart';
 import '../../../core/state/app_state.dart';
+import '../../../core/state/transaction_state.dart';
 import '../widgets/total_in_out.dart';
 
 class TransactionHistoryScreen extends StatefulWidget {
@@ -76,9 +77,9 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
           ),
         ],
       ),
-      body: Consumer<AppState>(
-        builder: (context, appState, _) {
-          final transactions = appState.transactions;
+      body: Consumer<TransactionState>(
+        builder: (context, state, _) {
+          final transactions = state.transactions;
 
           return Container(
             color: Colors.grey[200],
