@@ -45,7 +45,7 @@ class Category{
       id: json['id'],
       name: json['name'],
       icon: CategoryIcon.getIcon(json['icon']),
-      type: json['type'] == 'EXPENSE' ? CategoryType.expense : json['type'] == 'INCOME' ? CategoryType.income : CategoryType.expense,
+      type: CategoryType.values.firstWhere((e) => e.value == json['type']),
       parentId: json['parentId'],
       editable: json['editable'] == 1 ? true : false,
     );

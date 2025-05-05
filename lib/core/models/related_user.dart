@@ -1,7 +1,7 @@
 import '../state/related_user_state.dart';
 
 class RelatedUser {
-  final int? id;
+  int? id;
   final String name;
   final String? email;
   final String? phone;
@@ -46,5 +46,9 @@ class RelatedUser {
       totalBorrow: 0.0,
       isTemporary: true,
     );
+  }
+
+  void setId(int id) {
+    this.id = id;
   }
 }

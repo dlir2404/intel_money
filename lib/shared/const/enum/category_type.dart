@@ -1,4 +1,4 @@
-enum CategoryType { income, expense }
+enum CategoryType { income, expense, lend, borrow }
 
 extension CategoryTypeExtension on CategoryType {
   String get value {
@@ -7,6 +7,10 @@ extension CategoryTypeExtension on CategoryType {
         return 'INCOME';
       case CategoryType.expense:
         return 'EXPENSE';
+      case CategoryType.lend:
+        return 'LEND';
+      case CategoryType.borrow:
+        return 'BORROW';
     }
   }
 
@@ -16,6 +20,10 @@ extension CategoryTypeExtension on CategoryType {
         return 'Income';
       case CategoryType.expense:
         return 'Expense';
+      case CategoryType.lend:
+        return 'Lend';
+      case CategoryType.borrow:
+        return 'Borrow';
     }
   }
 }

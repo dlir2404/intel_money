@@ -32,6 +32,16 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
+  void decreaseUserTotalLoan(double amount) {
+    _user!.totalLoan -= amount;
+    notifyListeners();
+  }
+
+  void increaseUserTotalLoan(double amount) {
+    _user!.totalLoan += amount;
+    notifyListeners();
+  }
+
   void clear() {
     _user = null;
     notifyListeners();

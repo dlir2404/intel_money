@@ -1,9 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
+import 'category_type.dart';
+
 enum TransactionType { income, expense, transfer, lend, borrow, modifyBalance }
 
 extension CategoryTypeExtension on TransactionType {
+  CategoryType get categoryType {
+    switch (this) {
+      case TransactionType.income:
+        return CategoryType.income;
+      case TransactionType.expense:
+        return CategoryType.expense;
+      case TransactionType.lend:
+        return CategoryType.lend;
+      case TransactionType.borrow:
+        return CategoryType.borrow;
+      //TODO: change later
+      default:
+        return CategoryType.expense;
+    }
+  }
+
   String get value {
     switch (this) {
       case TransactionType.income:

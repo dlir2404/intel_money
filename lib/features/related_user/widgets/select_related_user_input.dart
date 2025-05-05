@@ -38,12 +38,10 @@ class _SelectRelatedUserInputState extends State<SelectRelatedUserInput> {
       ),
     );
 
-    if (selectedRelatedUser != null) {
-      setState(() {
-        _relatedUser = selectedRelatedUser;
-        widget.onRelatedUserSelected(_relatedUser!);
-      });
-    }
+    setState(() {
+      _relatedUser = selectedRelatedUser;
+      widget.onRelatedUserSelected(_relatedUser!);
+    });
   }
 
   Widget _buildSelectedItem(RelatedUser relatedUser) {

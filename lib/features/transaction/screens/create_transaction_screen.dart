@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:intel_money/core/models/scan_receipt_response.dart';
 import 'package:intel_money/core/network/api_exception.dart';
+import 'package:intel_money/core/services/related_user_service.dart';
 import 'package:intel_money/features/transaction/screens/take_picture_screen.dart';
 import 'package:intel_money/features/transaction/widgets/create_transaction_appbar.dart';
 import 'package:intel_money/features/wallet/widgets/select_wallet_input.dart';
@@ -14,6 +15,7 @@ import 'package:intel_money/shared/const/enum/transaction_type.dart';
 import 'package:intel_money/shared/helper/toast.dart';
 
 import '../../../core/models/category.dart';
+import '../../../core/models/related_user.dart';
 import '../../../core/models/wallet.dart';
 import '../../../core/services/transaction_service.dart';
 import '../../../core/state/wallet_state.dart';
@@ -40,6 +42,8 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
   DateTime? _transactionDate = DateTime.now();
   final TextEditingController _descriptionController = TextEditingController();
   File? _image;
+
+  RelatedUser? _borrower;
 
   bool _isLoading = false;
 
@@ -88,6 +92,11 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
       return;
     }
 
+    if (_selectedTransactionType == TransactionType.lend && _borrower == null) {
+      AppToast.showError(context, "Please choose a borrower");
+      return;
+    }
+
     setState(() {
       _isLoading = true;
     });
@@ -96,6 +105,11 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
       final List<File> images = [];
       if (_image != null) {
         images.add(_image!);
+      }
+
+      if (_borrower!.isTemporary) {
+        //save the borrower first
+        await RelatedUserService().create(_borrower!);
       }
 
       await TransactionService().createTransaction(
@@ -108,6 +122,7 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
         destinationWalletId: _destinationWallet?.id,
         notAddToReport: false,
         images: images,
+        borrowerId: _borrower?.id,
       );
 
       AppToast.showSuccess(context, 'Saved');
@@ -216,10 +231,7 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
                     SelectCategoryInput(
                       category: _selectedCategory,
                       placeholder: 'Select Category',
-                      categoryType:
-                          _selectedTransactionType == TransactionType.expense
-                              ? CategoryType.expense
-                              : CategoryType.income,
+                      categoryType: _selectedTransactionType.categoryType,
                       onCategorySelected: (category) {
                         setState(() {
                           _selectedCategory = category;
@@ -238,7 +250,7 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
                       placeholder: 'Borrower',
                       onRelatedUserSelected: (user) {
                         setState(() {
-                          // _selectedRelatedUser = user;
+                          _borrower = user;
                         });
                       },
                     ),

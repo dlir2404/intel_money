@@ -31,6 +31,19 @@ class _SelectCategoryScreenState extends State<SelectCategoryScreen> {
     _selectedCategory = widget.selectedCategory;
   }
 
+  List<Category> _getOptions(CategoryState state) {
+    switch (widget.categoryType) {
+      case CategoryType.expense:
+        return state.expenseCategories;
+      case CategoryType.income:
+        return state.incomeCategories;
+      case CategoryType.lend:
+        return state.lendCategories;
+      case CategoryType.borrow:
+        return state.borrowCategories;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -44,10 +57,7 @@ class _SelectCategoryScreenState extends State<SelectCategoryScreen> {
       ),
       body: Consumer<CategoryState>(
         builder: (context, state, _) {
-          final parentCategories =
-              widget.categoryType == CategoryType.expense
-                  ? state.expenseCategories
-                  : state.incomeCategories;
+          final parentCategories = _getOptions(state);
 
           return ListView.builder(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:intel_money/core/network/api_client.dart';
 import 'package:intel_money/core/state/app_state.dart';
+import 'package:intel_money/core/state/category_state.dart';
 import 'package:intel_money/core/state/statistic_state.dart';
 import 'package:intel_money/core/state/transaction_state.dart';
 import 'package:intel_money/core/state/wallet_state.dart';
@@ -42,6 +43,7 @@ class TransactionService {
     int? destinationWalletId,
     bool? notAddToReport,
     required List<File> images,
+    int? borrowerId,
   }) async {
     List<String> imageUrls = [];
     for (var image in images) {
@@ -84,8 +86,16 @@ class TransactionService {
         );
         break;
       case TransactionType.lend:
-        // TODO: Handle this case.
-        throw UnimplementedError();
+        await createLendTransaction(
+          amount,
+          description,
+          transactionDate,
+          sourceWalletId,
+          categoryId!,
+          borrowerId!,
+          imageUrls,
+        );
+        break;
       case TransactionType.borrow:
         // TODO: Handle this case.
         throw UnimplementedError();
@@ -172,6 +182,34 @@ class TransactionService {
     _appState.decreaseUserBalance(amount);
     _walletState.decreateWalletBalance(sourceWalletId, amount);
     _statisticState.updateStatisticData(transaction);
+    return transaction;
+  }
+
+  Future<Transaction> createLendTransaction(
+    double amount,
+    String? description,
+    DateTime transactionDate,
+    int sourceWalletId,
+    int categoryId,
+    int borrowerId,
+    List<String> images,
+  ) async {
+    final response = await _apiClient.post('/transaction/lend/create', {
+      'amount': amount,
+      'description': description,
+      'transactionDate': transactionDate.toIso8601String(),
+      'sourceWalletId': sourceWalletId,
+      'borrowerId': borrowerId,
+      'categoryId': categoryId,
+      'images': images,
+    });
+    final transaction = Transaction.fromJson(response);
+
+    _transactionState.addTransaction(transaction);
+    _walletState.decreateWalletBalance(sourceWalletId, amount);
+    _appState.decreaseUserBalance(transaction.amount);
+    _appState.increaseUserTotalLoan(transaction.amount);
+
     return transaction;
   }
 }
