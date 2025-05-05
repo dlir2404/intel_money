@@ -3,6 +3,7 @@ import 'package:intel_money/core/services/statistic_service.dart';
 
 import '../../shared/const/enum/transaction_type.dart';
 import '../../shared/helper/app_time.dart';
+import '../models/category.dart';
 import '../models/statistic_data.dart';
 import '../models/transaction.dart';
 
@@ -77,34 +78,196 @@ class StatisticState extends ChangeNotifier {
 
   void updateStatisticData(Transaction newTransaction) {
     if (AppTime.isToday(newTransaction.transactionDate)) {
-      if (newTransaction.type == TransactionType.expense) {
-        _todayStatisticData!.totalExpense += newTransaction.amount;
+      updateTodayStatisticData(newTransaction);
+    }
 
-        int categoryIndex = _todayStatisticData!.byCategoryExpense.indexWhere((element) => element.category.id == newTransaction.category!.id);
-        if (categoryIndex != -1) {
-          _todayStatisticData!.byCategoryExpense[categoryIndex].amount += newTransaction.amount;
-        } else {
-          _todayStatisticData!.byCategoryExpense.add(ByCategoryData(
-            category: newTransaction.category!,
-            amount: newTransaction.amount,
-          ));
-        }
+    if (AppTime.isThisWeek(newTransaction.transactionDate)) {
+      updateThisWeekStatisticData(newTransaction);
+    }
 
-      } else if (newTransaction.type == TransactionType.income) {
-        _todayStatisticData!.totalIncome += newTransaction.amount;
+    if (AppTime.isThisMonth(newTransaction.transactionDate)) {
+      updateThisMonthStatisticData(newTransaction);
+    }
 
-        int categoryIndex = _todayStatisticData!.byCategoryIncome.indexWhere((element) => element.category.id == newTransaction.category!.id);
-        if (categoryIndex != -1) {
-          _todayStatisticData!.byCategoryIncome[categoryIndex].amount += newTransaction.amount;
-        } else {
-          _todayStatisticData!.byCategoryIncome.add(ByCategoryData(
-            category: newTransaction.category!,
-            amount: newTransaction.amount,
-          ));
-        }
-      }
+    if (AppTime.isThisQuarter(newTransaction.transactionDate)) {
+      updateThisQuarterStatisticData(newTransaction);
+    }
+
+    if (AppTime.isThisYear(newTransaction.transactionDate)) {
+      updateThisYearStatisticData(newTransaction);
     }
 
     notifyListeners();
+  }
+
+  void updateTodayStatisticData(Transaction newTransaction) {
+    if (newTransaction.type == TransactionType.expense) {
+      _todayStatisticData!.totalExpense += newTransaction.amount;
+
+      int categoryId = newTransaction.category!.parentId ?? newTransaction.category!.id;
+      int categoryIndex = _todayStatisticData!.byCategoryExpense.indexWhere((element) => element.category.id == categoryId);
+      if (categoryIndex != -1) {
+        _todayStatisticData!.byCategoryExpense[categoryIndex].amount += newTransaction.amount;
+      } else {
+        _todayStatisticData!.byCategoryExpense.add(ByCategoryData(
+          category: Category.fromContext(categoryId),
+          amount: newTransaction.amount,
+        ));
+      }
+
+    } else if (newTransaction.type == TransactionType.income) {
+      _todayStatisticData!.totalIncome += newTransaction.amount;
+
+      int categoryId = newTransaction.category!.parentId ?? newTransaction.category!.id;
+      int categoryIndex = _todayStatisticData!.byCategoryIncome.indexWhere((element) => element.category.id == categoryId);
+      if (categoryIndex != -1) {
+        _todayStatisticData!.byCategoryIncome[categoryIndex].amount += newTransaction.amount;
+      } else {
+        _todayStatisticData!.byCategoryIncome.add(ByCategoryData(
+          category: Category.fromContext(categoryId),
+          amount: newTransaction.amount,
+        ));
+      }
+    }
+  }
+
+  void updateThisWeekStatisticData(Transaction newTransaction) {
+    if (_thisWeekStatisticData == null){
+      return;
+    }
+
+    if (newTransaction.type == TransactionType.expense) {
+      _thisWeekStatisticData!.totalExpense += newTransaction.amount;
+
+      int categoryId = newTransaction.category!.parentId ?? newTransaction.category!.id;
+      int categoryIndex = _thisWeekStatisticData!.byCategoryExpense.indexWhere((element) => element.category.id == categoryId);
+      if (categoryIndex != -1) {
+        _thisWeekStatisticData!.byCategoryExpense[categoryIndex].amount += newTransaction.amount;
+      } else {
+        _thisWeekStatisticData!.byCategoryExpense.add(ByCategoryData(
+          category: Category.fromContext(categoryId),
+          amount: newTransaction.amount,
+        ));
+      }
+
+    } else if (newTransaction.type == TransactionType.income) {
+      _thisWeekStatisticData!.totalIncome += newTransaction.amount;
+
+      int categoryId = newTransaction.category!.parentId ?? newTransaction.category!.id;
+      int categoryIndex = _thisWeekStatisticData!.byCategoryIncome.indexWhere((element) => element.category.id == categoryId);
+      if (categoryIndex != -1) {
+        _thisWeekStatisticData!.byCategoryIncome[categoryIndex].amount += newTransaction.amount;
+      } else {
+        _thisWeekStatisticData!.byCategoryIncome.add(ByCategoryData(
+          category: Category.fromContext(categoryId),
+          amount: newTransaction.amount,
+        ));
+      }
+    }
+  }
+
+  void updateThisMonthStatisticData(Transaction newTransaction) {
+    if (_thisMonthStatisticData == null){
+      return;
+    }
+
+    if (newTransaction.type == TransactionType.expense) {
+      _thisMonthStatisticData!.totalExpense += newTransaction.amount;
+
+      int categoryId = newTransaction.category!.parentId ?? newTransaction.category!.id;
+      int categoryIndex = _thisMonthStatisticData!.byCategoryExpense.indexWhere((element) => element.category.id == categoryId);
+      if (categoryIndex != -1) {
+        _thisMonthStatisticData!.byCategoryExpense[categoryIndex].amount += newTransaction.amount;
+      } else {
+        _thisMonthStatisticData!.byCategoryExpense.add(ByCategoryData(
+          category: Category.fromContext(categoryId),
+          amount: newTransaction.amount,
+        ));
+      }
+
+    } else if (newTransaction.type == TransactionType.income) {
+      _thisMonthStatisticData!.totalIncome += newTransaction.amount;
+
+      int categoryId = newTransaction.category!.parentId ?? newTransaction.category!.id;
+      int categoryIndex = _thisMonthStatisticData!.byCategoryIncome.indexWhere((element) => element.category.id == categoryId);
+      if (categoryIndex != -1) {
+        _thisMonthStatisticData!.byCategoryIncome[categoryIndex].amount += newTransaction.amount;
+      } else {
+        _thisMonthStatisticData!.byCategoryIncome.add(ByCategoryData(
+          category: Category.fromContext(categoryId),
+          amount: newTransaction.amount,
+        ));
+      }
+    }
+  }
+
+  void updateThisQuarterStatisticData(Transaction newTransaction) {
+    if (_thisQuarterStatisticData == null){
+      return;
+    }
+
+    if (newTransaction.type == TransactionType.expense) {
+      _thisQuarterStatisticData!.totalExpense += newTransaction.amount;
+
+      int categoryId = newTransaction.category!.parentId ?? newTransaction.category!.id;
+      int categoryIndex = _thisQuarterStatisticData!.byCategoryExpense.indexWhere((element) => element.category.id == categoryId);
+      if (categoryIndex != -1) {
+        _thisQuarterStatisticData!.byCategoryExpense[categoryIndex].amount += newTransaction.amount;
+      } else {
+        _thisQuarterStatisticData!.byCategoryExpense.add(ByCategoryData(
+          category: Category.fromContext(categoryId),
+          amount: newTransaction.amount,
+        ));
+      }
+
+    } else if (newTransaction.type == TransactionType.income) {
+      _thisQuarterStatisticData!.totalIncome += newTransaction.amount;
+
+      int categoryId = newTransaction.category!.parentId ?? newTransaction.category!.id;
+      int categoryIndex = _thisQuarterStatisticData!.byCategoryIncome.indexWhere((element) => element.category.id == categoryId);
+      if (categoryIndex != -1) {
+        _thisQuarterStatisticData!.byCategoryIncome[categoryIndex].amount += newTransaction.amount;
+      } else {
+        _thisQuarterStatisticData!.byCategoryIncome.add(ByCategoryData(
+          category: Category.fromContext(categoryId),
+          amount: newTransaction.amount,
+        ));
+      }
+    }
+  }
+
+  void updateThisYearStatisticData(Transaction newTransaction) {
+    if (_thisYearStatisticData == null){
+      return;
+    }
+
+    if (newTransaction.type == TransactionType.expense) {
+      _thisYearStatisticData!.totalExpense += newTransaction.amount;
+
+      int categoryId = newTransaction.category!.parentId ?? newTransaction.category!.id;
+      int categoryIndex = _thisYearStatisticData!.byCategoryExpense.indexWhere((element) => element.category.id == categoryId);
+      if (categoryIndex != -1) {
+        _thisYearStatisticData!.byCategoryExpense[categoryIndex].amount += newTransaction.amount;
+      } else {
+        _thisYearStatisticData!.byCategoryExpense.add(ByCategoryData(
+          category: Category.fromContext(categoryId),
+          amount: newTransaction.amount,
+        ));
+      }
+
+    } else if (newTransaction.type == TransactionType.income) {
+      _thisYearStatisticData!.totalIncome += newTransaction.amount;
+
+      int categoryId = newTransaction.category!.parentId ?? newTransaction.category!.id;
+      int categoryIndex = _thisYearStatisticData!.byCategoryIncome.indexWhere((element) => element.category.id == categoryId);
+      if (categoryIndex != -1) {
+        _thisYearStatisticData!.byCategoryIncome[categoryIndex].amount += newTransaction.amount;
+      } else {
+        _thisYearStatisticData!.byCategoryIncome.add(ByCategoryData(
+          category: Category.fromContext(categoryId),
+          amount: newTransaction.amount,
+        ));
+      }
+    }
   }
 }
