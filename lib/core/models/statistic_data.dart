@@ -1,12 +1,12 @@
 import 'category.dart';
 
 class StatisticData {
-  final double totalIncome;
-  final double totalExpense;
-  final double totalBalance;
+  double totalIncome;
+  double totalExpense;
+  double totalBalance;
 
-  final List<ByCategoryData> byCategoryIncome;
-  final List<ByCategoryData> byCategoryExpense;
+  List<ByCategoryData> byCategoryIncome;
+  List<ByCategoryData> byCategoryExpense;
 
   StatisticData({
     required this.totalIncome,
@@ -44,7 +44,7 @@ class StatisticData {
 
 class ByCategoryData {
   final Category category;
-  final double amount;
+  double amount;
 
   ByCategoryData({
     required this.category,

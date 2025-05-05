@@ -137,6 +137,7 @@ class TransactionService {
     _appState.addTransaction(transaction);
     _appState.increaseUserBalance(amount);
     _appState.increaseWalletBalance(sourceWalletId, amount);
+    _appState.updateStatisticData(transaction);
     return transaction;
   }
 
@@ -163,6 +164,7 @@ class TransactionService {
     _appState.addTransaction(transaction);
     _appState.decreaseUserBalance(amount);
     _appState.decreateWalletBalance(sourceWalletId, amount);
+    _appState.updateStatisticData(transaction);
     return transaction;
   }
 }

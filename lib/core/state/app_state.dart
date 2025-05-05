@@ -3,8 +3,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:intel_money/core/models/transaction.dart';
 import 'package:intel_money/core/models/user.dart';
 import 'package:intel_money/core/models/wallet.dart';
+import 'package:intel_money/shared/helper/app_time.dart';
 
 import '../../shared/const/enum/category_type.dart';
+import '../../shared/const/enum/transaction_type.dart';
 import '../models/category.dart';
 import '../models/statistic_data.dart';
 
@@ -243,6 +245,39 @@ class AppState extends ChangeNotifier {
   StatisticData? get thisYearStatisticData => _thisYearStatisticData;
   void setThisYearStatisticData(StatisticData statisticData) {
     _thisYearStatisticData = statisticData;
+    notifyListeners();
+  }
+  
+  void updateStatisticData(Transaction newTransaction) {
+    if (AppTime.isToday(newTransaction.transactionDate)) {
+      if (newTransaction.type == TransactionType.expense) {
+        _todayStatisticData!.totalExpense += newTransaction.amount;
+
+        int categoryIndex = _todayStatisticData!.byCategoryExpense.indexWhere((element) => element.category.id == newTransaction.category!.id);
+        if (categoryIndex != -1) {
+          _todayStatisticData!.byCategoryExpense[categoryIndex].amount += newTransaction.amount;
+        } else {
+          _todayStatisticData!.byCategoryExpense.add(ByCategoryData(
+            category: newTransaction.category!,
+            amount: newTransaction.amount,
+          ));
+        }
+
+      } else if (newTransaction.type == TransactionType.income) {
+        _todayStatisticData!.totalIncome += newTransaction.amount;
+
+        int categoryIndex = _todayStatisticData!.byCategoryIncome.indexWhere((element) => element.category.id == newTransaction.category!.id);
+        if (categoryIndex != -1) {
+          _todayStatisticData!.byCategoryIncome[categoryIndex].amount += newTransaction.amount;
+        } else {
+          _todayStatisticData!.byCategoryIncome.add(ByCategoryData(
+            category: newTransaction.category!,
+            amount: newTransaction.amount,
+          ));
+        }
+      }
+    }
+
     notifyListeners();
   }
 
