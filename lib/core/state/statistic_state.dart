@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:intel_money/core/services/statistic_service.dart';
 
 import '../../shared/const/enum/transaction_type.dart';
 import '../../shared/helper/app_time.dart';
@@ -22,25 +23,53 @@ class StatisticState extends ChangeNotifier {
     notifyListeners();
   }
 
-  StatisticData? get thisWeekStatisticData => _thisWeekStatisticData;
+  StatisticData? get thisWeekStatisticData {
+    if (_thisWeekStatisticData != null) {
+      return _thisWeekStatisticData;
+    }
+
+    StatisticService().getThisWeekStatisticData();
+    return _thisWeekStatisticData;
+  }
   void setThisWeekStatisticData(StatisticData statisticData) {
     _thisWeekStatisticData = statisticData;
     notifyListeners();
   }
 
-  StatisticData? get thisMonthStatisticData => _thisMonthStatisticData;
+  StatisticData? get thisMonthStatisticData {
+    if (_thisMonthStatisticData != null) {
+      return _thisMonthStatisticData;
+    }
+
+    StatisticService().getThisMonthStatisticData();
+    return _thisMonthStatisticData;
+  }
   void setThisMonthStatisticData(StatisticData statisticData) {
     _thisMonthStatisticData = statisticData;
     notifyListeners();
   }
 
-  StatisticData? get thisQuarterStatisticData => _thisQuarterStatisticData;
+  StatisticData? get thisQuarterStatisticData {
+    if (_thisQuarterStatisticData != null) {
+      return _thisQuarterStatisticData;
+    }
+
+    StatisticService().getThisQuarterStatisticData();
+    return _thisQuarterStatisticData;
+  }
   void setThisQuarterStatisticData(StatisticData statisticData) {
     _thisQuarterStatisticData = statisticData;
     notifyListeners();
   }
 
-  StatisticData? get thisYearStatisticData => _thisYearStatisticData;
+  StatisticData? get thisYearStatisticData {
+    if (_thisYearStatisticData != null) {
+      return _thisYearStatisticData;
+    }
+
+    StatisticService().getThisYearStatisticData();
+    return _thisYearStatisticData;
+  }
   void setThisYearStatisticData(StatisticData statisticData) {
     _thisYearStatisticData = statisticData;
     notifyListeners();

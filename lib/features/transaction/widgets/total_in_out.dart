@@ -59,7 +59,7 @@ class TotalInOut extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     CurrencyDoubleText(
-                      value: totalIncome,
+                      value: totalExpense,
                       color: Colors.red,
                       fontSize: 17,
                       fontWeight: FontWeight.w500,

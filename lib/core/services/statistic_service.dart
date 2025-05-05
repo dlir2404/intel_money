@@ -19,4 +19,38 @@ class StatisticService {
 
     _state.setTodayStatisticData(statisticData);
   }
+
+  Future<void> getThisWeekStatisticData() async {
+    final response = await _apiClient.get('/statistic/this-week');
+
+    final statisticData = StatisticData.fromJson(response);
+
+    _state.setThisWeekStatisticData(statisticData);
+  }
+
+  Future<void> getThisMonthStatisticData() async {
+    final response = await _apiClient.get('/statistic/this-month');
+
+    final statisticData = StatisticData.fromJson(response);
+
+    _state.setThisMonthStatisticData(statisticData);
+  }
+
+
+  Future<void> getThisQuarterStatisticData() async {
+    final response = await _apiClient.get('/statistic/this-quarter');
+
+    final statisticData = StatisticData.fromJson(response);
+
+    _state.setThisQuarterStatisticData(statisticData);
+  }
+
+
+  Future<void> getThisYearStatisticData() async {
+    final response = await _apiClient.get('/statistic/this-year');
+
+    final statisticData = StatisticData.fromJson(response);
+
+    _state.setThisYearStatisticData(statisticData);
+  }
 }

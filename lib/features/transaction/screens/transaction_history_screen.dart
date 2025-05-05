@@ -6,7 +6,6 @@ import 'package:intel_money/shared/const/enum/transaction_data_source_type.dart'
 import 'package:provider/provider.dart';
 
 import '../../../core/models/transaction.dart';
-import '../../../core/state/app_state.dart';
 import '../../../core/state/transaction_state.dart';
 import '../widgets/total_in_out.dart';
 
