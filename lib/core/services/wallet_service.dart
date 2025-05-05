@@ -1,11 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:intel_money/core/network/api_client.dart';
-import 'package:intel_money/core/state/app_state.dart';
 import 'package:intel_money/core/models/wallet.dart';
 import 'package:intel_money/shared/const/icons/wallet_icon.dart';
 
+import '../state/wallet_state.dart';
+
 class WalletService {
-  final AppState _appState = AppState();
+  final WalletState _walletState = WalletState();
   final ApiClient _apiClient = ApiClient.instance;
 
   static final WalletService _instance = WalletService._internal();
@@ -28,7 +29,7 @@ class WalletService {
     debugPrint(response.toString());
 
     final wallet = Wallet.fromJson(response);
-    _appState.addWallet(wallet);
+    _walletState.addWallet(wallet);
   }
 
   Future<void> getWallets() async {
@@ -37,7 +38,7 @@ class WalletService {
     final List<dynamic> walletsData = response['wallets'];
     final wallets =
         walletsData.map((wallet) => Wallet.fromJson(wallet)).toList();
-    _appState.setWallets(wallets);
+    _walletState.setWallets(wallets);
   }
 
   Future<void> update(
@@ -61,11 +62,11 @@ class WalletService {
       balance: balance,
       description: description,
     );
-    _appState.updateWallet(wallet);
+    _walletState.updateWallet(wallet);
   }
 
   Future<void> delete(int id) async {
     await _apiClient.delete('/wallet/$id');
-    _appState.removeWallet(id);
+    _walletState.removeWallet(id);
   }
 }

@@ -2,7 +2,6 @@ import 'package:currency_picker/currency_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intel_money/core/models/transaction.dart';
 import 'package:intel_money/core/models/user.dart';
-import 'package:intel_money/core/models/wallet.dart';
 import 'package:intel_money/shared/helper/app_time.dart';
 
 import '../../shared/const/enum/category_type.dart';
@@ -25,7 +24,6 @@ class AppState extends ChangeNotifier {
 
 
   User? _user;
-  List<Wallet> _wallets = [];
   List<Category> _categories = [];
   List<Category> _expenseCategories = [];
   List<Category> _incomeCategories = [];
@@ -43,10 +41,6 @@ class AppState extends ChangeNotifier {
 
   User? get user => _user;
 
-  List<Wallet> get wallets => _wallets;
-
-  Wallet get defaultWallet => _wallets[0];
-
   List<Category> get categories => _categories;
 
   List<Category> get expenseCategories => _expenseCategories;
@@ -57,27 +51,6 @@ class AppState extends ChangeNotifier {
 
   void setUser(User user) {
     _user = user;
-    notifyListeners();
-  }
-
-  void setWallets(List<Wallet> wallets) {
-    _wallets = wallets;
-    notifyListeners();
-  }
-
-  void addWallet(Wallet wallet) {
-    _wallets.add(wallet);
-    notifyListeners();
-  }
-
-  void updateWallet(Wallet wallet) {
-    final index = _wallets.indexWhere((element) => element.id == wallet.id);
-    _wallets[index] = wallet;
-    notifyListeners();
-  }
-
-  void removeWallet(int id) {
-    _wallets.removeWhere((element) => element.id == id);
     notifyListeners();
   }
 
@@ -199,18 +172,6 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  void decreateWalletBalance(int walletId, double amount) {
-    final index = _wallets.indexWhere((element) => element.id == walletId);
-    _wallets[index].balance -= amount;
-    notifyListeners();
-  }
-
-  void increaseWalletBalance(int walletId, double amount) {
-    final index = _wallets.indexWhere((element) => element.id == walletId);
-    _wallets[index].balance += amount;
-    notifyListeners();
-  }
-
 
   StatisticData? _todayStatisticData;
   StatisticData? _thisWeekStatisticData;
@@ -283,7 +244,6 @@ class AppState extends ChangeNotifier {
 
   void clear() {
     _user = null;
-    _wallets = [];
     notifyListeners();
   }
 }

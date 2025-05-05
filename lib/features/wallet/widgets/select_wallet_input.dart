@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:intel_money/core/state/wallet_state.dart';
 import '../../../core/models/wallet.dart';
-import '../../../core/state/app_state.dart';
 import '../screens/select_wallet_screen.dart';
+import '../../../shared/const/icons/wallet_icon.dart';
 
 class SelectWalletInput extends StatefulWidget {
   final String placeholder;
@@ -18,7 +19,7 @@ class SelectWalletInput extends StatefulWidget {
 }
 
 class _SelectWalletInputState extends State<SelectWalletInput> {
-  Wallet _wallet = AppState().defaultWallet;
+  Wallet? _wallet = WalletState().defaultWallet;
 
   void _navigateToSelectWallet() async {
     final selectedWallet = await Navigator.push<Wallet>(
@@ -52,21 +53,21 @@ class _SelectWalletInputState extends State<SelectWalletInput> {
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: _wallet.icon.color.withOpacity(0.15),
+                color: _wallet?.icon.color.withOpacity(0.15) ?? Colors.grey.withOpacity(0.15),
                 shape: BoxShape.circle,
               ),
               child: Icon(
-                _wallet.icon.icon,
-                color: _wallet.icon.color,
+                _wallet?.icon.icon ?? WalletIcon.defaultIcon().icon,
+                color: _wallet?.icon.color ?? Colors.grey,
                 size: 24,
               ),
             ),
             const SizedBox(width: 10),
             Expanded(
               child: Text(
-                _wallet.name,
+                _wallet?.name ?? widget.placeholder,
                 style: TextStyle(
-                  color: Colors.black,
+                  color: _wallet == null ? Colors.grey : Colors.black,
                 ),
               ),
             ),

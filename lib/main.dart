@@ -4,6 +4,7 @@ import 'package:google_mobile_ads/google_mobile_ads.dart' hide AppState;
 import 'package:intel_money/core/network/api_client.dart';
 import 'package:intel_money/core/services/auth_service.dart';
 import 'package:intel_money/core/state/app_state.dart';
+import 'package:intel_money/core/state/wallet_state.dart';
 import 'package:intel_money/features/auth/login/login_view.dart';
 import 'package:intel_money/shared/component/layout/authenticated_app.dart';
 import 'package:provider/provider.dart';
@@ -18,8 +19,12 @@ Future<void> main() async {
   //initialize app
   await AppInitializer.initialize();
 
-  runApp(ChangeNotifierProvider(
-    create: (context) => AppState(),
+  runApp(MultiProvider(
+    providers: [
+      ChangeNotifierProvider(create: (context) => AppState()),
+      ChangeNotifierProvider(create: (context) => WalletState()),
+      // Add more providers as needed
+    ],
     child: MyApp(),
   ));
 }

@@ -1,6 +1,5 @@
 import 'package:intel_money/shared/const/icons/wallet_icon.dart';
-
-import '../state/app_state.dart';
+import '../state/wallet_state.dart';
 import 'app_icon.dart';
 
 class Wallet {
@@ -20,7 +19,7 @@ class Wallet {
 
 
   factory Wallet.fromContext(int? id) {
-    return AppState().wallets.firstWhere((wallet) => wallet.id == id);
+    return WalletState().wallets.firstWhere((wallet) => wallet.id == id);
   }
 
 

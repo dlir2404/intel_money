@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:intel_money/core/network/api_client.dart';
 import 'package:intel_money/core/state/app_state.dart';
+import 'package:intel_money/core/state/wallet_state.dart';
 import 'package:intel_money/shared/const/enum/transaction_type.dart';
 
 import '../models/transaction.dart';
@@ -9,6 +10,7 @@ import 'cloudinary_service.dart';
 
 class TransactionService {
   final AppState _appState = AppState();
+  final WalletState _walletState = WalletState();
   final ApiClient _apiClient = ApiClient.instance;
 
   static final TransactionService _instance = TransactionService._internal();
@@ -109,8 +111,8 @@ class TransactionService {
     final transaction = Transaction.fromJson(response);
 
     _appState.addTransaction(transaction);
-    _appState.decreateWalletBalance(sourceWalletId, amount);
-    _appState.increaseWalletBalance(destinationWalletId, amount);
+    _walletState.decreateWalletBalance(sourceWalletId, amount);
+    _walletState.increaseWalletBalance(destinationWalletId, amount);
     return transaction;
   }
 
@@ -136,7 +138,7 @@ class TransactionService {
 
     _appState.addTransaction(transaction);
     _appState.increaseUserBalance(amount);
-    _appState.increaseWalletBalance(sourceWalletId, amount);
+    _walletState.increaseWalletBalance(sourceWalletId, amount);
     _appState.updateStatisticData(transaction);
     return transaction;
   }
@@ -163,7 +165,7 @@ class TransactionService {
 
     _appState.addTransaction(transaction);
     _appState.decreaseUserBalance(amount);
-    _appState.decreateWalletBalance(sourceWalletId, amount);
+    _walletState.decreateWalletBalance(sourceWalletId, amount);
     _appState.updateStatisticData(transaction);
     return transaction;
   }

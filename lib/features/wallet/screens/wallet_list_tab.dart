@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intel_money/core/services/wallet_service.dart';
-import 'package:intel_money/core/state/app_state.dart';
-import 'package:intel_money/core/models/wallet.dart';
+import 'package:intel_money/core/state/wallet_state.dart';
 import 'package:provider/provider.dart';
-
-import '../../../shared/const/icons/wallet_icon.dart';
 import '../widgets/wallet_list.dart';
 
 class WalletListTab extends StatelessWidget {
@@ -12,9 +9,9 @@ class WalletListTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<AppState>(
-      builder: (context, appState, _) {
-        final wallets = appState.wallets;
+    return Consumer<WalletState>(
+      builder: (context, state, _) {
+        final wallets = state.wallets;
 
         return RefreshIndicator(
           onRefresh: () async {
