@@ -44,15 +44,13 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
   File? _image;
 
   RelatedUser? _borrower;
+  RelatedUser? _lender;
 
   bool _isLoading = false;
 
   void _clearFields() {
     setState(() {
       _amount = 0;
-      _selectedCategory = null;
-      _destinationWallet = null;
-      _transactionDate = DateTime.now();
       _descriptionController.clear();
       _image = null;
     });
@@ -64,7 +62,9 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
       return;
     }
     if ((_selectedTransactionType == TransactionType.expense ||
-            _selectedTransactionType == TransactionType.income) &&
+            _selectedTransactionType == TransactionType.income ||
+            _selectedTransactionType == TransactionType.lend ||
+            _selectedTransactionType == TransactionType.borrow) &&
         _selectedCategory == null) {
       AppToast.showError(context, 'Please select a category');
       return;
@@ -97,6 +97,11 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
       return;
     }
 
+    if (_selectedTransactionType == TransactionType.borrow && _lender == null) {
+      AppToast.showError(context, "Please choose a lender");
+      return;
+    }
+
     setState(() {
       _isLoading = true;
     });
@@ -107,9 +112,16 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
         images.add(_image!);
       }
 
-      if (_borrower!.isTemporary) {
+      if (_selectedTransactionType == TransactionType.lend &&
+          _borrower!.isTemporary) {
         //save the borrower first
         await RelatedUserService().create(_borrower!);
+      }
+
+      if (_selectedTransactionType == TransactionType.borrow &&
+          _lender!.isTemporary) {
+        //save the lender first
+        await RelatedUserService().create(_lender!);
       }
 
       await TransactionService().createTransaction(
@@ -123,6 +135,7 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
         notAddToReport: false,
         images: images,
         borrowerId: _borrower?.id,
+        lenderId: _lender?.id,
       );
 
       AppToast.showSuccess(context, 'Saved');
@@ -225,7 +238,8 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
 
               if (_selectedTransactionType == TransactionType.income ||
                   _selectedTransactionType == TransactionType.expense ||
-                  _selectedTransactionType == TransactionType.lend)
+                  _selectedTransactionType == TransactionType.lend ||
+                  _selectedTransactionType == TransactionType.borrow)
                 Column(
                   children: [
                     SelectCategoryInput(
@@ -251,6 +265,21 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
                       onRelatedUserSelected: (user) {
                         setState(() {
                           _borrower = user;
+                        });
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                  ],
+                ),
+
+              if (_selectedTransactionType == TransactionType.borrow)
+                Column(
+                  children: [
+                    SelectRelatedUserInput(
+                      placeholder: 'Lender',
+                      onRelatedUserSelected: (user) {
+                        setState(() {
+                          _lender = user;
                         });
                       },
                     ),

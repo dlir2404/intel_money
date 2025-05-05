@@ -6,7 +6,7 @@ class User {
   final String? picture;
   double totalBalance;
   double totalLoan;
-  double totalBorrowed;
+  double totalDebt;
 
   User({
     required this.id,
@@ -16,7 +16,7 @@ class User {
     this.picture,
     this.totalBalance = 0.0,
     this.totalLoan = 0.0,
-    this.totalBorrowed = 0.0,
+    this.totalDebt = 0.0,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
@@ -28,7 +28,7 @@ class User {
       picture: json['picture'],
       totalBalance: json['totalBalance']?.toDouble() ?? 0.0,
       totalLoan: json['totalLoan']?.toDouble() ?? 0.0,
-      totalBorrowed: json['totalBorrowed']?.toDouble() ?? 0.0,
+      totalDebt: json['totalBorrowed']?.toDouble() ?? 0.0,
     );
 
     return user;
@@ -36,7 +36,7 @@ class User {
 
   @override
   String toString() {
-    return 'User(id: $id, name: $name, email: $email, phone: $phone, totalBalance: $totalBalance, totalLoan: $totalLoan, totalBorrowed: $totalBorrowed)';
+    return 'User(id: $id, name: $name, email: $email, phone: $phone, totalBalance: $totalBalance, totalLoan: $totalLoan, totalBorrowed: $totalDebt)';
   }
 
   Map<String, dynamic> toJson() {
@@ -48,7 +48,7 @@ class User {
       'picture': picture,
       'totalBalance': totalBalance,
       'totalLoan': totalLoan,
-      'totalBorrowed': totalBorrowed,
+      'totalBorrowed': totalDebt,
     };
   }
 }
