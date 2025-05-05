@@ -1,13 +1,12 @@
-import 'package:flutter/cupertino.dart';
 import 'package:intel_money/core/network/api_client.dart';
 import 'package:intel_money/shared/const/enum/category_type.dart';
 
 import '../../shared/const/icons/category_icon.dart';
-import '../state/app_state.dart';
 import '../models/category.dart';
+import '../state/category_state.dart';
 
 class CategoryService {
-  final AppState _appState = AppState();
+  final CategoryState _appState = CategoryState();
   final ApiClient _apiClient = ApiClient.instance;
 
   static final CategoryService _instance = CategoryService._internal();

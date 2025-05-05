@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intel_money/core/services/category_service.dart';
+import 'package:intel_money/core/state/category_state.dart';
 import 'package:intel_money/features/category/widgets/icon_picker.dart';
 import 'package:intel_money/features/category/widgets/select_category_input.dart';
 import 'package:intel_money/shared/component/input/form_input.dart';
-import 'package:intel_money/core/state/app_state.dart';
 import 'package:intel_money/core/models/category.dart';
 
 import '../../../core/models/app_icon.dart';
@@ -19,7 +19,7 @@ class EditCategoryScreen extends StatefulWidget {
 }
 
 class _EditCategoryScreenState extends State<EditCategoryScreen> {
-  Category category = AppState().categories[0];
+  Category category = CategoryState().categories[0];
 
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();

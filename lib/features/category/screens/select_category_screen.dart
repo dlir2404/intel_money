@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:intel_money/core/state/category_state.dart';
 import 'package:intel_money/shared/component/icons/icon_selected.dart';
 import 'package:intel_money/shared/const/enum/category_type.dart';
 import 'package:provider/provider.dart';
-import '../../../core/state/app_state.dart';
 import '../../../core/models/category.dart';
 import '../widgets/category_group.dart';
 
@@ -42,12 +42,12 @@ class _SelectCategoryScreenState extends State<SelectCategoryScreen> {
         backgroundColor: primaryColor,
         foregroundColor: Colors.white,
       ),
-      body: Consumer<AppState>(
-        builder: (context, appState, _) {
+      body: Consumer<CategoryState>(
+        builder: (context, state, _) {
           final parentCategories =
               widget.categoryType == CategoryType.expense
-                  ? appState.expenseCategories
-                  : appState.incomeCategories;
+                  ? state.expenseCategories
+                  : state.incomeCategories;
 
           return ListView.builder(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),

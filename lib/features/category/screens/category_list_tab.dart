@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:intel_money/core/services/category_service.dart';
-import 'package:intel_money/core/state/app_state.dart';
 import 'package:intel_money/core/models/category.dart';
 import 'package:provider/provider.dart';
 import 'package:intel_money/shared/const/enum/category_type.dart';
 
 import '../../../core/config/routes.dart';
+import '../../../core/state/category_state.dart';
 import '../widgets/category_group.dart';
 
 class CategoryListTab extends StatelessWidget {
@@ -15,11 +15,11 @@ class CategoryListTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<AppState>(
-      builder: (context, appState, _) {
+    return Consumer<CategoryState>(
+      builder: (context, state, _) {
         final categories = categoryType == CategoryType.expense
-            ? appState.expenseCategories
-            : appState.incomeCategories;
+            ? state.expenseCategories
+            : state.incomeCategories;
 
         return RefreshIndicator(
           onRefresh: () async {

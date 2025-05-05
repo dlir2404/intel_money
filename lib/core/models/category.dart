@@ -1,7 +1,7 @@
 import 'package:intel_money/shared/const/enum/category_type.dart';
 
 import '../../shared/const/icons/category_icon.dart';
-import '../state/app_state.dart';
+import '../state/category_state.dart';
 import 'app_icon.dart';
 
 class Category{
@@ -23,7 +23,7 @@ class Category{
   });
 
   factory Category.fromContext(int? id) {
-    final List<Category> nestedCategories = AppState().categories;
+    final List<Category> nestedCategories = CategoryState().categories;
     for (var i = 0; i < nestedCategories.length; i++) {
       if (nestedCategories[i].id == id) {
         return nestedCategories[i];
@@ -37,7 +37,7 @@ class Category{
     }
 
     //fallback to first category
-    return AppState().expenseCategories[0];
+    return CategoryState().expenseCategories[0];
   }
 
   factory Category.fromJson(Map<String, dynamic> json) {
