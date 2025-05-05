@@ -43,6 +43,8 @@ class AppState extends ChangeNotifier {
 
   List<Wallet> get wallets => _wallets;
 
+  Wallet get defaultWallet => _wallets[0];
+
   List<Category> get categories => _categories;
 
   List<Category> get expenseCategories => _expenseCategories;

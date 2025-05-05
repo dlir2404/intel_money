@@ -35,13 +35,25 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
   TransactionType _selectedTransactionType = TransactionType.expense;
   double _amount = 0;
   Category? _selectedCategory;
-  Wallet? _sourceWallet;
+  Wallet _sourceWallet = AppState().defaultWallet;
   Wallet? _destinationWallet;
   DateTime? _transactionDate = DateTime.now();
   final TextEditingController _descriptionController = TextEditingController();
   File? _image;
 
   bool _isLoading = false;
+
+  void _clearFields() {
+    setState(() {
+      _amount = 0;
+      _selectedCategory = null;
+      _sourceWallet = AppState().defaultWallet;
+      _destinationWallet = null;
+      _transactionDate = DateTime.now();
+      _descriptionController.clear();
+      _image = null;
+    });
+  }
 
   Future<void> _saveTransaction() async {
     if (_amount <= 0) {
@@ -93,6 +105,9 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
       );
 
       AppToast.showSuccess(context, 'Saved');
+
+      // Clear fields after saving
+      _clearFields();
     } catch (e) {
       if (e is ApiException) {
         AppToast.showError(context, e.message);
@@ -133,7 +148,7 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
       if (result.extractedData != null) {
         _amount = result.extractedData?.amount ?? 0;
         _selectedCategory = result.extractedData!.category;
-        _sourceWallet = result.extractedData!.sourceWallet;
+        _sourceWallet = result.extractedData!.sourceWallet ?? AppState().defaultWallet;
         _transactionDate = result.extractedData!.date;
         _descriptionController.text = result.extractedData!.description ?? '';
       }
