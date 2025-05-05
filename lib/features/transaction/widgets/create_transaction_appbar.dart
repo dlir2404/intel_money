@@ -11,7 +11,7 @@ class CreateTransactionAppbar extends StatefulWidget
   final bool isLoading;
   final Function() onSave;
 
-  const CreateTransactionAppbar({
+  const   CreateTransactionAppbar({
     super.key,
     required this.selectedTransactionType,
     required this.onTransactionTypeChanged,

@@ -19,6 +19,7 @@ import '../../../core/services/transaction_service.dart';
 import '../../../core/state/wallet_state.dart';
 import '../../../shared/component/input/form_input.dart';
 import '../../category/widgets/select_category_input.dart';
+import '../../related_user/widgets/select_related_user_input.dart';
 import '../controller/transaction_controller.dart';
 import '../widgets/input_image.dart';
 
@@ -58,7 +59,9 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
       AppToast.showError(context, 'Amount must be greater than 0');
       return;
     }
-    if ((_selectedTransactionType == TransactionType.expense || _selectedTransactionType == TransactionType.income) && _selectedCategory == null) {
+    if ((_selectedTransactionType == TransactionType.expense ||
+            _selectedTransactionType == TransactionType.income) &&
+        _selectedCategory == null) {
       AppToast.showError(context, 'Please select a category');
       return;
     }
@@ -71,12 +74,17 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
       return;
     }
 
-    if (_selectedTransactionType == TransactionType.transfer && _destinationWallet == null){
+    if (_selectedTransactionType == TransactionType.transfer &&
+        _destinationWallet == null) {
       AppToast.showError(context, "Please choose a destination wallet");
       return;
     }
-    if (_selectedTransactionType == TransactionType.transfer && _sourceWallet == _destinationWallet){
-      AppToast.showError(context, "Source wallet and destination wallet can not be the same");
+    if (_selectedTransactionType == TransactionType.transfer &&
+        _sourceWallet == _destinationWallet) {
+      AppToast.showError(
+        context,
+        "Source wallet and destination wallet can not be the same",
+      );
       return;
     }
 
@@ -146,7 +154,8 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
       if (result.extractedData != null) {
         _amount = result.extractedData?.amount ?? 0;
         _selectedCategory = result.extractedData!.category;
-        _sourceWallet = result.extractedData!.sourceWallet ?? WalletState().defaultWallet;
+        _sourceWallet =
+            result.extractedData!.sourceWallet ?? WalletState().defaultWallet;
         _transactionDate = result.extractedData!.date;
         _descriptionController.text = result.extractedData!.description ?? '';
       }
@@ -200,7 +209,8 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
               const SizedBox(height: 16),
 
               if (_selectedTransactionType == TransactionType.income ||
-                  _selectedTransactionType == TransactionType.expense)
+                  _selectedTransactionType == TransactionType.expense ||
+                  _selectedTransactionType == TransactionType.lend)
                 Column(
                   children: [
                     SelectCategoryInput(
@@ -216,6 +226,21 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
                         });
                       },
                       showChildren: true,
+                    ),
+                    const SizedBox(height: 16),
+                  ],
+                ),
+
+              if (_selectedTransactionType == TransactionType.lend)
+                Column(
+                  children: [
+                    SelectRelatedUserInput(
+                      placeholder: 'Borrower',
+                      onRelatedUserSelected: (user) {
+                        setState(() {
+                          // _selectedRelatedUser = user;
+                        });
+                      },
                     ),
                     const SizedBox(height: 16),
                   ],
