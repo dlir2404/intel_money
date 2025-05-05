@@ -8,9 +8,15 @@ class AppTime {
 
   static bool isThisWeek(DateTime date) {
     final now = DateTime.now();
-    final startOfWeek = now.subtract(Duration(days: now.weekday - 1));
-    final endOfWeek = startOfWeek.add(Duration(days: 6));
-    return date.isAfter(startOfWeek) && date.isBefore(endOfWeek);
+    // Get start of current week (Monday)
+    final startOfWeek = DateTime(now.year, now.month, now.day)
+        .subtract(Duration(days: now.weekday - 1));
+    // Get end of current week (Sunday)
+    final endOfWeek = startOfWeek.add(Duration(days: 6, hours: 23, minutes: 59, seconds: 59));
+
+    // Include start and end dates in the comparison
+    return (date.isAtSameMomentAs(startOfWeek) || date.isAfter(startOfWeek)) &&
+        (date.isAtSameMomentAs(endOfWeek) || date.isBefore(endOfWeek));
   }
 
   static bool isThisMonth(DateTime date) {
