@@ -19,7 +19,32 @@ class SelectWalletInput extends StatefulWidget {
 }
 
 class _SelectWalletInputState extends State<SelectWalletInput> {
-  Wallet? _wallet = WalletState().defaultWallet;
+  Wallet? _wallet;
+  final WalletState _walletState = WalletState();
+
+  @override
+  void initState() {
+    super.initState();
+    _wallet = _walletState.defaultWallet;
+    _walletState.addListener(_onWalletStateChanged);
+  }
+
+  @override
+  void dispose() {
+    _walletState.removeListener(_onWalletStateChanged);
+    super.dispose();
+  }
+
+  void _onWalletStateChanged() {
+    if (mounted) {
+      setState(() {
+        // Only update if we're using the default wallet (not a custom selection)
+        if (_wallet == null || _wallet == _walletState.defaultWallet) {
+          _wallet = _walletState.defaultWallet;
+        }
+      });
+    }
+  }
 
   void _navigateToSelectWallet() async {
     final selectedWallet = await Navigator.push<Wallet>(
@@ -53,7 +78,9 @@ class _SelectWalletInputState extends State<SelectWalletInput> {
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: _wallet?.icon.color.withOpacity(0.15) ?? Colors.grey.withOpacity(0.15),
+                color:
+                    _wallet?.icon.color.withOpacity(0.15) ??
+                    Colors.grey.withOpacity(0.15),
                 shape: BoxShape.circle,
               ),
               child: Icon(
