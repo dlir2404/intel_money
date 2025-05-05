@@ -43,10 +43,38 @@ class _MainInputState extends State<MainInput> {
       _focusNode.addListener(_handleFocusChange);
     });
 
-    if (widget.initialValue != null && widget.initialValue! > 0) {
+    if (widget.initialValue != null) {
       _value = widget.initialValue!;
 
-      _displayText = _getDisplayText(_value.toString());
+      String valueText = _value.toString();
+      if (valueText.endsWith('.0')) {
+        valueText = valueText.substring(0, valueText.length - 2);
+      }
+
+      valueText = valueText.replaceAll(".", ",");
+      _displayText = _getDisplayText(valueText);
+
+      //try parse again in case of too much decimal places
+      _value = _getValueFromDisplayText(_displayText);
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant MainInput oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    // Check if initialValue has changed
+    if (widget.initialValue != oldWidget.initialValue && widget.initialValue != null) {
+      _value = widget.initialValue!;
+
+      String valueText = _value.toString();
+      if (valueText.endsWith('.0')) {
+        valueText = valueText.substring(0, valueText.length - 2);
+      }
+
+      valueText = valueText.replaceAll(".", ",");
+      _displayText = _getDisplayText(valueText);
+
       //try parse again in case of too much decimal places
       _value = _getValueFromDisplayText(_displayText);
     }

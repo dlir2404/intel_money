@@ -16,7 +16,6 @@ import 'package:intel_money/shared/helper/toast.dart';
 import '../../../core/models/category.dart';
 import '../../../core/models/wallet.dart';
 import '../../../core/services/transaction_service.dart';
-import '../../../core/state/app_state.dart';
 import '../../../core/state/wallet_state.dart';
 import '../../../shared/component/input/form_input.dart';
 import '../../category/widgets/select_category_input.dart';
@@ -35,7 +34,7 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
   TransactionType _selectedTransactionType = TransactionType.expense;
   double _amount = 0;
   Category? _selectedCategory;
-  Wallet? _sourceWallet = WalletState().defaultWallet;
+  Wallet? _sourceWallet;
   Wallet? _destinationWallet;
   DateTime? _transactionDate = DateTime.now();
   final TextEditingController _descriptionController = TextEditingController();
@@ -47,7 +46,6 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
     setState(() {
       _amount = 0;
       _selectedCategory = null;
-      _sourceWallet = WalletState().defaultWallet;
       _destinationWallet = null;
       _transactionDate = DateTime.now();
       _descriptionController.clear();
@@ -191,6 +189,7 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               MainInput(
+                initialValue: _amount,
                 onChanged: (double newValue) {
                   setState(() {
                     _amount = newValue;

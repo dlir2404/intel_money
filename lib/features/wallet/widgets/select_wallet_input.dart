@@ -41,6 +41,7 @@ class _SelectWalletInputState extends State<SelectWalletInput> {
         // Only update if we're using the default wallet (not a custom selection)
         if (_wallet == null || _wallet == _walletState.defaultWallet) {
           _wallet = _walletState.defaultWallet;
+          widget.onWalletSelected(_wallet!);
         }
       });
     }
