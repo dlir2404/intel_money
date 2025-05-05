@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import '../../../core/config/routes.dart';
 import '../../../core/models/statistic_data.dart';
 import '../../../core/state/app_state.dart';
+import '../../../core/state/statistic_state.dart';
 import '../../../shared/component/charts/donut_chart.dart';
 import '../../../shared/const/enum/statistic_type.dart';
 
@@ -153,25 +154,25 @@ class _ExpenseIncomeChartState extends State<ExpenseIncomeChart> {
     return chartWidgets;
   }
 
-  StatisticData? _getStatisticData(AppState appState) {
+  StatisticData? _getStatisticData(StatisticState statisticState) {
     switch (type) {
       case StatisticThisTime.today:
-        return appState.todayStatisticData;
+        return statisticState.todayStatisticData;
       case StatisticThisTime.thisWeek:
-        return appState.thisWeekStatisticData;
+        return statisticState.thisWeekStatisticData;
       case StatisticThisTime.thisMonth:
-        return appState.thisMonthStatisticData;
+        return statisticState.thisMonthStatisticData;
       case StatisticThisTime.thisQuarter:
-        return appState.thisQuarterStatisticData;
+        return statisticState.thisQuarterStatisticData;
       case StatisticThisTime.thisYear:
-        return appState.thisYearStatisticData;
+        return statisticState.thisYearStatisticData;
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final appState = Provider.of<AppState>(context);
-    final statisticData = _getStatisticData(appState);
+    final statisticState = Provider.of<StatisticState>(context);
+    final statisticData = _getStatisticData(statisticState);
 
     return Container(
       color: Colors.white,

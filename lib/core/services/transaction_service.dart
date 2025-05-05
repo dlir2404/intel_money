@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:intel_money/core/network/api_client.dart';
 import 'package:intel_money/core/state/app_state.dart';
+import 'package:intel_money/core/state/statistic_state.dart';
 import 'package:intel_money/core/state/transaction_state.dart';
 import 'package:intel_money/core/state/wallet_state.dart';
 import 'package:intel_money/shared/const/enum/transaction_type.dart';
@@ -13,6 +14,8 @@ class TransactionService {
   final AppState _appState = AppState();
   final TransactionState _transactionState = TransactionState();
   final WalletState _walletState = WalletState();
+  final StatisticState _statisticState = StatisticState();
+
   final ApiClient _apiClient = ApiClient.instance;
 
   static final TransactionService _instance = TransactionService._internal();
@@ -141,7 +144,7 @@ class TransactionService {
     _transactionState.addTransaction(transaction);
     _appState.increaseUserBalance(amount);
     _walletState.increaseWalletBalance(sourceWalletId, amount);
-    _appState.updateStatisticData(transaction);
+    _statisticState.updateStatisticData(transaction);
     return transaction;
   }
 
@@ -168,7 +171,7 @@ class TransactionService {
     _transactionState.addTransaction(transaction);
     _appState.decreaseUserBalance(amount);
     _walletState.decreateWalletBalance(sourceWalletId, amount);
-    _appState.updateStatisticData(transaction);
+    _statisticState.updateStatisticData(transaction);
     return transaction;
   }
 }

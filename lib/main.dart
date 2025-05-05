@@ -14,6 +14,7 @@ import 'core/config/routes.dart';
 import 'core/initialization/app_initializer.dart';
 import 'core/services/ad_service.dart';
 import 'core/state/category_state.dart';
+import 'core/state/statistic_state.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,6 +28,7 @@ Future<void> main() async {
       ChangeNotifierProvider(create: (context) => WalletState()),
       ChangeNotifierProvider(create: (context) => CategoryState()),
       ChangeNotifierProvider(create: (context) => TransactionState()),
+      ChangeNotifierProvider(create: (context) => StatisticState()),
       // Add more providers as needed
     ],
     child: MyApp(),

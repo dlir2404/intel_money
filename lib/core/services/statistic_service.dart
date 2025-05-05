@@ -1,9 +1,10 @@
+import 'package:intel_money/core/state/statistic_state.dart';
+
 import '../models/statistic_data.dart';
 import '../network/api_client.dart';
-import '../state/app_state.dart';
 
 class StatisticService {
-  final AppState _appState = AppState();
+  final StatisticState _state = StatisticState();
   final ApiClient _apiClient = ApiClient.instance;
 
 
@@ -16,6 +17,6 @@ class StatisticService {
 
     final statisticData = StatisticData.fromJson(response);
 
-    _appState.setTodayStatisticData(statisticData);
+    _state.setTodayStatisticData(statisticData);
   }
 }
