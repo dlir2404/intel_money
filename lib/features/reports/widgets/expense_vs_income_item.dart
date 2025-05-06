@@ -16,42 +16,47 @@ class ExpenseVsIncomeItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.white,
-      padding: const EdgeInsets.all(16),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-          ),
-
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
+    return Column(
+      children: [
+        Container(
+          color: Colors.white,
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              CurrencyDoubleText(
-                value: totalIncome,
-                fontSize: 16,
-                color: Colors.green,
+              Text(
+                title,
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
               ),
-              const SizedBox(height: 6),
 
-              CurrencyDoubleText(
-                value: totalExpense,
-                fontSize: 16,
-                color: Colors.red,
-              ),
-              const SizedBox(height: 3),
-              Container(color: Colors.grey, child: const SizedBox(height: 0.2, width: 100,)),
-              const SizedBox(height: 3),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  CurrencyDoubleText(
+                    value: totalIncome,
+                    fontSize: 16,
+                    color: Colors.green,
+                  ),
+                  const SizedBox(height: 6),
 
-              CurrencyDoubleText(value: totalIncome - totalExpense, fontSize: 16),
+                  CurrencyDoubleText(
+                    value: totalExpense,
+                    fontSize: 16,
+                    color: Colors.red,
+                  ),
+                  const SizedBox(height: 3),
+                  Container(color: Colors.grey, child: const SizedBox(height: 0.2, width: 100,)),
+                  const SizedBox(height: 3),
+
+                  CurrencyDoubleText(value: totalIncome - totalExpense, fontSize: 16),
+                ],
+              )
             ],
-          )
-        ],
-      ),
+          ),
+        ),
+        const SizedBox(height: 2),
+      ]
     );
   }
 }

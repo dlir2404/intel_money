@@ -36,35 +36,30 @@ class _CurrentExpenseVsIncomeState extends State<CurrentExpenseVsIncome> {
                 totalIncome: today.totalIncome,
                 totalExpense: today.totalExpense,
               ),
-              const SizedBox(height: 1),
 
               ExpenseVsIncomeItem(
                 title: "This week",
                 totalIncome: thisWeek.totalIncome,
                 totalExpense: thisWeek.totalExpense,
               ),
-              const SizedBox(height: 1),
 
               ExpenseVsIncomeItem(
                 title: "This month",
                 totalIncome: thisMonth.totalIncome,
                 totalExpense: thisMonth.totalExpense,
               ),
-              const SizedBox(height: 1),
 
               ExpenseVsIncomeItem(
                 title: "This quarter",
                 totalIncome: thisQuarter.totalIncome,
                 totalExpense: thisQuarter.totalExpense,
               ),
-              const SizedBox(height: 1),
 
               ExpenseVsIncomeItem(
                 title: "This year",
                 totalIncome: thisYear.totalIncome,
                 totalExpense: thisYear.totalExpense,
               ),
-              const SizedBox(height: 1),
             ],
           );
         },

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'month_expense_vs_income_overview.dart';
 import 'month_income_vs_expense_chart.dart';
 
 class MonthExpenseVsIncome extends StatefulWidget {
@@ -14,10 +15,19 @@ class _MonthExpenseVsIncomeState extends State<MonthExpenseVsIncome> {
   Widget build(BuildContext context) {
     return Container(
       color: Colors.grey[100],
-      child: Column(
-        children: [
-          MonthIncomeVsExpenseChart(),
-        ],
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
+              color: Colors.white,
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              child: MonthIncomeVsExpenseChart(),
+            ),
+            const SizedBox(height: 6),
+
+            MonthExpenseVsIncomeOverview(),
+          ],
+        ),
       ),
     );
   }
