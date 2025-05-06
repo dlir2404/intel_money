@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intel_money/core/state/statistic_state.dart';
-import 'package:intel_money/features/reports/widgets/report_sum_form.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/models/statistic_data.dart';
+import 'expense_vs_income_item.dart';
 
 class CurrentExpenseVsIncome extends StatefulWidget {
   const CurrentExpenseVsIncome({super.key});
@@ -13,24 +13,6 @@ class CurrentExpenseVsIncome extends StatefulWidget {
 }
 
 class _CurrentExpenseVsIncomeState extends State<CurrentExpenseVsIncome> {
-  Widget _buildItem(String title, double totalIncome, double totalExpense) {
-    return Container(
-      color: Colors.white,
-      padding: const EdgeInsets.all(16),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-          ),
-          ReportSumForm(totalIncome: totalIncome, totalExpense: totalExpense),
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -38,41 +20,49 @@ class _CurrentExpenseVsIncomeState extends State<CurrentExpenseVsIncome> {
       child: Consumer<StatisticState>(
         builder: (context, state, _) {
           final today = state.todayStatisticData ?? StatisticData.defaultData();
-          final thisWeek = state.thisWeekStatisticData ?? StatisticData.defaultData();
-          final thisMonth = state.thisMonthStatisticData ?? StatisticData.defaultData();
-          final thisQuarter = state.thisQuarterStatisticData ?? StatisticData.defaultData();
-          final thisYear = state.thisYearStatisticData ?? StatisticData.defaultData();
+          final thisWeek =
+              state.thisWeekStatisticData ?? StatisticData.defaultData();
+          final thisMonth =
+              state.thisMonthStatisticData ?? StatisticData.defaultData();
+          final thisQuarter =
+              state.thisQuarterStatisticData ?? StatisticData.defaultData();
+          final thisYear =
+              state.thisYearStatisticData ?? StatisticData.defaultData();
 
           return Column(
             children: [
-              _buildItem("Today", today.totalIncome, today.totalExpense),
-              const SizedBox(height: 1),
-
-              _buildItem(
-                "This week",
-                thisWeek.totalIncome,
-                thisWeek.totalExpense,
+              ExpenseVsIncomeItem(
+                title: "Today",
+                totalIncome: today.totalIncome,
+                totalExpense: today.totalExpense,
               ),
               const SizedBox(height: 1),
 
-              _buildItem(
-                "This month",
-                thisMonth.totalIncome,
-                thisMonth.totalExpense,
+              ExpenseVsIncomeItem(
+                title: "This week",
+                totalIncome: thisWeek.totalIncome,
+                totalExpense: thisWeek.totalExpense,
               ),
               const SizedBox(height: 1),
 
-              _buildItem(
-                "This quarter",
-                thisQuarter.totalIncome,
-                thisQuarter.totalExpense,
+              ExpenseVsIncomeItem(
+                title: "This month",
+                totalIncome: thisMonth.totalIncome,
+                totalExpense: thisMonth.totalExpense,
               ),
               const SizedBox(height: 1),
 
-              _buildItem(
-                "This year",
-                thisYear.totalIncome,
-                thisYear.totalExpense,
+              ExpenseVsIncomeItem(
+                title: "This quarter",
+                totalIncome: thisQuarter.totalIncome,
+                totalExpense: thisQuarter.totalExpense,
+              ),
+              const SizedBox(height: 1),
+
+              ExpenseVsIncomeItem(
+                title: "This year",
+                totalIncome: thisYear.totalIncome,
+                totalExpense: thisYear.totalExpense,
               ),
               const SizedBox(height: 1),
             ],
