@@ -137,19 +137,26 @@ class _ExpenseIncomeChartState extends State<ExpenseIncomeChart> {
       expenseHeight = (expense / maxVal) * 140;
     }
 
-    Map<String, double> expenseRate = {};
-    for (var data in statisticData.byCategoryExpense) {
-      expenseRate["${data.category.name} (${Formatter.formatCurrency(data.amount * 100 / expense)}%)"] =
-          data.amount;
-    }
-
     List<Widget> chartWidgets = [];
 
     chartWidgets.add(
       _columnChart(incomeHeight, expenseHeight, income, expense),
     );
     chartWidgets.add(const SizedBox(height: 40));
-    chartWidgets.add(_pieChart(expenseRate));
+
+    if (expense == 0){
+      chartWidgets.add(const SizedBox(
+          height: 160,
+          child: Center(child: Text("No expense record found"))
+      ));
+    } else {
+      Map<String, double> expenseRate = {};
+      for (var data in statisticData.byCategoryExpense) {
+        expenseRate["${data.category.name} (${Formatter.formatCurrency(data.amount * 100 / expense)}%)"] =
+            data.amount;
+      }
+      chartWidgets.add(_pieChart(expenseRate));
+    }
 
     return chartWidgets;
   }
