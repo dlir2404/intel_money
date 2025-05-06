@@ -55,6 +55,7 @@ dependencies:
   currency_picker: ^2.0.21
   material_dialogs: ^1.1.5
   community_charts_flutter: ^1.0.4
+  syncfusion_flutter_datepicker: ^29.1.41
 
 dev_dependencies:
   flutter_test:

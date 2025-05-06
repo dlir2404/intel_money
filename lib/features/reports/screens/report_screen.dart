@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intel_money/features/reports/screens/expense_vs_income_screen.dart';
 
+import 'expense_analysis.dart';
 import 'financial_statement_screen.dart';
 
 class ReportScreen extends StatelessWidget {
@@ -38,7 +39,12 @@ class ReportScreen extends StatelessWidget {
       'icon': Icons.insert_chart_outlined_rounded,
       'title': 'Expense analysis',
       'color': Colors.red,
-      'ontap': null,
+      'ontap': (BuildContext context) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const ExpenseAnalysis()),
+        );
+      },
     },
     {
       'icon': Icons.insert_chart_outlined_rounded,
