@@ -8,16 +8,22 @@ class StatisticData {
   List<ByCategoryData> byCategoryIncome;
   List<ByCategoryData> byCategoryExpense;
 
+  //only for year statistic
+  List<StatisticData>? byMonthStatistic = [];
+  List<StatisticData>? byQuarterStatistic = [];
+
   StatisticData({
     required this.totalIncome,
     required this.totalExpense,
     required this.totalBalance,
     required this.byCategoryIncome,
     required this.byCategoryExpense,
+    this.byMonthStatistic,
+    this.byQuarterStatistic,
   });
 
   factory StatisticData.fromJson(Map<String, dynamic> json) {
-    return StatisticData(
+    final data = StatisticData(
       totalIncome: json['totalIncome'].toDouble(),
       totalExpense: json['totalExpense'].toDouble(),
       totalBalance: json['totalBalance'].toDouble(),
@@ -28,6 +34,20 @@ class StatisticData {
           .map((e) => ByCategoryData.fromJson(e))
           .toList(),
     );
+
+    if (json['byMonthStatistic'] != null) {
+      data.byMonthStatistic = (json['byMonthStatistic'] as List)
+          .map((e) => StatisticData.fromJson(e))
+          .toList();
+    }
+
+    if (json['byQuarterStatistic'] != null) {
+      data.byQuarterStatistic = (json['byQuarterStatistic'] as List)
+          .map((e) => StatisticData.fromJson(e))
+          .toList();
+    }
+
+    return data;
   }
 
   factory StatisticData.defaultData(){
@@ -37,6 +57,8 @@ class StatisticData {
       totalBalance: 0,
       byCategoryIncome: [],
       byCategoryExpense: [],
+      byMonthStatistic: [],
+      byQuarterStatistic: [],
     );
   }
 }

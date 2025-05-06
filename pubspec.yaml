@@ -54,6 +54,7 @@ dependencies:
   material_design_icons_flutter: ^6.0.7096
   currency_picker: ^2.0.21
   material_dialogs: ^1.1.5
+  community_charts_flutter: ^1.0.4
 
 dev_dependencies:
   flutter_test:
