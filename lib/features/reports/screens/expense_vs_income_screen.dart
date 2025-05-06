@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../widgets/current_expense_vs_income.dart';
 import '../widgets/month_expense_vs_income.dart';
+import '../widgets/quarter_income_vs_expense.dart';
 
 class ExpenseVsIncomeScreen extends StatefulWidget {
   const ExpenseVsIncomeScreen({super.key});
@@ -58,7 +59,7 @@ class _ExpenseVsIncomeScreenState extends State<ExpenseVsIncomeScreen>
                 children: const [
                   CurrentExpenseVsIncome(),
                   MonthExpenseVsIncome(),
-                  Center(child: Text("Quarter")),
+                  QuarterIncomeVsExpense(),
                   Center(child: Text("Year")),
                   Center(child: Text("Custom")),
                 ]
