@@ -1,25 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
+import '../../helper/app_time.dart';
+
 class MonthRangePicker extends StatefulWidget {
   final Function(PickerDateRange?)? onChanged;
-  const MonthRangePicker({super.key, this.onChanged});
+  final DateTime? startDate;
+  final DateTime? endDate;
+
+  const MonthRangePicker({super.key, this.onChanged, this.startDate, this.endDate});
 
   @override
   State<MonthRangePicker> createState() => _MonthRangePickerState();
 }
 
 class _MonthRangePickerState extends State<MonthRangePicker> {
-  PickerDateRange? _selectedMonthRange;
+  PickerDateRange? _selectedRange;
+  PickerDateRange? _tempDateRange;
 
   void _handleOk() {
-    if (widget.onChanged != null) {
-      widget.onChanged!(_selectedMonthRange);
+    if (_tempDateRange != null &&
+        _tempDateRange!.startDate != null &&
+        _tempDateRange!.endDate != null) {
+
+      setState(() {
+        _selectedRange = _tempDateRange;
+      });
+
+      if (widget.onChanged != null) {
+        widget.onChanged!(_selectedRange);
+      }
     }
   }
 
   Future<void> _showMonthRangePicker(BuildContext context) async {
-    showDialog<DateTimeRange>(
+    showDialog<PickerDateRange>(
       context: context,
       builder: (BuildContext context) {
         final ThemeData theme = Theme.of(context);
@@ -41,7 +56,9 @@ class _MonthRangePickerState extends State<MonthRangePicker> {
                   style:
                       datePickerTheme.cancelButtonStyle ??
                       defaults.cancelButtonStyle,
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
                   child: Text(
                     (useMaterial3
                         ? localizations.cancelButtonLabel
@@ -52,7 +69,10 @@ class _MonthRangePickerState extends State<MonthRangePicker> {
                   style:
                       datePickerTheme.confirmButtonStyle ??
                       defaults.confirmButtonStyle,
-                  onPressed: _handleOk,
+                  onPressed: () {
+                    Navigator.pop(context);
+                    _handleOk();
+                  },
                   child: Text(localizations.okButtonLabel),
                 ),
               ],
@@ -93,6 +113,7 @@ class _MonthRangePickerState extends State<MonthRangePicker> {
                 width: MediaQuery.of(context).size.width * 0.8,
                 height: 300,
                 child: SfDateRangePicker(
+                  initialSelectedRange: _selectedRange,
                   headerStyle: DateRangePickerHeaderStyle(
                     textAlign: TextAlign.center,
                     backgroundColor:
@@ -107,7 +128,7 @@ class _MonthRangePickerState extends State<MonthRangePicker> {
                   allowViewNavigation: false,
                   onSelectionChanged: (DateRangePickerSelectionChangedArgs args) {
                     setState(() {
-                      _selectedMonthRange = args.value as PickerDateRange;
+                      _tempDateRange = args.value as PickerDateRange;
                     });
                   },
                 ),
@@ -122,18 +143,42 @@ class _MonthRangePickerState extends State<MonthRangePicker> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    if (widget.startDate != null && widget.endDate != null) {
+      _selectedRange = PickerDateRange(widget.startDate, widget.endDate);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.white,
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          ElevatedButton(
-            onPressed: () => _showMonthRangePicker(context),
-            child: const Text("Click me"),
-          ),
-        ],
+    return InkWell(
+      onTap: () {
+        _showMonthRangePicker(context);
+      },
+      child: Container(
+        color: Colors.white,
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Icon(Icons.calendar_today_outlined, color: Colors.grey[400]),
+            const SizedBox(width: 8),
+
+            Text(
+              (_selectedRange != null &&
+                  _selectedRange!.startDate != null &&
+                  _selectedRange!.endDate != null)
+                  ? '${AppTime.format(time: _selectedRange!.startDate!, pattern: "MM/YYYY")} - ${AppTime.format(time: _selectedRange!.endDate!, pattern: "MM/YYYY")}'
+                  : 'Select month range',
+              style: const TextStyle(fontSize: 16),
+            ),
+            const SizedBox(width: 8),
+            Expanded(child: const SizedBox()),
+
+            Icon(Icons.arrow_forward_ios, color: Colors.grey[400]),
+          ],
+        ),
       ),
     );
   }

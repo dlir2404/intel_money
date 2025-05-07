@@ -1,20 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
+import '../../helper/app_time.dart';
+
 class YearRangePicker extends StatefulWidget {
   final Function(PickerDateRange?)? onChanged;
-  const YearRangePicker({super.key, this.onChanged});
+  final DateTime? startDate;
+  final DateTime? endDate;
+  
+  const YearRangePicker({super.key, this.onChanged, this.startDate, this.endDate});
 
   @override
   State<YearRangePicker> createState() => _YearRangePickerState();
 }
 
 class _YearRangePickerState extends State<YearRangePicker> {
-  PickerDateRange? _selectedMonthRange;
+  PickerDateRange? _selectedRange;
+  PickerDateRange? _tempDateRange;
 
   void _handleOk() {
-    if (widget.onChanged != null) {
-      widget.onChanged!(_selectedMonthRange);
+    if (_tempDateRange != null &&
+        _tempDateRange!.startDate != null &&
+        _tempDateRange!.endDate != null) {
+
+      setState(() {
+        _selectedRange = _tempDateRange;
+      });
+
+      if (widget.onChanged != null) {
+        widget.onChanged!(_selectedRange);
+      }
     }
   }
 
@@ -41,7 +56,9 @@ class _YearRangePickerState extends State<YearRangePicker> {
                   style:
                       datePickerTheme.cancelButtonStyle ??
                       defaults.cancelButtonStyle,
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
                   child: Text(
                     (useMaterial3
                         ? localizations.cancelButtonLabel
@@ -52,7 +69,10 @@ class _YearRangePickerState extends State<YearRangePicker> {
                   style:
                       datePickerTheme.confirmButtonStyle ??
                       defaults.confirmButtonStyle,
-                  onPressed: _handleOk,
+                  onPressed: () {
+                    Navigator.pop(context);
+                    _handleOk();
+                  },
                   child: Text(localizations.okButtonLabel),
                 ),
               ],
@@ -107,7 +127,7 @@ class _YearRangePickerState extends State<YearRangePicker> {
                   allowViewNavigation: false,
                   onSelectionChanged: (DateRangePickerSelectionChangedArgs args) {
                     setState(() {
-                      _selectedMonthRange = args.value as PickerDateRange;
+                      _tempDateRange = args.value as PickerDateRange;
                     });
                   },
                 ),
@@ -122,18 +142,42 @@ class _YearRangePickerState extends State<YearRangePicker> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    if (widget.startDate != null && widget.endDate != null) {
+      _selectedRange = PickerDateRange(widget.startDate, widget.endDate);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.white,
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          ElevatedButton(
-            onPressed: () => _showYearRangePicker(context),
-            child: const Text("Select year range"),
-          ),
-        ],
+    return InkWell(
+      onTap: () {
+        _showYearRangePicker(context);
+      },
+      child: Container(
+        color: Colors.white,
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Icon(Icons.calendar_today_outlined, color: Colors.grey[400]),
+            const SizedBox(width: 8),
+
+            Text(
+              (_selectedRange != null &&
+                  _selectedRange!.startDate != null &&
+                  _selectedRange!.endDate != null)
+                  ? '${AppTime.format(time: _selectedRange!.startDate!, pattern: "YYYY")} - ${AppTime.format(time: _selectedRange!.endDate!, pattern: "YYYY")}'
+                  : 'Select year range',
+              style: const TextStyle(fontSize: 16),
+            ),
+            const SizedBox(width: 8),
+            Expanded(child: const SizedBox()),
+
+            Icon(Icons.arrow_forward_ios, color: Colors.grey[400]),
+          ],
+        ),
       ),
     );
   }
