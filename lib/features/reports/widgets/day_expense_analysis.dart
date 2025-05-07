@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:intel_money/shared/component/filters/year_range_picker.dart';
+import 'package:intel_money/shared/component/filters/categories_filter.dart';
 
+import '../../../shared/component/filters/account_filter.dart';
 import '../../../shared/component/filters/day_range_picker.dart';
-import '../../../shared/component/filters/month_range_picker.dart';
 
 class DayExpenseAnalysis extends StatefulWidget {
   const DayExpenseAnalysis({super.key});
@@ -17,8 +17,15 @@ class _DayExpenseAnalysisState extends State<DayExpenseAnalysis> {
     return Column(
       children: [
         DayRangePicker(),
-        MonthRangePicker(),
-        YearRangePicker()
+        const SizedBox(height: 2),
+
+        CategoriesFilter(),
+        const SizedBox(height: 2),
+
+        AccountFilter(),
+        const SizedBox(height: 6),
+
+
       ],
     );
   }
