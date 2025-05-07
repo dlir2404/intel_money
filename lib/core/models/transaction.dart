@@ -1,4 +1,5 @@
 import 'package:intel_money/core/models/wallet.dart';
+import 'package:intel_money/shared/helper/app_time.dart';
 
 import '../../shared/const/enum/transaction_type.dart';
 import 'category.dart';
@@ -39,7 +40,7 @@ class Transaction {
       amount: double.parse(json['amount'].toString()),
       category: category,
       sourceWallet: sourceWallet,
-      transactionDate: DateTime.parse(json['transactionDate']),
+      transactionDate: AppTime.parseFromApi(json['transactionDate']),
       description: json['description'],
       notAddToReport: json['notAddToReport'] == true ? true : false,
       images: json['images'] is List ? List<String>.from(json['images']) : [],
@@ -53,7 +54,7 @@ class Transaction {
       'amount': amount,
       'category': category?.toJson(),
       'sourceWallet': sourceWallet.toJson(),
-      'transactionDate': transactionDate.toIso8601String(),
+      'transactionDate': AppTime.toUtcIso8601String(transactionDate),
       'description': description,
       'notAddToReport': notAddToReport,
       'images': images,

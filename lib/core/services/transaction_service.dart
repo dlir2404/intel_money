@@ -6,6 +6,7 @@ import 'package:intel_money/core/state/statistic_state.dart';
 import 'package:intel_money/core/state/transaction_state.dart';
 import 'package:intel_money/core/state/wallet_state.dart';
 import 'package:intel_money/shared/const/enum/transaction_type.dart';
+import 'package:intel_money/shared/helper/app_time.dart';
 
 import '../models/transaction.dart';
 import 'cloudinary_service.dart';
@@ -125,7 +126,7 @@ class TransactionService {
     final response = await _apiClient.post('/transaction/transfer/create', {
       'amount': amount,
       'description': description,
-      'transactionDate': transactionDate.toIso8601String(),
+      'transactionDate': AppTime.toUtcIso8601String(transactionDate),
       'sourceWalletId': sourceWalletId,
       'destinationWalletId': destinationWalletId,
       'notAddToReport': notAddToReport,
@@ -152,7 +153,7 @@ class TransactionService {
       'amount': amount,
       'categoryId': categoryId,
       'description': description,
-      'transactionDate': transactionDate.toIso8601String(),
+      'transactionDate': AppTime.toUtcIso8601String(transactionDate),
       'sourceWalletId': sourceWalletId,
       'notAddToReport': notAddToReport,
       'images': images,
@@ -179,7 +180,7 @@ class TransactionService {
       'amount': amount,
       'categoryId': categoryId,
       'description': description,
-      'transactionDate': transactionDate.toIso8601String(),
+      'transactionDate': AppTime.toUtcIso8601String(transactionDate),
       'sourceWalletId': sourceWalletId,
       'notAddToReport': notAddToReport,
       'images': images,
@@ -205,7 +206,7 @@ class TransactionService {
     final response = await _apiClient.post('/transaction/lend/create', {
       'amount': amount,
       'description': description,
-      'transactionDate': transactionDate.toIso8601String(),
+      'transactionDate': AppTime.toUtcIso8601String(transactionDate),
       'sourceWalletId': sourceWalletId,
       'borrowerId': borrowerId,
       'categoryId': categoryId,
@@ -233,7 +234,7 @@ class TransactionService {
     final response = await _apiClient.post('/transaction/borrow/create', {
       'amount': amount,
       'description': description,
-      'transactionDate': transactionDate.toIso8601String(),
+      'transactionDate': AppTime.toUtcIso8601String(transactionDate),
       'sourceWalletId': sourceWalletId,
       'lenderId': lenderId,
       'categoryId': categoryId,

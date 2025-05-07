@@ -91,4 +91,25 @@ class AppTime {
     final now = DateTime.now();
     return DateTime(now.year, now.month, now.day, 23, 59, 59);
   }
+
+  /// isoString from API is in UTC already
+  static DateTime parseFromApi(String isoString) {
+    return DateTime.parse(isoString).toLocal();
+  }
+
+  /// convert DateTime to UTC ISO 8601 String format, must call this before send to API
+  static String toUtcIso8601String(DateTime date) {
+    return date.toUtc().toIso8601String();
+  }
+
+  /// get user timezone
+  static String userTimeZone() {
+    final now = DateTime.now();
+    final offset = now.timeZoneOffset;
+    final sign = offset.isNegative ? '-' : '+';
+    final hours = offset.inHours.abs().toString().padLeft(2, '0');
+    final minutes = (offset.inMinutes.abs() % 60).toString().padLeft(2, '0');
+
+    return '$sign$hours:$minutes';
+  }
 }

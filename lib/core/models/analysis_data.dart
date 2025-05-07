@@ -1,5 +1,7 @@
 import 'package:intel_money/core/models/statistic_data.dart';
 
+import '../../shared/helper/app_time.dart';
+
 class AnalysisData {
   final DateTime date;
   final CompactStatisticData compactStatisticData;
@@ -11,7 +13,7 @@ class AnalysisData {
 
   factory AnalysisData.fromJson(Map<String, dynamic> json) {
     return AnalysisData(
-      date: DateTime.parse(json['date']),
+      date: AppTime.parseFromApi(json['date']),
       compactStatisticData: CompactStatisticData.fromJson(json['statisticData']),
     );
   }

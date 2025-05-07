@@ -1,3 +1,5 @@
+import 'package:intel_money/shared/helper/app_time.dart';
+
 class ExtractTransactionInfoResponse {
   final double? amount;
   final int? categoryId;
@@ -13,7 +15,7 @@ class ExtractTransactionInfoResponse {
       double.parse(json['amount'].toString()),
       json['categoryId'],
       json['walletId'],
-      DateTime.parse(json['date']),
+      AppTime.parseFromApi(json['date']),
       json['description'],
     );
   }
@@ -23,7 +25,7 @@ class ExtractTransactionInfoResponse {
       'amount': amount,
       'categoryId': categoryId,
       'walletId': walletId,
-      'date': date?.toIso8601String(),
+      'date': date != null ? AppTime.toUtcIso8601String(date!) : null,
       'description': description,
     };
   }

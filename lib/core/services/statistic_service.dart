@@ -1,4 +1,5 @@
 import 'package:intel_money/core/state/statistic_state.dart';
+import 'package:intel_money/shared/helper/app_time.dart';
 
 import '../models/analysis_data.dart';
 import '../models/statistic_data.dart';
@@ -57,7 +58,7 @@ class StatisticService {
   Future<void> getByDayAnalysisData(DateTime from, DateTime to) async {
     final response = await _apiClient.get(
       '/statistic/by-day',
-      params: {'from': from.toIso8601String(), 'to': to.toIso8601String()},
+      params: {'from': AppTime.toUtcIso8601String(from), 'to': AppTime.toUtcIso8601String(to)},
     );
 
     final analysisData =
