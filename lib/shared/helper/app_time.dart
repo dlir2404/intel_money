@@ -1,3 +1,5 @@
+import 'package:flutter_timezone/flutter_timezone.dart';
+
 class AppTime {
   static bool isToday(DateTime date) {
     final now = DateTime.now();
@@ -103,13 +105,7 @@ class AppTime {
   }
 
   /// get user timezone
-  static String userTimeZone() {
-    final now = DateTime.now();
-    final offset = now.timeZoneOffset;
-    final sign = offset.isNegative ? '-' : '+';
-    final hours = offset.inHours.abs().toString().padLeft(2, '0');
-    final minutes = (offset.inMinutes.abs() % 60).toString().padLeft(2, '0');
-
-    return '$sign$hours:$minutes';
+  static Future<String> getUserTimeZone() async {
+    return await FlutterTimezone.getLocalTimezone();
   }
 }

@@ -42,7 +42,7 @@ class ApiClient {
 
   // Initialize timezone
   Future<void> _initTimezone() async {
-    _timezone = AppTime.userTimeZone();
+    _timezone = await AppTime.getUserTimeZone();
   }
 
   Future<void> _initTokens() async {
