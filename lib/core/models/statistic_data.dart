@@ -80,3 +80,27 @@ class ByCategoryData {
     );
   }
 }
+
+class CompactStatisticData {
+  double totalIncome;
+  double totalExpense;
+
+  CompactStatisticData({
+    required this.totalIncome,
+    required this.totalExpense,
+  });
+
+  factory CompactStatisticData.fromJson(Map<String, dynamic> json) {
+    return CompactStatisticData(
+      totalIncome: json['totalIncome'].toDouble(),
+      totalExpense: json['totalExpense'].toDouble(),
+    );
+  }
+
+  factory CompactStatisticData.defaultData() {
+    return CompactStatisticData(
+      totalIncome: 0,
+      totalExpense: 0,
+    );
+  }
+}

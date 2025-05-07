@@ -81,4 +81,14 @@ class AppTime {
 
     return result;
   }
+
+  static DateTime startOfMonth({DateTime? date}) {
+    final dateToUse = date ?? DateTime.now();
+    return DateTime(dateToUse.year, dateToUse.month, 1);
+  }
+
+  static DateTime endOfToday() {
+    final now = DateTime.now();
+    return DateTime(now.year, now.month, now.day, 23, 59, 59);
+  }
 }

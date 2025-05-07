@@ -3,6 +3,7 @@ import 'package:intel_money/core/services/statistic_service.dart';
 
 import '../../shared/const/enum/transaction_type.dart';
 import '../../shared/helper/app_time.dart';
+import '../models/analysis_data.dart';
 import '../models/category.dart';
 import '../models/statistic_data.dart';
 import '../models/transaction.dart';
@@ -17,6 +18,20 @@ class StatisticState extends ChangeNotifier {
   StatisticData? _thisMonthStatisticData;
   StatisticData? _thisQuarterStatisticData;
   StatisticData? _thisYearStatisticData;
+
+  List<AnalysisData>? _byDayAnalysisData;
+  List<AnalysisData>? get byDayAnalysisData {
+    if (_byDayAnalysisData != null) {
+      return _byDayAnalysisData;
+    }
+
+    StatisticService().getByDayAnalysisData(AppTime.startOfMonth(), AppTime.endOfToday());
+    return _byDayAnalysisData;
+  }
+  void setByDayAnalysisData(List<AnalysisData> analysisData) {
+    _byDayAnalysisData = analysisData;
+    notifyListeners();
+  }
 
   StatisticData? get todayStatisticData => _todayStatisticData;
   void setTodayStatisticData(StatisticData statisticData) {

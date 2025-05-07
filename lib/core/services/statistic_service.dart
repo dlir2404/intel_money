@@ -1,5 +1,6 @@
 import 'package:intel_money/core/state/statistic_state.dart';
 
+import '../models/analysis_data.dart';
 import '../models/statistic_data.dart';
 import '../network/api_client.dart';
 
@@ -7,9 +8,10 @@ class StatisticService {
   final StatisticState _state = StatisticState();
   final ApiClient _apiClient = ApiClient.instance;
 
-
   static final StatisticService _instance = StatisticService._internal();
+
   factory StatisticService() => _instance;
+
   StatisticService._internal();
 
   Future<void> getTodayStatisticData() async {
@@ -36,7 +38,6 @@ class StatisticService {
     _state.setThisMonthStatisticData(statisticData);
   }
 
-
   Future<void> getThisQuarterStatisticData() async {
     final response = await _apiClient.get('/statistic/this-quarter');
 
@@ -45,12 +46,25 @@ class StatisticService {
     _state.setThisQuarterStatisticData(statisticData);
   }
 
-
   Future<void> getThisYearStatisticData() async {
     final response = await _apiClient.get('/statistic/this-year');
 
     final statisticData = StatisticData.fromJson(response);
 
     _state.setThisYearStatisticData(statisticData);
+  }
+
+  Future<void> getByDayAnalysisData(DateTime from, DateTime to) async {
+    final response = await _apiClient.get(
+      '/statistic/by-day',
+      params: {'from': from.toIso8601String(), 'to': to.toIso8601String()},
+    );
+
+    final analysisData =
+        (response as List)
+            .map((analysisData) => AnalysisData.fromJson(analysisData))
+            .toList();
+
+    _state.setByDayAnalysisData(analysisData);
   }
 }

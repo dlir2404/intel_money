@@ -25,7 +25,9 @@ class ApiClient {
 
   static ApiClient get instance {
     if (_instance == null) {
-      throw Exception('ApiClient must be initialized before accessing instance');
+      throw Exception(
+        'ApiClient must be initialized before accessing instance',
+      );
     }
     return _instance!;
   }
@@ -74,7 +76,10 @@ class ApiClient {
         final data = json.decode(response.body);
         await saveToken(data['accessToken']);
         if (data['refreshToken'] != null) {
-          await _secureStorage.write(key: 'refreshToken', value: data['refreshToken']);
+          await _secureStorage.write(
+            key: 'refreshToken',
+            value: data['refreshToken'],
+          );
         }
         return true;
       } else {
@@ -88,9 +93,13 @@ class ApiClient {
   }
 
   // HTTP methods
-  Future<dynamic> get(String endpoint) async {
+  Future<dynamic> get(String endpoint, {Map<String, dynamic>? params}) async {
     try {
       final token = await getToken();
+      if (params != null) {
+        endpoint += '?${Uri(queryParameters: params).query}';
+      }
+
       final response = await _client.get(
         Uri.parse('$baseUrl$endpoint'),
         headers: {
@@ -99,7 +108,7 @@ class ApiClient {
         },
       );
 
-      return _handleResponse(response, () => get(endpoint));
+      return _handleResponse(response, () => get(endpoint, params: params));
     } catch (e) {
       throw _handleError(e);
     }
@@ -161,9 +170,13 @@ class ApiClient {
   }
 
   // Response handling
-  Future<dynamic> _handleResponse(http.Response response, Future<dynamic> Function() retryFunction) async {
+  Future<dynamic> _handleResponse(
+    http.Response response,
+    Future<dynamic> Function() retryFunction,
+  ) async {
     final statusCode = response.statusCode;
-    final responseBody = response.body.isNotEmpty ? json.decode(response.body) : null;
+    final responseBody =
+        response.body.isNotEmpty ? json.decode(response.body) : null;
 
     if (statusCode >= 200 && statusCode < 300) {
       return responseBody;
@@ -173,9 +186,9 @@ class ApiClient {
         return retryFunction();
       } else {
         throw ApiException(
-            message: 'Authentication failed',
-            statusCode: 401,
-            error: responseBody?['message'] ?? 'Unauthorized'
+          message: 'Authentication failed',
+          statusCode: 401,
+          error: responseBody?['message'] ?? 'Unauthorized',
         );
       }
     } else {
@@ -189,9 +202,9 @@ class ApiClient {
       }
 
       throw ApiException(
-          message: message,
-          statusCode: statusCode,
-          error: responseBody?['error']
+        message: message,
+        statusCode: statusCode,
+        error: responseBody?['error'],
       );
     }
   }
@@ -199,8 +212,8 @@ class ApiClient {
   ApiException _handleError(dynamic error) {
     if (error is ApiException) return error;
     return ApiException(
-        message: 'Network error occurred',
-        error: error.toString()
+      message: 'Network error occurred',
+      error: error.toString(),
     );
   }
 

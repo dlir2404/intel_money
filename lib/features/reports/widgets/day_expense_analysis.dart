@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intel_money/shared/component/filters/categories_filter.dart';
 
-import '../../../shared/component/charts/time_series.dart';
 import '../../../shared/component/filters/account_filter.dart';
 import '../../../shared/component/filters/day_range_picker.dart';
+import 'day_expense_analysis_chart.dart';
 
 class DayExpenseAnalysis extends StatefulWidget {
   const DayExpenseAnalysis({super.key});
@@ -29,7 +29,7 @@ class _DayExpenseAnalysisState extends State<DayExpenseAnalysis> {
         Container(
           color: Colors.white,
           padding: const EdgeInsets.only(top: 12, bottom: 12, left: 16),
-          child: TimeSeries.withSampleData(),
+          child: DayExpenseAnalysisChart(),
         ),
       ],
     );
