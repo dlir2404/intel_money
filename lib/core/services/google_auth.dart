@@ -1,6 +1,7 @@
 import 'package:google_sign_in/google_sign_in.dart';
 
 import '../network/api_client.dart';
+import '../state/app_state.dart';
 
 class GoogleAuthService {
   final ApiClient _apiClient = ApiClient.instance;
@@ -21,6 +22,7 @@ class GoogleAuthService {
     // Gửi idToken đến backend để xác thực
     final response = await _apiClient.post('/auth/google', {
       'idToken': auth.idToken,
+      'timezone': AppState().userTimezone,
     });
 
     await _apiClient.saveToken(response['accessToken']);
