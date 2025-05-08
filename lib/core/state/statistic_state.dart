@@ -47,6 +47,21 @@ class StatisticState extends ChangeNotifier {
     notifyListeners();
   }
 
+  List<AnalysisData>? _byYearAnalysisData;
+  List<AnalysisData>? get byYearAnalysisData {
+    if (_byYearAnalysisData != null) {
+      return _byYearAnalysisData;
+    }
+
+    //get 10 years data
+    StatisticService().getByYearAnalysisData(AppTime.startOfYear(date: DateTime(DateTime.now().year - 10)), AppTime.startOfYear());
+    return _byYearAnalysisData;
+  }
+  void setByYearAnalysisData(List<AnalysisData> analysisData) {
+    _byYearAnalysisData = analysisData;
+    notifyListeners();
+  }
+
   StatisticData? get todayStatisticData => _todayStatisticData;
   void setTodayStatisticData(StatisticData statisticData) {
     _todayStatisticData = statisticData;

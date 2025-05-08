@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intel_money/features/reports/widgets/year_expense_analysis.dart';
 
 import '../widgets/day_expense_analysis.dart';
 import '../widgets/month_expense_analysis.dart';
@@ -54,7 +55,7 @@ class _ExpenseAnalysisState extends State<ExpenseAnalysis>
               children: const [
                 DayExpenseAnalysis(),
                 MonthExpenseAnalysis(),
-                Center(child: Text('Year')),
+                YearExpenseAnalysis(),
               ],
             ),
           ),

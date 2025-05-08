@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:intel_money/core/models/analysis_data.dart';
-import 'package:intel_money/core/state/statistic_state.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/models/analysis_data.dart';
+import '../../../core/state/statistic_state.dart';
 import '../../../shared/component/charts/time_series.dart';
 
-class DayExpenseAnalysisChart extends StatelessWidget {
-  const DayExpenseAnalysisChart({super.key});
+class YearExpenseAnalysisChart extends StatelessWidget {
+  const YearExpenseAnalysisChart({super.key});
 
   List<TimeSeriesData> _prepareChartData(List<AnalysisData> data) {
     if (data.isEmpty) return [];
@@ -18,20 +18,20 @@ class DayExpenseAnalysisChart extends StatelessWidget {
     // Create a map with existing data points
     final Map<DateTime, double> dataMap = {};
     for (var item in data) {
-      final date = DateTime(item.date.year, item.date.month, item.date.day);
+      final date = DateTime(item.date.year, item.date.month);
       dataMap[date] = item.compactStatisticData.totalExpense;
     }
 
     // Generate complete list with all dates in range
     final List<TimeSeriesData> result = [];
-    DateTime currentDate = DateTime(minDate.year, minDate.month, minDate.day);
+    DateTime currentDate = DateTime(minDate.year, minDate.month);
 
     while (!currentDate.isAfter(maxDate)) {
       result.add(TimeSeriesData(
         currentDate,
         dataMap[currentDate] ?? 0, // Use 0 for missing dates
       ));
-      currentDate = currentDate.add(const Duration(days: 1));
+      currentDate = DateTime(currentDate.year, currentDate.month + 1);
     }
 
     return result;
@@ -41,14 +41,14 @@ class DayExpenseAnalysisChart extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<StatisticState>(
       builder: (context, state, _) {
-        final dayData = state.byDayAnalysisData ?? [];
-        final data = _prepareChartData(dayData);
+        final monthData = state.byYearAnalysisData ?? [];
+        final data = _prepareChartData(monthData);
 
         return TimeSeries(
           data,
           height: 300,
           totalTitle: "Total Expense",
-          averageTitle: "Average spending/day",
+          averageTitle: "Average spending/year",
         );
       },
     );

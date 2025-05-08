@@ -47,6 +47,8 @@ class MonthExpenseAnalysisChart extends StatelessWidget {
         return TimeSeries(
           data,
           height: 300,
+          totalTitle: "Total Expense",
+          averageTitle: "Average spending/month",
         );
       },
     );

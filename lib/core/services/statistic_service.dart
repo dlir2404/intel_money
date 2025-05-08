@@ -82,4 +82,18 @@ class StatisticService {
 
     _state.setByMonthAnalysisData(analysisData);
   }
+
+  Future<void> getByYearAnalysisData(DateTime from, DateTime to) async {
+    final response = await _apiClient.get(
+      '/statistic/by-year',
+      params: {'from': AppTime.toUtcIso8601String(from), 'to': AppTime.toUtcIso8601String(to)},
+    );
+
+    final analysisData =
+        (response as List)
+            .map((analysisData) => AnalysisData.fromJson(analysisData))
+            .toList();
+
+    _state.setByYearAnalysisData(analysisData);
+  }
 }
