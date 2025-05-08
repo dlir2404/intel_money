@@ -1,4 +1,3 @@
-import 'package:community_charts_flutter/community_charts_flutter.dart' as charts;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -57,8 +56,8 @@ class MonthIncomeVsExpenseChart extends StatelessWidget {
       final data = _createData(yearData);
 
       return DivergingStackedBarChart(
-        upData: data.first,
-        downData: data.last,
+        upData: data.isNotEmpty ? data.first : [],
+        downData: data.isNotEmpty ? data.last : [],
         upTitle: "Income",
         downTitle: "Expense",
         height: 300,

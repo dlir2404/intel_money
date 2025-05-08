@@ -95,6 +95,17 @@ class AppTime {
     return DateTime(now.year, now.month, now.day, 23, 59, 59);
   }
 
+  static DateTime startOfYear({DateTime? date}) {
+    final dateToUse = date ?? DateTime.now();
+    return DateTime(dateToUse.year, 1, 1);
+  }
+
+  static DateTime endOfMonth({DateTime? date}) {
+    final dateToUse = date ?? DateTime.now();
+    //day 0 is tricky it will represent the last day of dateToUse.month
+    return DateTime(dateToUse.year, dateToUse.month + 1, 0, 23, 59, 59);
+  }
+
   /// isoString from API is in UTC already
   static DateTime parseFromApi(String isoString) {
     return DateTime.parse(isoString).toLocal();

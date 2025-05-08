@@ -33,6 +33,20 @@ class StatisticState extends ChangeNotifier {
     notifyListeners();
   }
 
+  List<AnalysisData>? _byMonthAnalysisData;
+  List<AnalysisData>? get byMonthAnalysisData {
+    if (_byMonthAnalysisData != null) {
+      return _byMonthAnalysisData;
+    }
+
+    StatisticService().getByMonthAnalysisData(AppTime.startOfYear(), AppTime.endOfMonth());
+    return _byMonthAnalysisData;
+  }
+  void setByMonthAnalysisData(List<AnalysisData> analysisData) {
+    _byMonthAnalysisData = analysisData;
+    notifyListeners();
+  }
+
   StatisticData? get todayStatisticData => _todayStatisticData;
   void setTodayStatisticData(StatisticData statisticData) {
     _todayStatisticData = statisticData;

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../widgets/day_expense_analysis.dart';
+import '../widgets/month_expense_analysis.dart';
 
 class ExpenseAnalysis extends StatefulWidget {
   const ExpenseAnalysis({super.key});
@@ -52,7 +53,7 @@ class _ExpenseAnalysisState extends State<ExpenseAnalysis>
               controller: _tabController,
               children: const [
                 DayExpenseAnalysis(),
-                Center(child: Text('Month')),
+                MonthExpenseAnalysis(),
                 Center(child: Text('Year')),
               ],
             ),

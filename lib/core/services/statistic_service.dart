@@ -68,4 +68,18 @@ class StatisticService {
 
     _state.setByDayAnalysisData(analysisData);
   }
+
+  Future<void> getByMonthAnalysisData(DateTime from, DateTime to) async {
+    final response = await _apiClient.get(
+      '/statistic/by-month',
+      params: {'from': AppTime.toUtcIso8601String(from), 'to': AppTime.toUtcIso8601String(to)},
+    );
+
+    final analysisData =
+        (response as List)
+            .map((analysisData) => AnalysisData.fromJson(analysisData))
+            .toList();
+
+    _state.setByMonthAnalysisData(analysisData);
+  }
 }
