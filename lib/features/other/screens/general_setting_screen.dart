@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import '../widgets/currency_picker.dart';
 import '../widgets/general_setting_group.dart';
 import '../widgets/general_setting_select_input.dart';
+import '../widgets/timezone_picker.dart';
 
 class GeneralSettingScreen extends StatelessWidget {
   const GeneralSettingScreen({super.key});
@@ -44,7 +45,8 @@ class GeneralSettingScreen extends StatelessWidget {
                   // Handle theme selection
                 },
               ),
-              CurrencyPicker()
+              CurrencyPicker(),
+              TimezonePicker()
             ],
           ),
         ],

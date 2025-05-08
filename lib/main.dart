@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart' hide AppState;
-import 'package:intel_money/core/network/api_client.dart';
 import 'package:intel_money/core/services/auth_service.dart';
 import 'package:intel_money/core/state/app_state.dart';
 import 'package:intel_money/core/state/related_user_state.dart';
@@ -13,7 +10,6 @@ import 'package:provider/provider.dart';
 
 import 'core/config/routes.dart';
 import 'core/initialization/app_initializer.dart';
-import 'core/services/ad_service.dart';
 import 'core/state/category_state.dart';
 import 'core/state/statistic_state.dart';
 

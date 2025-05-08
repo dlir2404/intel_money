@@ -8,6 +8,8 @@ class User {
   double totalLoan;
   double totalDebt;
 
+  UserPreferences preferences;
+
   User({
     required this.id,
     required this.name,
@@ -17,6 +19,7 @@ class User {
     this.totalBalance = 0.0,
     this.totalLoan = 0.0,
     this.totalDebt = 0.0,
+    required this.preferences,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
@@ -29,6 +32,7 @@ class User {
       totalBalance: json['totalBalance']?.toDouble() ?? 0.0,
       totalLoan: json['totalLoan']?.toDouble() ?? 0.0,
       totalDebt: json['totalBorrowed']?.toDouble() ?? 0.0,
+      preferences: UserPreferences.fromJson(json['preferences']),
     );
 
     return user;
@@ -50,5 +54,15 @@ class User {
       'totalLoan': totalLoan,
       'totalBorrowed': totalDebt,
     };
+  }
+}
+
+class UserPreferences {
+  String? timezone;
+
+  UserPreferences(this.timezone);
+
+  factory UserPreferences.fromJson(Map<String, dynamic> json) {
+    return UserPreferences(json['timezone'] ?? '');
   }
 }

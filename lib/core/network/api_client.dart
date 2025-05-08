@@ -14,7 +14,6 @@ class ApiClient {
   final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
 
   String? _accessToken;
-  String? _timezone;
 
   //private contructor
   ApiClient._({required this.baseUrl});
@@ -37,12 +36,6 @@ class ApiClient {
   static Future<void> initialize({required String baseUrl}) async {
     _instance = ApiClient._(baseUrl: baseUrl);
     await _instance!._initTokens();
-    await _instance!._initTimezone();
-  }
-
-  // Initialize timezone
-  Future<void> _initTimezone() async {
-    _timezone = await AppTime.getUserTimeZone();
   }
 
   Future<void> _initTokens() async {
@@ -112,7 +105,6 @@ class ApiClient {
         Uri.parse('$baseUrl$endpoint'),
         headers: {
           'Content-Type': 'application/json',
-          'X-Timezone': _timezone!,
           if (token != null) 'Authorization': 'Bearer $token',
         },
       );

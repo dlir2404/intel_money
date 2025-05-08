@@ -7,6 +7,21 @@ class AppState extends ChangeNotifier {
   factory AppState() => _instance;
   AppState._internal();
 
+  List<String> _timezones = [];
+  List<String> get timezones => _timezones;
+  void setTimezones(List<String> tzs) {
+    _timezones = tzs;
+    notifyListeners();
+  }
+
+  String? _userTimezone;
+  String? get userTimezone => _userTimezone;
+  void setUserTimezone(String tz) {
+    _userTimezone = tz;
+    _user?.preferences.timezone = tz;
+    notifyListeners();
+  }
+
   //system config
   Currency? _currency = CurrencyService().findByCode("VND");
   Currency? get currency => _currency;

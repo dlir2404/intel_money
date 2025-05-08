@@ -1,4 +1,5 @@
 import 'package:flutter_timezone/flutter_timezone.dart';
+import 'package:intel_money/core/state/app_state.dart';
 
 class AppTime {
   static bool isToday(DateTime date) {
@@ -107,5 +108,17 @@ class AppTime {
   /// get user timezone
   static Future<String> getUserTimeZone() async {
     return await FlutterTimezone.getLocalTimezone();
+  }
+
+  static Future<List<String>> getAvailableTimezones() async {
+    return await FlutterTimezone.getAvailableTimezones();
+  }
+
+  static void initialize() async {
+    List<String> timezones = await getAvailableTimezones();
+    AppState().setTimezones(timezones);
+
+    String userTimezone = await getUserTimeZone();
+    AppState().setUserTimezone(userTimezone);
   }
 }

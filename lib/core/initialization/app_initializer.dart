@@ -6,12 +6,17 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:intel_money/core/services/ad_service.dart';
 import 'package:intel_money/core/network/api_client.dart';
 
+import '../../shared/helper/app_time.dart';
+
 /// Handles all initialization tasks when the app starts, before context is available
 class AppInitializer {
   static Future<void> initialize() async {
     try {
       // Initialize configs
       await dotenv.load(fileName: '.env.dev');
+
+      //initialize time
+      AppTime.initialize();
 
       // Initialize API client
       await ApiClient.initialize(

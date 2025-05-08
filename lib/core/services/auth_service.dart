@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 
 import '../models/user.dart';
 import '../network/api_client.dart';
+import '../state/app_state.dart';
 
 class AuthService {
   final ApiClient _apiClient = ApiClient.instance;
@@ -26,7 +27,8 @@ class AuthService {
     final response = await _apiClient.post('/auth/register', {
       'name': name,
       'email': email,
-      'password': password
+      'password': password,
+      'timezone': AppState().userTimezone,
     });
 
     await _apiClient.saveToken(response['accessToken']);
