@@ -9,7 +9,7 @@ import '../../../shared/component/charts/diverging_stacked_bar_chart.dart';
 class MonthIncomeVsExpenseChart extends StatelessWidget {
   const MonthIncomeVsExpenseChart({super.key});
 
-  List<charts.Series<DivergingStackedBarData, String>> _createData(StatisticData yearData) {
+  List<List<DivergingStackedBarData>> _createData(StatisticData yearData) {
     if (yearData.byMonthStatistic == null || yearData.byMonthStatistic!.isEmpty) {
       return [];
     }
@@ -30,35 +30,23 @@ class MonthIncomeVsExpenseChart extends StatelessWidget {
     ];
 
     final expenseData = [
-      DivergingStackedBarData("1", -yearData.byMonthStatistic![0].totalExpense),
-      DivergingStackedBarData("2", -yearData.byMonthStatistic![1].totalExpense),
+      DivergingStackedBarData("1", yearData.byMonthStatistic![0].totalExpense),
+      DivergingStackedBarData("2", yearData.byMonthStatistic![1].totalExpense),
       DivergingStackedBarData("3", yearData.byMonthStatistic![2].totalExpense),
-      DivergingStackedBarData("4", -yearData.byMonthStatistic![3].totalExpense),
-      DivergingStackedBarData("5", -yearData.byMonthStatistic![4].totalExpense),
-      DivergingStackedBarData("6", -yearData.byMonthStatistic![5].totalExpense),
-      DivergingStackedBarData("7", -yearData.byMonthStatistic![6].totalExpense),
-      DivergingStackedBarData("8", -yearData.byMonthStatistic![7].totalExpense),
-      DivergingStackedBarData("9", -yearData.byMonthStatistic![8].totalExpense),
-      DivergingStackedBarData("10", -yearData.byMonthStatistic![9].totalExpense),
-      DivergingStackedBarData("11", -yearData.byMonthStatistic![10].totalExpense),
-      DivergingStackedBarData("12", -yearData.byMonthStatistic![11].totalExpense),
+      DivergingStackedBarData("4", yearData.byMonthStatistic![3].totalExpense),
+      DivergingStackedBarData("5", yearData.byMonthStatistic![4].totalExpense),
+      DivergingStackedBarData("6", yearData.byMonthStatistic![5].totalExpense),
+      DivergingStackedBarData("7", yearData.byMonthStatistic![6].totalExpense),
+      DivergingStackedBarData("8", yearData.byMonthStatistic![7].totalExpense),
+      DivergingStackedBarData("9", yearData.byMonthStatistic![8].totalExpense),
+      DivergingStackedBarData("10", yearData.byMonthStatistic![9].totalExpense),
+      DivergingStackedBarData("11", yearData.byMonthStatistic![10].totalExpense),
+      DivergingStackedBarData("12", yearData.byMonthStatistic![11].totalExpense),
     ];
 
     return [
-      charts.Series<DivergingStackedBarData, String>(
-        id: 'Income',
-        domainFn: (DivergingStackedBarData data, _) => data.category,
-        measureFn: (DivergingStackedBarData data, _) => data.value,
-        data: incomeData,
-        colorFn: (_, __) => charts.MaterialPalette.green.shadeDefault,
-      ),
-      charts.Series<DivergingStackedBarData, String>(
-        id: 'Expense',
-        domainFn: (DivergingStackedBarData data, _) => data.category,
-        measureFn: (DivergingStackedBarData data, _) => data.value,
-        data: expenseData,
-        colorFn: (_, __) => charts.MaterialPalette.red.shadeDefault,
-      ),
+      incomeData,
+      expenseData,
     ];
   }
 
@@ -69,7 +57,10 @@ class MonthIncomeVsExpenseChart extends StatelessWidget {
       final data = _createData(yearData);
 
       return DivergingStackedBarChart(
-        data,
+        upData: data.first,
+        downData: data.last,
+        upTitle: "Income",
+        downTitle: "Expense",
         height: 300,
       );
     });

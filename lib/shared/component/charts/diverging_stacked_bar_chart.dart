@@ -2,72 +2,139 @@ import 'package:flutter/material.dart';
 import 'package:community_charts_flutter/community_charts_flutter.dart'
     as charts;
 
+import '../../const/enum/currency_unit.dart';
+
 class DivergingStackedBarChart extends StatelessWidget {
-  final List<charts.Series<DivergingStackedBarData, String>> seriesList;
+  final List<DivergingStackedBarData> upData;
+  final List<DivergingStackedBarData> downData;
+  final String upTitle;
+  final String downTitle;
   final bool animate;
   final double height;
   final double? width;
+  final CurrencyUnit currencyUnit;
 
-  const DivergingStackedBarChart(
-    this.seriesList, {
+  DivergingStackedBarChart({
     super.key,
     this.animate = false,
     this.height = 300,
     this.width,
-  });
+    required this.upData,
+    required this.downData,
+    required this.upTitle,
+    required this.downTitle,
+    CurrencyUnit? currencyUnit,
+  }) : currencyUnit = currencyUnit ?? _calculateCurrencyUnit([...upData, ...downData]);
+
+  static CurrencyUnit _calculateCurrencyUnit(List<DivergingStackedBarData> data) {
+    if (data.isNotEmpty) {
+      double maxValue = 0;
+      for (var item in data) {
+        if (item.value > maxValue) {
+          maxValue = item.value;
+        }
+      }
+
+      if (maxValue > 1000000000) {
+        return CurrencyUnit.b;
+      } else if (maxValue > 1000000) {
+        return CurrencyUnit.m;
+      }
+    }
+    return CurrencyUnit.k;
+  }
+
+  List<charts.Series<DivergingStackedBarData, String>> _prepareChartData(
+    List<DivergingStackedBarData> upData,
+    List<DivergingStackedBarData> downData,
+  ) {
+    return [
+      charts.Series<DivergingStackedBarData, String>(
+        id: upTitle,
+        domainFn: (DivergingStackedBarData data, _) => data.category,
+        measureFn: (DivergingStackedBarData data, _) => data.value / currencyUnit.multiplier,
+        data: upData,
+        colorFn: (_, __) => charts.MaterialPalette.green.shadeDefault,
+      ),
+      charts.Series<DivergingStackedBarData, String>(
+        id: downTitle,
+        domainFn: (DivergingStackedBarData data, _) => data.category,
+        measureFn: (DivergingStackedBarData data, _) => -data.value / currencyUnit.multiplier,
+        data: downData,
+        colorFn: (_, __) => charts.MaterialPalette.red.shadeDefault,
+      ),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: height,
-      width: width,
-      child: charts.BarChart(
-        seriesList,
-        animate: animate,
-        // This is important - set the bar rendering to stacked
-        barGroupingType: charts.BarGroupingType.stacked,
-        // Configure a domain axis that renders vertically
-        vertical: true,
-        // You can add a custom domain axis if needed
-        domainAxis: const charts.OrdinalAxisSpec(
-          renderSpec: charts.SmallTickRendererSpec(
-            labelRotation: 0, // Keep labels horizontal
-          ),
+    final chartData = _prepareChartData(upData, downData);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "(Unit: ${currencyUnit.name})",
+          style: const TextStyle(fontSize: 12, color: Colors.grey),
         ),
-        // Make sure to include the negative values in the range
-        primaryMeasureAxis: charts.NumericAxisSpec(
-          // This ensures zero is included and visible
-          showAxisLine: true,
-          // Optional: customize the appearance of the zero line
-          renderSpec: charts.GridlineRendererSpec(
-            lineStyle: charts.LineStyleSpec(
-              color: charts.MaterialPalette.gray.shade300,
-              thickness: 1,
+        SizedBox(
+          height: height,
+          width: width,
+          child: charts.BarChart(
+            chartData,
+            animate: animate,
+            // This is important - set the bar rendering to stacked
+            barGroupingType: charts.BarGroupingType.stacked,
+            // Configure a domain axis that renders vertically
+            vertical: true,
+            // You can add a custom domain axis if needed
+            domainAxis: const charts.OrdinalAxisSpec(
+              renderSpec: charts.SmallTickRendererSpec(
+                labelRotation: 0, // Keep labels horizontal
+              ),
             ),
+            // Make sure to include the negative values in the range
+            primaryMeasureAxis: charts.NumericAxisSpec(
+              // This ensures zero is included and visible
+              showAxisLine: true,
+              // Optional: customize the appearance of the zero line
+              renderSpec: charts.GridlineRendererSpec(
+                lineStyle: charts.LineStyleSpec(
+                  color: charts.MaterialPalette.gray.shade300,
+                  thickness: 1,
+                ),
+              ),
+            ),
+            behaviors: [
+              charts.LinePointHighlighter(
+                showHorizontalFollowLine:
+                    charts.LinePointHighlighterFollowLineType.nearest,
+                showVerticalFollowLine:
+                    charts.LinePointHighlighterFollowLineType.nearest,
+              ),
+              charts.SelectNearest(),
+              charts.SeriesLegend(
+                position: charts.BehaviorPosition.bottom
+              ),
+            ],
           ),
         ),
-        behaviors: [
-          charts.LinePointHighlighter(
-            showHorizontalFollowLine: charts.LinePointHighlighterFollowLineType.nearest,
-            showVerticalFollowLine: charts.LinePointHighlighterFollowLineType.nearest,
-          ),
-          charts.SelectNearest(),
-          charts.SeriesLegend(),
-        ],
-      ),
+      ],
     );
   }
 
   static Widget withSampleData({double height = 300, double? width}) {
     return DivergingStackedBarChart(
-      createSampleData(),
+      upData: createSampleData().first,
+      downData: createSampleData().last,
       height: height,
       width: width,
+      upTitle: 'Income',
+      downTitle: 'Expense',
     );
   }
 
-  static List<charts.Series<DivergingStackedBarData, String>>
-  createSampleData() {
+  static List<List<DivergingStackedBarData>> createSampleData() {
     final incomeData = [
       DivergingStackedBarData('Jan', 50),
       DivergingStackedBarData('Feb', 75),
@@ -82,22 +149,7 @@ class DivergingStackedBarChart extends StatelessWidget {
       DivergingStackedBarData('Apr', -60),
     ];
 
-    return [
-      charts.Series<DivergingStackedBarData, String>(
-        id: 'Income',
-        domainFn: (DivergingStackedBarData data, _) => data.category,
-        measureFn: (DivergingStackedBarData data, _) => data.value,
-        data: incomeData,
-        colorFn: (_, __) => charts.MaterialPalette.green.shadeDefault,
-      ),
-      charts.Series<DivergingStackedBarData, String>(
-        id: 'Expense',
-        domainFn: (DivergingStackedBarData data, _) => data.category,
-        measureFn: (DivergingStackedBarData data, _) => data.value,
-        data: expenseData,
-        colorFn: (_, __) => charts.MaterialPalette.red.shadeDefault,
-      ),
-    ];
+    return [incomeData, expenseData];
   }
 }
 
@@ -105,6 +157,5 @@ class DivergingStackedBarData {
   final String category;
   final double value;
 
-  DivergingStackedBarData(this.category, double value)
-    : value = value / 1000000;
+  DivergingStackedBarData(this.category, this.value);
 }
