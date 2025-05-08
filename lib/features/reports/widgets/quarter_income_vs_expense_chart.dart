@@ -9,7 +9,7 @@ import '../../../shared/component/charts/grouped_bar_chart.dart';
 class QuarterIncomeVsExpenseChart extends StatelessWidget {
   const QuarterIncomeVsExpenseChart({super.key});
 
-  List<charts.Series<GroupedBarData, String>> _createData(StatisticData yearData) {
+  List<List<GroupedBarData>> _createData(StatisticData yearData) {
     if (yearData.byQuarterStatistic == null || yearData.byQuarterStatistic!.isEmpty) {
       return [];
     }
@@ -29,20 +29,8 @@ class QuarterIncomeVsExpenseChart extends StatelessWidget {
     ];
 
     return [
-      charts.Series<GroupedBarData, String>(
-        id: 'Income',
-        domainFn: (GroupedBarData data, _) => data.category,
-        measureFn: (GroupedBarData data, _) => data.value,
-        data: incomeData,
-        colorFn: (_, __) => charts.MaterialPalette.green.shadeDefault,
-      ),
-      charts.Series<GroupedBarData, String>(
-        id: 'Expense',
-        domainFn: (GroupedBarData data, _) => data.category,
-        measureFn: (GroupedBarData data, _) => data.value,
-        data: expenseData,
-        colorFn: (_, __) => charts.MaterialPalette.red.shadeDefault,
-      ),
+      incomeData,
+      expenseData,
     ];
   }
 
@@ -53,7 +41,12 @@ class QuarterIncomeVsExpenseChart extends StatelessWidget {
       final data = _createData(yearData);
 
       return GroupedBarChart(
-        data,
+        seriesList: data,
+        colors: [
+          Colors.green,
+          Colors.red,
+        ],
+        titles: ["Income", "Expense"],
         height: 300,
       );
     });
