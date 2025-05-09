@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:intel_money/features/other/screens/detail_ratio_screen.dart';
 import 'package:intel_money/shared/component/typos/currency_double_text.dart';
 import 'package:intel_money/shared/helper/formatter.dart';
 import 'package:pie_chart/pie_chart.dart';
@@ -179,77 +180,84 @@ class _ExpenseIncomeChartState extends State<ExpenseIncomeChart> {
   @override
   Widget build(BuildContext context) {
     final statisticState = Provider.of<StatisticState>(context);
-    final statisticData = _getStatisticData(statisticState);
+    final statisticData = _getStatisticData(statisticState) ?? StatisticData.defaultData();
 
     return Container(
       color: Colors.white,
       width: double.infinity,
       padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text("Expense vs Income", style: TextStyle(fontSize: 20)),
-          DropdownButtonHideUnderline(
-            child: DropdownButton<StatisticThisTime>(
-              value: type,
-              items:
-                  StatisticThisTime.values.map((StatisticThisTime time) {
-                    return DropdownMenuItem<StatisticThisTime>(
-                      value: time,
-                      child: Text(
-                        time.name,
-                        style: const TextStyle(color: Colors.grey),
-                      ),
-                    );
-                  }).toList(),
-              onChanged: (StatisticThisTime? newValue) {
-                setState(() {
-                  type = newValue!;
-                });
+      child: InkWell(
+        onTap: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => DetailRatioScreen(title: "Today", statisticData: statisticData,)),
+          );
+        },
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text("Expense vs Income", style: TextStyle(fontSize: 20)),
+            DropdownButtonHideUnderline(
+              child: DropdownButton<StatisticThisTime>(
+                value: type,
+                items:
+                    StatisticThisTime.values.map((StatisticThisTime time) {
+                      return DropdownMenuItem<StatisticThisTime>(
+                        value: time,
+                        child: Text(
+                          time.name,
+                          style: const TextStyle(color: Colors.grey),
+                        ),
+                      );
+                    }).toList(),
+                onChanged: (StatisticThisTime? newValue) {
+                  setState(() {
+                    type = newValue!;
+                  });
+                },
+                icon: const Icon(Icons.arrow_drop_down, color: Colors.grey),
+                style: const TextStyle(color: Colors.grey),
+              ),
+            ),
+        
+            if (statisticData != null &&
+                (statisticData.totalIncome != 0 ||
+                    statisticData.totalExpense != 0))
+              ..._buildChart(statisticData),
+        
+            if (statisticData == null ||
+                (statisticData.totalIncome == 0 &&
+                    statisticData.totalExpense == 0))
+              SizedBox(
+                height: 160,
+                child: Center(child: const Text("No record found")),
+              ),
+        
+            const SizedBox(height: 16),
+            GestureDetector(
+              onTap: () {
+                AppRoutes.navigateToTransactionHistory(context);
               },
-              icon: const Icon(Icons.arrow_drop_down, color: Colors.grey),
-              style: const TextStyle(color: Colors.grey),
-            ),
-          ),
-
-          if (statisticData != null &&
-              (statisticData.totalIncome != 0 ||
-                  statisticData.totalExpense != 0))
-            ..._buildChart(statisticData),
-
-          if (statisticData == null ||
-              (statisticData.totalIncome == 0 &&
-                  statisticData.totalExpense == 0))
-            SizedBox(
-              height: 160,
-              child: Center(child: const Text("No record found")),
-            ),
-
-          const SizedBox(height: 16),
-          GestureDetector(
-            onTap: () {
-              AppRoutes.navigateToTransactionHistory(context);
-            },
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Text(
-                  "Transaction history",
-                  style: TextStyle(
-                    fontSize: 16,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text(
+                    "Transaction history",
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Theme.of(context).primaryColor,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Icon(
+                    Icons.arrow_forward_ios,
+                    size: 14,
                     color: Theme.of(context).primaryColor,
                   ),
-                ),
-                const SizedBox(width: 8),
-                Icon(
-                  Icons.arrow_forward_ios,
-                  size: 14,
-                  color: Theme.of(context).primaryColor,
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

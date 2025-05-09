@@ -10,6 +10,7 @@ class AppDonutChart extends StatelessWidget {
   final double ringStrokeWidth;
   final bool showLegends;
   final bool showLegendsInRow;
+  final bool centerChart;
 
   const AppDonutChart({
     super.key,
@@ -19,6 +20,7 @@ class AppDonutChart extends StatelessWidget {
     required this.ringStrokeWidth,
     this.showLegends = true,
     this.showLegendsInRow = true,
+    this.centerChart = false,
   });
 
   Widget _buildLegend(Color color, String text) {
@@ -69,6 +71,7 @@ class AppDonutChart extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: centerChart ? MainAxisAlignment.center : MainAxisAlignment.start,
       children: [
         Container(
           padding: const EdgeInsets.all(16),

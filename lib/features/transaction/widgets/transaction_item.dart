@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intel_money/shared/component/typos/currency_double_text.dart';
 import 'package:intel_money/shared/const/enum/transaction_type.dart';
-import 'package:intel_money/shared/const/icons/category_icon.dart';
 
 import '../../../core/models/transaction.dart';
-import '../../../shared/helper/formatter.dart';
 
 class TransactionItem extends StatelessWidget {
   final Transaction transaction;
