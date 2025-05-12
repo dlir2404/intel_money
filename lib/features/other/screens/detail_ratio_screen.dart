@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:intel_money/features/transaction/screens/transactions_of_categories.dart';
 
 import '../../../core/models/statistic_data.dart';
 import '../../../shared/component/charts/donut_chart.dart';
 import '../../../shared/component/typos/currency_double_text.dart';
+import '../../../shared/helper/app_time.dart';
 import '../../../shared/helper/formatter.dart';
 
 class DetailRatioScreen extends StatefulWidget {
@@ -52,14 +54,20 @@ class _DetailRatioScreenState extends State<DetailRatioScreen>
   Widget _buildDescription(double total, List<ByCategoryData> data) {
     return Container(
       color: Colors.white,
-      child: InkWell(
-        onTap: () {
-          //TODO: Navigate to transaction list screen
-        },
-        child: Column(
-          children: [
-            ...data.map(
-              (item) => Container(
+      child: Column(
+        children: [
+          ...data.map(
+            (item) => InkWell(
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => TransactionsOfCategories(
+                    category: item.category,
+                    from: AppTime.startOfToday(),
+                    to: AppTime.endOfToday(),
+                  )),
+                );
+              },
+              child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
                 decoration: BoxDecoration(
                   border: Border(
@@ -128,8 +136,8 @@ class _DetailRatioScreenState extends State<DetailRatioScreen>
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

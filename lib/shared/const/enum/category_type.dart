@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 enum CategoryType { income, expense, lend, borrow }
 
 extension CategoryTypeExtension on CategoryType {
@@ -24,6 +25,19 @@ extension CategoryTypeExtension on CategoryType {
         return 'Lend';
       case CategoryType.borrow:
         return 'Borrow';
+    }
+  }
+
+  Color get color {
+    switch (this) {
+      case CategoryType.income:
+        return Colors.green;
+      case CategoryType.expense:
+        return Colors.red;
+      case CategoryType.lend:
+        return Colors.blue;
+      case CategoryType.borrow:
+        return Colors.orange;
     }
   }
 }

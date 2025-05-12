@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:intel_money/core/models/category.dart';
 
 import '../models/transaction.dart';
 
@@ -33,5 +34,13 @@ class TransactionState extends ChangeNotifier {
     }
 
     notifyListeners();
+  }
+
+  List<Transaction> filterTransactions(DateTime from, DateTime to, Category category) {
+    return _transactions.where((transaction) {
+      return transaction.transactionDate.isAfter(from) &&
+          transaction.transactionDate.isBefore(to) &&
+          transaction.category?.id == category.id;
+    }).toList();
   }
 }

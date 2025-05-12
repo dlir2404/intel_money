@@ -189,7 +189,7 @@ class _ExpenseIncomeChartState extends State<ExpenseIncomeChart> {
       child: InkWell(
         onTap: () {
           Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => DetailRatioScreen(title: "Today", statisticData: statisticData,)),
+            MaterialPageRoute(builder: (context) => DetailRatioScreen(title: type.name, statisticData: statisticData,)),
           );
         },
         child: Column(
