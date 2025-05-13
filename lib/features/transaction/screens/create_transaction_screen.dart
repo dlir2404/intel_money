@@ -199,6 +199,7 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
         onTransactionTypeChanged: (transactionType) {
           setState(() {
             _selectedTransactionType = transactionType;
+            _selectedCategory = null;
           });
         },
         onSave: _saveTransaction,
