@@ -20,4 +20,15 @@ class RelatedUserService {
     temp.isTemporary = false;
     _relatedUserState.addRelatedUser(temp);
   }
+
+  Future<void> getAll() async {
+    final response = await _apiClient.get('/related-user');
+    final List<RelatedUser> relatedUsers = [];
+
+    for (var item in response) {
+      relatedUsers.add(RelatedUser.fromJson(item));
+    }
+
+    _relatedUserState.setRelatedUsers(relatedUsers);
+  }
 }

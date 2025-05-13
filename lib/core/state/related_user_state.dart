@@ -31,4 +31,28 @@ class RelatedUserState extends ChangeNotifier {
     _relatedUsers.removeWhere((element) => element.id == id);
     notifyListeners();
   }
+
+  void increaseRelatedUserTotalLoan(int id, double amount) {
+    final index = _relatedUsers.indexWhere((element) => element.id == id);
+    _relatedUsers[index].totalLoan += amount;
+    notifyListeners();
+  }
+
+  void increaseRelatedUserTotalDebt(int id, double amount) {
+    final index = _relatedUsers.indexWhere((element) => element.id == id);
+    _relatedUsers[index].totalDebt += amount;
+    notifyListeners();
+  }
+
+  void decreaseRelatedUserTotalLoan(int id, double amount) {
+    final index = _relatedUsers.indexWhere((element) => element.id == id);
+    _relatedUsers[index].totalLoan -= amount;
+    notifyListeners();
+  }
+
+  void decreaseRelatedUserTotalDebt(int id, double amount) {
+    final index = _relatedUsers.indexWhere((element) => element.id == id);
+    _relatedUsers[index].totalDebt -= amount;
+    notifyListeners();
+  }
 }

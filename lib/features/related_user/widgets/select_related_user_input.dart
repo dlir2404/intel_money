@@ -40,7 +40,7 @@ class _SelectRelatedUserInputState extends State<SelectRelatedUserInput> {
 
     setState(() {
       _relatedUser = selectedRelatedUser;
-      widget.onRelatedUserSelected(_relatedUser!);
+      widget.onRelatedUserSelected(_relatedUser);
     });
   }
 

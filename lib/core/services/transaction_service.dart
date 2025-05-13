@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:intel_money/core/network/api_client.dart';
 import 'package:intel_money/core/state/app_state.dart';
+import 'package:intel_money/core/state/related_user_state.dart';
 import 'package:intel_money/core/state/statistic_state.dart';
 import 'package:intel_money/core/state/transaction_state.dart';
 import 'package:intel_money/core/state/wallet_state.dart';
@@ -16,6 +17,7 @@ class TransactionService {
   final TransactionState _transactionState = TransactionState();
   final WalletState _walletState = WalletState();
   final StatisticState _statisticState = StatisticState();
+  final RelatedUserState _relatedUserState = RelatedUserState();
 
   final ApiClient _apiClient = ApiClient.instance;
 
@@ -217,8 +219,11 @@ class TransactionService {
     _transactionState.addTransaction(transaction);
     _walletState.decreateWalletBalance(sourceWalletId, amount);
     _appState.decreaseUserBalance(transaction.amount);
+    //increase user total loan
     _appState.increaseUserTotalLoan(transaction.amount);
 
+    //increase borrower total debt
+    _relatedUserState.increaseRelatedUserTotalDebt(borrowerId, amount);
     return transaction;
   }
 
@@ -245,8 +250,12 @@ class TransactionService {
     _transactionState.addTransaction(transaction);
     _walletState.increaseWalletBalance(sourceWalletId, amount);
     _appState.increaseUserBalance(transaction.amount);
+
+    //increase user total debt
     _appState.increaseUserTotalDebt(transaction.amount);
 
+    //increase lender total loan
+    _relatedUserState.increaseRelatedUserTotalLoan(lenderId, amount);
     return transaction;
   }
 }

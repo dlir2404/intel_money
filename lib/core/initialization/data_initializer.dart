@@ -7,6 +7,7 @@ import 'package:intel_money/core/services/wallet_service.dart';
 import 'package:intel_money/core/services/category_service.dart';
 import 'package:intel_money/core/services/auth_service.dart';
 
+import '../services/related_user_service.dart';
 import '../services/statistic_service.dart';
 import '../services/transaction_service.dart';
 
@@ -33,6 +34,7 @@ class DataInitializer {
         _loadWallets(),
         _loadCategories(),
         _loadTodayStatistics(),
+        _loadRelatedUsers(),
       ]);
 
       // Load transactions separately as it might be heavy and have references to wallets, categories, etc.
@@ -78,6 +80,16 @@ class DataInitializer {
       debugPrint('Categories loaded successfully');
     } catch (e) {
       debugPrint('Error loading categories: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> _loadRelatedUsers() async {
+    try {
+      await RelatedUserService().getAll();
+      debugPrint('Related users loaded successfully');
+    } catch (e) {
+      debugPrint('Error loading related users: $e');
       rethrow;
     }
   }
