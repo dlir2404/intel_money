@@ -5,14 +5,16 @@ import '../models/category.dart';
 
 class CategoryState extends ChangeNotifier {
   static final CategoryState _instance = CategoryState._internal();
+
   factory CategoryState() => _instance;
+
   CategoryState._internal();
 
   List<Category> _categories = [];
   List<Category> _expenseCategories = [];
   List<Category> _incomeCategories = [];
-  List<Category> _lendCategories = [];
-  List<Category> _borrowCategories = [];
+  Category? _lendCategory;
+  Category? _borrowCategory;
 
   List<Category> get categories => _categories;
 
@@ -20,9 +22,9 @@ class CategoryState extends ChangeNotifier {
 
   List<Category> get incomeCategories => _incomeCategories;
 
-  List<Category> get lendCategories => _lendCategories;
+  Category? get lendCategory => _lendCategory;
 
-  List<Category> get borrowCategories => _borrowCategories;
+  Category? get borrowCategory => _borrowCategory;
 
   void setCategories(List<Category> categories) {
     _categories = categories;
@@ -36,15 +38,15 @@ class CategoryState extends ChangeNotifier {
         categories
             .where((element) => element.type == CategoryType.income)
             .toList();
-    _lendCategories =
-        categories
-            .where((element) => element.type == CategoryType.lend)
-            .toList();
 
-    _borrowCategories =
-        categories
-            .where((element) => element.type == CategoryType.borrow)
-            .toList();
+    //there are only one lend and borrow categories
+    _lendCategory = categories.firstWhere(
+      (element) => element.type == CategoryType.lend,
+    );
+
+    _borrowCategory = categories.firstWhere(
+      (element) => element.type == CategoryType.borrow,
+    );
 
     notifyListeners();
   }
@@ -59,7 +61,7 @@ class CategoryState extends ChangeNotifier {
       }
     } else {
       final parent = _categories.firstWhere(
-            (element) => element.id == category.parentId,
+        (element) => element.id == category.parentId,
       );
       parent.addChild(category);
       //NOTICE: cause income & expense categories just reference variables, we do not need to add once again
@@ -79,27 +81,30 @@ class CategoryState extends ChangeNotifier {
     notifyListeners();
   }
 
-
   //done
   void updateCategory(Category category) {
     if (category.parentId != null && category.parentId != 0) {
-      final parent = _categories.firstWhere((element) => element.id == category.parentId);
-      final index = parent.children.indexWhere((element) => element.id == category.id);
+      final parent = _categories.firstWhere(
+        (element) => element.id == category.parentId,
+      );
+      final index = parent.children.indexWhere(
+        (element) => element.id == category.id,
+      );
       parent.children[index] = category;
     } else {
       final index = _categories.indexWhere(
-            (element) => element.id == category.id,
+        (element) => element.id == category.id,
       );
       _categories[index] = category;
 
       if (category.type == CategoryType.expense) {
         final index = _expenseCategories.indexWhere(
-              (element) => element.id == category.id,
+          (element) => element.id == category.id,
         );
         _expenseCategories[index] = category;
       } else {
         final index = _incomeCategories.indexWhere(
-              (element) => element.id == category.id,
+          (element) => element.id == category.id,
         );
         _incomeCategories[index] = category;
       }

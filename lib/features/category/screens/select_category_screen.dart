@@ -38,9 +38,9 @@ class _SelectCategoryScreenState extends State<SelectCategoryScreen> {
       case CategoryType.income:
         return state.incomeCategories;
       case CategoryType.lend:
-        return state.lendCategories;
+        return [];
       case CategoryType.borrow:
-        return state.borrowCategories;
+        return [];
     }
   }
 

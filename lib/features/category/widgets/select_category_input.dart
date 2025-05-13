@@ -28,6 +28,12 @@ class SelectCategoryInput extends StatefulWidget {
 
 class _SelectCategoryInputState extends State<SelectCategoryInput> {
   void _navigateToSelectParentCategory() async {
+    if (widget.categoryType == CategoryType.lend ||
+        widget.categoryType == CategoryType.borrow) {
+      //do nothing
+      return;
+    }
+
     final selectedCategory = await Navigator.push<Category>(
       context,
       MaterialPageRoute(
@@ -61,7 +67,8 @@ class _SelectCategoryInputState extends State<SelectCategoryInput> {
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: widget.category?.icon.color.withOpacity(0.15) ??
+                color:
+                    widget.category?.icon.color.withOpacity(0.15) ??
                     CategoryIcon.defaultIcon().color.withOpacity(0.15),
                 shape: BoxShape.circle,
               ),

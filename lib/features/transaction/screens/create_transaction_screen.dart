@@ -5,6 +5,7 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:intel_money/core/models/scan_receipt_response.dart';
 import 'package:intel_money/core/network/api_exception.dart';
 import 'package:intel_money/core/services/related_user_service.dart';
+import 'package:intel_money/core/state/category_state.dart';
 import 'package:intel_money/features/transaction/screens/take_picture_screen.dart';
 import 'package:intel_money/features/transaction/widgets/create_transaction_appbar.dart';
 import 'package:intel_money/features/wallet/widgets/select_wallet_input.dart';
@@ -13,6 +14,7 @@ import 'package:intel_money/shared/component/input/main_input.dart';
 import 'package:intel_money/shared/const/enum/category_type.dart';
 import 'package:intel_money/shared/const/enum/transaction_type.dart';
 import 'package:intel_money/shared/helper/toast.dart';
+import 'package:provider/provider.dart';
 
 import '../../../core/models/category.dart';
 import '../../../core/models/related_user.dart';
@@ -199,7 +201,15 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
         onTransactionTypeChanged: (transactionType) {
           setState(() {
             _selectedTransactionType = transactionType;
-            _selectedCategory = null;
+            if (transactionType == TransactionType.lend) {
+              final state = Provider.of<CategoryState>(context, listen: false);
+              _selectedCategory = state.lendCategory;
+            } else if (transactionType == TransactionType.borrow) {
+              final state = Provider.of<CategoryState>(context, listen: false);
+              _selectedCategory = state.borrowCategory;
+            } else {
+              _selectedCategory = null;
+            }
           });
         },
         onSave: _saveTransaction,
