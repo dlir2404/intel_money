@@ -45,13 +45,10 @@ class CategoryService {
     Category oldCategory,
     String name,
     String icon,
-    CategoryType type, {
-    int? parentId,
-  }) async {
+    CategoryType type) async {
     await _apiClient.put('/category/${oldCategory.id}', {
       'name': name,
       'icon': icon,
-      'parentId': parentId,
     });
 
     final category = Category(
@@ -59,7 +56,7 @@ class CategoryService {
       name: name,
       icon: CategoryIcon.getIcon(icon),
       type: type,
-      parentId: parentId ?? 0,
+      parentId: oldCategory.parentId,
       editable: true,
     );
 

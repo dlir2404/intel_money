@@ -23,7 +23,6 @@ class _EditCategoryScreenState extends State<EditCategoryScreen> {
 
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _nameController = TextEditingController();
-  Category? _parentCategory;
   AppIcon _selectedIcon = CategoryIcon.defaultIcon();
 
   bool _isLoading = false;
@@ -47,10 +46,6 @@ class _EditCategoryScreenState extends State<EditCategoryScreen> {
         category = arguments!['category'] as Category;
         _nameController.text = category.name;
         _selectedIcon = category.icon;
-
-        if (category.parentId != null && category.parentId != 0) {
-          _parentCategory = Category.fromContext(category.parentId);
-        }
       });
     });
   }
@@ -96,7 +91,6 @@ class _EditCategoryScreenState extends State<EditCategoryScreen> {
         _nameController.text.trim(),
         _selectedIcon.name,
         category.type,
-        parentId: _parentCategory?.id,
       );
 
       if (mounted) {
@@ -140,6 +134,7 @@ class _EditCategoryScreenState extends State<EditCategoryScreen> {
             fontSize: 18,
           ),
         ),
+        centerTitle: true,
         actions: [
           TextButton(
             onPressed: _isLoading ? null : _saveCategory,
@@ -226,27 +221,6 @@ class _EditCategoryScreenState extends State<EditCategoryScreen> {
                   },
                 ),
                 const SizedBox(height: 25),
-
-                // Parent Category
-                const Text(
-                  'Parent Category',
-                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
-                ),
-                const SizedBox(height: 10),
-
-                SelectCategoryInput(
-                  category: _parentCategory,
-                  placeholder: 'Select Parent Category',
-                  categoryType: category.type,
-                  onCategorySelected: (category) {
-                    if (category != null) {
-                      setState(() {
-                        _parentCategory = category;
-                      });
-                    }
-                  },
-                ),
-                const SizedBox(height: 40),
 
                 // Save Button
                 SizedBox(
