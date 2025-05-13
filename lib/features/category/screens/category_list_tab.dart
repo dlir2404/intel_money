@@ -6,6 +6,7 @@ import 'package:intel_money/shared/const/enum/category_type.dart';
 
 import '../../../core/config/routes.dart';
 import '../../../core/state/category_state.dart';
+import '../../../shared/helper/toast.dart';
 import '../widgets/category_group.dart';
 
 class CategoryListTab extends StatelessWidget {
@@ -101,7 +102,11 @@ class CategoryListTab extends StatelessWidget {
           category: parent,
           showChildren: true,
           onCategoryTap: (parent) {
-            _navigateToEditCategory(context, parent);
+            if (parent.editable) {
+              _navigateToEditCategory(context, parent);
+            } else {
+              AppToast.showWarning(context, 'Cannot edit this category');
+            }
           },
           onChildrenTap: (category) {
             if (category.editable) {

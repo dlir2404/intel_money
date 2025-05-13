@@ -80,6 +80,7 @@ class _CategoryScreenState extends State<CategoryScreen> with TickerProviderStat
             fontSize: 18,
           ),
         ),
+        centerTitle: true,
         actions: [
           IconButton(
             icon: Icon(

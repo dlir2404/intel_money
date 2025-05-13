@@ -139,6 +139,7 @@ class _CreateCategoryScreenState extends State<CreateCategoryScreen> {
             fontSize: 18,
           ),
         ),
+        centerTitle: true,
         actions: [
           TextButton(
             onPressed: _isLoading ? null : _saveCategory,
