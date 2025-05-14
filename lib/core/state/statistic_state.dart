@@ -290,6 +290,7 @@ class StatisticState extends ChangeNotifier {
 
       int categoryId = newTransaction.category!.parentId ?? newTransaction.category!.id;
       int categoryIndex = _thisYearStatisticData!.byCategoryExpense.indexWhere((element) => element.category.id == categoryId);
+      //by category expense
       if (categoryIndex != -1) {
         _thisYearStatisticData!.byCategoryExpense[categoryIndex].amount += newTransaction.amount;
       } else {
@@ -299,11 +300,19 @@ class StatisticState extends ChangeNotifier {
         ));
       }
 
+      //by month statistic
+      final month = newTransaction.transactionDate.month;
+      _thisYearStatisticData!.byMonthStatistic![month - 1].totalExpense += newTransaction.amount;
+
+      //by quarter statistic
+      final quarter = (newTransaction.transactionDate.month / 3).toInt() + 1;
+      _thisYearStatisticData!.byQuarterStatistic![quarter - 1].totalExpense += newTransaction.amount;
     } else if (newTransaction.type == TransactionType.income) {
       _thisYearStatisticData!.totalIncome += newTransaction.amount;
 
       int categoryId = newTransaction.category!.parentId ?? newTransaction.category!.id;
       int categoryIndex = _thisYearStatisticData!.byCategoryIncome.indexWhere((element) => element.category.id == categoryId);
+      // by category income
       if (categoryIndex != -1) {
         _thisYearStatisticData!.byCategoryIncome[categoryIndex].amount += newTransaction.amount;
       } else {
@@ -312,6 +321,14 @@ class StatisticState extends ChangeNotifier {
           amount: newTransaction.amount,
         ));
       }
+
+      //by month statistic
+      final month = newTransaction.transactionDate.month;
+      _thisYearStatisticData!.byMonthStatistic![month - 1].totalIncome += newTransaction.amount;
+
+      //by quarter statistic
+      final quarter = (newTransaction.transactionDate.month / 3).toInt() + 1;
+      _thisYearStatisticData!.byQuarterStatistic![quarter - 1].totalIncome += newTransaction.amount;
     }
   }
 }
