@@ -1,6 +1,7 @@
 import 'package:currency_picker/currency_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intel_money/core/models/user.dart';
+import 'package:intel_money/core/services/ad_service.dart';
 
 class AppState extends ChangeNotifier {
   static final AppState _instance = AppState._internal();
@@ -34,6 +35,8 @@ class AppState extends ChangeNotifier {
   User? get user => _user;
   void setUser(User user) {
     _user = user;
+
+    AdService().setVipStatus(user.isVip);
     notifyListeners();
   }
 

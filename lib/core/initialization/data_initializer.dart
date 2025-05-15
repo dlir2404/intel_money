@@ -52,8 +52,8 @@ class DataInitializer {
       final user = await AuthService().getMe();
       if (user != null) {
         appState.setUser(user);
-        if (user.preferences != null && user.preferences!.timezone != null) {
-          appState.setUserTimezone(user.preferences!.timezone!);
+        if (user.preferences.timezone != null) {
+          appState.setUserTimezone(user.preferences.timezone!);
         }
         debugPrint('User data loaded successfully');
       }

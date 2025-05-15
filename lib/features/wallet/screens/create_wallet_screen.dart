@@ -219,7 +219,7 @@ class _CreateWalletScreenState extends State<CreateWalletScreen> {
       initialAmount,
     ).then((_) {
       if (mounted) {
-        AdService().showInterstitialAd();
+        AdService().showAdIfEligible();
 
         AppToast.showSuccess(context, "Wallet created successfully");
         Future.delayed(const Duration(seconds: 1), () {

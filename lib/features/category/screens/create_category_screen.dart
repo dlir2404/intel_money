@@ -98,7 +98,7 @@ class _CreateCategoryScreenState extends State<CreateCategoryScreen> {
 
         AppToast.showSuccess(context, "Category created successfully");
 
-        AdService().showInterstitialAd();
+        AdService().showAdIfEligible();
 
         Future.delayed(const Duration(seconds: 1), () {
           Navigator.pop(context);

@@ -100,7 +100,7 @@ class _EditCategoryScreenState extends State<EditCategoryScreen> {
 
         AppToast.showSuccess(context, "Category created successfully");
 
-        AdService().showInterstitialAd();
+        AdService().showAdIfEligible();
 
         Future.delayed(const Duration(seconds: 1), () {
           Navigator.pop(context);

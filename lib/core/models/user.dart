@@ -1,3 +1,5 @@
+import '../../shared/helper/app_time.dart';
+
 class User {
   final int id;
   final String name;
@@ -8,6 +10,8 @@ class User {
   double totalLoan;
   double totalDebt;
 
+  bool isVip;
+  DateTime? vipExpirationDate;
   UserPreferences preferences;
 
   User({
@@ -20,6 +24,8 @@ class User {
     this.totalLoan = 0.0,
     this.totalDebt = 0.0,
     required this.preferences,
+    this.isVip = false,
+    this.vipExpirationDate,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
@@ -33,6 +39,11 @@ class User {
       totalLoan: json['totalLoan']?.toDouble() ?? 0.0,
       totalDebt: json['totalBorrowed']?.toDouble() ?? 0.0,
       preferences: UserPreferences.fromJson(json['preferences']),
+      isVip: json['isVip'] == 1 ? true : false,
+      vipExpirationDate:
+          json['vipExpirationDate'] != null
+              ? AppTime.parseFromApi(json['vipExpirationDate'])
+              : null,
     );
 
     return user;

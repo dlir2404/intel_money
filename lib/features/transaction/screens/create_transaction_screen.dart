@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:intel_money/core/models/scan_receipt_response.dart';
 import 'package:intel_money/core/network/api_exception.dart';
+import 'package:intel_money/core/services/ad_service.dart';
 import 'package:intel_money/core/services/related_user_service.dart';
 import 'package:intel_money/core/state/category_state.dart';
 import 'package:intel_money/features/transaction/screens/take_picture_screen.dart';
@@ -144,6 +145,8 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
 
       // Clear fields after saving
       _clearFields();
+
+      AdService().showAdIfEligible();
     } catch (e) {
       if (e is ApiException) {
         AppToast.showError(context, e.message);
