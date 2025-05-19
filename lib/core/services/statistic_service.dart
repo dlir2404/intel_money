@@ -55,6 +55,17 @@ class StatisticService {
     _state.setThisYearStatisticData(statisticData);
   }
 
+  Future<StatisticData> getCustomRangeStatisticData(DateTime from, DateTime to) async {
+    final response = await _apiClient.get('/statistic/custom-range',
+        params: {
+          'from': AppTime.toUtcIso8601String(from),
+          'to': AppTime.toUtcIso8601String(to),
+        });
+
+    final statisticData = StatisticData.fromJson(response);
+    return statisticData;
+  }
+
   Future<void> getByDayAnalysisData(DateTime from, DateTime to) async {
     final response = await _apiClient.get(
       '/statistic/by-day',

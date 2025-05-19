@@ -26,11 +26,11 @@ class StatisticData {
     final data = StatisticData(
       totalIncome: json['totalIncome'].toDouble(),
       totalExpense: json['totalExpense'].toDouble(),
-      totalBalance: json['totalBalance'].toDouble(),
-      byCategoryIncome: (json['byCategoryIncome'] as List)
+      totalBalance: json['totalBalance'] != null ? json['totalBalance'].toDouble() : 0,
+      byCategoryIncome: ((json['byCategoryIncome'] ?? []) as List)
           .map((e) => ByCategoryData.fromJson(e))
           .toList(),
-      byCategoryExpense: (json['byCategoryExpense'] as List)
+      byCategoryExpense: ((json['byCategoryExpense'] ?? []) as List)
           .map((e) => ByCategoryData.fromJson(e))
           .toList(),
     );

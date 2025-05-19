@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intel_money/features/reports/widgets/custom_income_vs_expense.dart';
 
 import '../widgets/current_expense_vs_income.dart';
 import '../widgets/month_expense_vs_income.dart';
@@ -62,7 +63,7 @@ class _ExpenseVsIncomeScreenState extends State<ExpenseVsIncomeScreen>
                   MonthExpenseVsIncome(),
                   QuarterIncomeVsExpense(),
                   YearIncomeVsExpense(),
-                  Center(child: Text("Custom")),
+                  CustomIncomeVsExpense(),
                 ]
             ),
           ),

@@ -86,7 +86,7 @@ class AppTime {
   }
 
   static DateTime startOfMonth({DateTime? date}) {
-    final dateToUse = date ?? DateTime.now();
+    final dateToUse = date ?? startOfToday();
     return DateTime(dateToUse.year, dateToUse.month, 1);
   }
 
