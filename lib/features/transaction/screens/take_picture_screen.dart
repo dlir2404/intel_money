@@ -24,7 +24,6 @@ class _TakePictureScreenState extends State<TakePictureScreen> {
   List<CameraDescription>? cameras;
   bool _isCameraInitialized = false;
   bool _isProcessing = false;
-  final textRecognizer = TextRecognizer();
 
   @override
   void initState() {
@@ -35,7 +34,6 @@ class _TakePictureScreenState extends State<TakePictureScreen> {
   @override
   void dispose() {
     _cameraController?.dispose();
-    textRecognizer.close();
     super.dispose();
   }
 

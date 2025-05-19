@@ -16,7 +16,7 @@ class TransactionController {
   ) async {
     //Scan text from image
     final inputImage = InputImage.fromFilePath(image.path);
-    final textRecognizer = TextRecognizer();
+    final textRecognizer = TextRecognizer(script: TextRecognitionScript.latin);
     final RecognizedText recognizedText = await textRecognizer.processImage(
       inputImage,
     );
