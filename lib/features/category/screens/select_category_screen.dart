@@ -52,6 +52,7 @@ class _SelectCategoryScreenState extends State<SelectCategoryScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Select Category'),
+        centerTitle: true,
         backgroundColor: primaryColor,
         foregroundColor: Colors.white,
       ),

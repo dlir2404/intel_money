@@ -1,5 +1,7 @@
 import 'package:intel_money/core/models/extract_transaction_info_response.dart';
 
+import '../models/message.dart';
+import '../models/transaction.dart';
 import '../network/api_client.dart';
 
 class AIService {
@@ -19,5 +21,26 @@ class AIService {
         ExtractTransactionInfoResponse.fromJson(response);
 
     return transactionInfo;
+  }
+
+  Future<Message> registerTransactionFromChat(String text) async {
+    final response = await _apiClient.post(
+      '/ai/openai/register-transaction-from-chat',
+      {'text': text},
+    );
+
+    List<Transaction> transactions = [];
+    if (response['transactions'] != null) {
+      transactions = (response['transactions'] as List)
+          .map((transaction) => Transaction.fromJson(transaction))
+          .toList();
+    }
+
+    final Message message = Message.newAgentMessage(
+      content: response['advice'],
+      transactions: transactions
+    );
+
+    return message;
   }
 }

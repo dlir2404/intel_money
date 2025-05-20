@@ -7,6 +7,7 @@ import 'package:intel_money/core/network/api_exception.dart';
 import 'package:intel_money/core/services/ad_service.dart';
 import 'package:intel_money/core/services/related_user_service.dart';
 import 'package:intel_money/core/state/category_state.dart';
+import 'package:intel_money/features/transaction/screens/chat_with_ai_screen.dart';
 import 'package:intel_money/features/transaction/screens/take_picture_screen.dart';
 import 'package:intel_money/features/transaction/widgets/create_transaction_appbar.dart';
 import 'package:intel_money/features/wallet/widgets/select_wallet_input.dart';
@@ -195,6 +196,30 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
     });
   }
 
+  void _moveToChatWithAIScreen(BuildContext context) async {
+    // Capture the context in a local variable to avoid using across async gap
+    final navigatorContext = context;
+
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        // Internet connection is available
+        // Replace RegisterView with your actual chat screen class
+        if (!navigatorContext.mounted) return;
+        Navigator.of(navigatorContext).push(
+          MaterialPageRoute(builder: (context) => const ChatWithAiScreen()),
+        );
+      } else {
+        if (!navigatorContext.mounted) return;
+        AppToast.showError(navigatorContext, 'No internet connection');
+      }
+    } on SocketException catch (_) {
+      // No internet connection
+      if (!navigatorContext.mounted) return;
+      AppToast.showError(navigatorContext, 'Please check your internet connection');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -223,11 +248,24 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
           FloatingActionButton(
             heroTag: 'scan_receipt',
             onPressed: () => _scanReceipt(),
-            elevation: 4.0,
+            elevation: 8.0,
+            highlightElevation: 12.0,
             shape: const CircleBorder(),
             backgroundColor: Theme.of(context).colorScheme.primary,
             foregroundColor: Colors.white,
             child: const Icon(Icons.camera_alt_outlined),
+          ),
+          const SizedBox(height: 20),
+
+          FloatingActionButton(
+            heroTag: 'chat_with_ai',
+            onPressed: () => _moveToChatWithAIScreen(context),
+            elevation: 8.0,
+            highlightElevation: 12.0,
+            shape: const CircleBorder(),
+            backgroundColor: Theme.of(context).colorScheme.primary,
+            foregroundColor: Colors.white,
+            child: const Icon(Icons.chat_outlined),
           ),
 
           const SizedBox(height: 60),
