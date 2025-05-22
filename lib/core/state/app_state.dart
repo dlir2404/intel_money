@@ -1,5 +1,6 @@
 import 'package:currency_picker/currency_picker.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:intel_money/core/models/system_config.dart';
 import 'package:intel_money/core/models/user.dart';
 import 'package:intel_money/core/services/ad_service.dart';
 
@@ -69,6 +70,15 @@ class AppState extends ChangeNotifier {
     _user!.totalDebt += amount;
     notifyListeners();
   }
+
+  SystemConfig config = SystemConfig.defaultValue();
+  void setSystemConfig(SystemConfig newConfig) {
+    config = newConfig;
+    AdService().setAdProbability(newConfig.adsConfig.adProbability);
+    AdService().setMinTimeBetweenAds(newConfig.adsConfig.minTimeBetweenAds ~/ 60);
+    notifyListeners();
+  }
+
 
   void clear() {
     _user = null;

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intel_money/features/reports/screens/expense_vs_income_screen.dart';
 import 'package:intel_money/features/reports/screens/income_analysis.dart';
 
+import '../../../core/services/ad_service.dart';
 import 'expense_analysis.dart';
 import 'financial_statement_screen.dart';
 
@@ -15,6 +16,7 @@ class ReportScreen extends StatelessWidget {
       'title': 'Financial Statement',
       'color': Colors.blue,
       'ontap': (BuildContext context) {
+        AdService().showAdIfEligible();
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -28,6 +30,7 @@ class ReportScreen extends StatelessWidget {
       'title': 'Expense vs Income',
       'color': Colors.greenAccent,
       'ontap': (BuildContext context) {
+        AdService().showAdIfEligible();
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -41,6 +44,7 @@ class ReportScreen extends StatelessWidget {
       'title': 'Expense analysis',
       'color': Colors.red,
       'ontap': (BuildContext context) {
+        AdService().showAdIfEligible();
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const ExpenseAnalysis()),
@@ -52,6 +56,7 @@ class ReportScreen extends StatelessWidget {
       'title': 'Income analysis',
       'color': Colors.green,
       'ontap': (BuildContext context) {
+        AdService().showAdIfEligible();
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => const IncomeAnalysis()),

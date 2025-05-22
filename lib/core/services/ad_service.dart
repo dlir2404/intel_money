@@ -49,8 +49,7 @@ class AdService {
   }
 
   Future<void> initialize() async {
-    final lastAdTimeString = DateTime.now();
-
+    await MobileAds.instance.initialize();
     loadInterstitialAd();
   }
 

@@ -165,6 +165,7 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
   }
 
   Future<void> _scanReceipt() async {
+    AdService().showAdIfEligible();
     final TakePictureResponse result = await Navigator.push(
       context,
       MaterialPageRoute(
@@ -206,6 +207,9 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
         // Internet connection is available
         // Replace RegisterView with your actual chat screen class
         if (!navigatorContext.mounted) return;
+
+        AdService().showAdIfEligible();
+
         Navigator.of(navigatorContext).push(
           MaterialPageRoute(builder: (context) => const ChatWithAiScreen()),
         );

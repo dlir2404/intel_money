@@ -4,6 +4,7 @@ import 'package:intel_money/features/wallet/widgets/wallet_appbar.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/config/routes.dart';
+import '../../../core/services/ad_service.dart';
 import '../../../core/services/wallet_service.dart';
 import '../../../core/state/app_state.dart';
 
@@ -33,6 +34,8 @@ class _WalletScreenState extends State<WalletScreen> with SingleTickerProviderSt
   }
 
   void _showCreateWalletScreen() {
+    AdService().showAdIfEligible();
+
     Navigator.of(context).pushNamed(AppRoutes.createWallet);
   }
 

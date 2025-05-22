@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:intel_money/core/state/app_state.dart';
 
 import '../../../core/models/user.dart';
+import '../../../core/services/ad_service.dart';
 import '../../../core/services/auth_service.dart';
 import '../../category/screens/category_screen.dart';
 import 'general_setting_screen.dart';
@@ -206,6 +207,7 @@ class OtherScreen extends StatelessWidget {
     return InkWell(
       onTap: () {
         // Handle navigation based on the function title
+        AdService().showAdIfEligible();
         if (title == 'Categories') {
           Navigator.of(context).push(
             MaterialPageRoute(builder: (context) => const CategoryScreen()),
@@ -260,6 +262,7 @@ class OtherScreen extends StatelessWidget {
         'title': 'General Settings',
         'color': Colors.blue,
         'onTap': () {
+          AdService().showAdIfEligible();
           Navigator.of(context).push(
             MaterialPageRoute(
               builder: (context) => const GeneralSettingScreen(),

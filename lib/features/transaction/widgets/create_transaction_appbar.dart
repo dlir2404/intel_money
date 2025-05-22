@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intel_money/shared/const/enum/transaction_type.dart';
 
 import '../../../core/config/routes.dart';
+import '../../../core/services/ad_service.dart';
 import '../../../shared/const/enum/category_type.dart';
 
 class CreateTransactionAppbar extends StatefulWidget
@@ -120,6 +121,7 @@ class _CreateTransactionAppbarState extends State<CreateTransactionAppbar> {
       leading: IconButton(
         icon: const Icon(Icons.history),
         onPressed: () {
+          AdService().showAdIfEligible();
           AppRoutes.navigateToTransactionHistory(context);
         },
       ),
