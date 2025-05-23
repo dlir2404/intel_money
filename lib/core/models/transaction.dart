@@ -2,6 +2,7 @@ import 'package:intel_money/core/models/wallet.dart';
 import 'package:intel_money/shared/helper/app_time.dart';
 
 import '../../shared/const/enum/transaction_type.dart';
+import '../state/transaction_state.dart';
 import 'category.dart';
 
 class Transaction {
@@ -26,6 +27,17 @@ class Transaction {
     this.notAddToReport = false,
     this.images,
   });
+
+  factory Transaction.fromContext(int id) {
+    final List<Transaction> transactions = TransactionState().transactions;
+    for (var i = 0; i < transactions.length; i++) {
+      if (transactions[i].id == id) {
+        return transactions[i];
+      }
+    }
+
+    throw Exception('Transaction not found');
+  }
 
   factory Transaction.fromJson(Map<String, dynamic> json) {
     Category? category;

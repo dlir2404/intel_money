@@ -17,36 +17,33 @@ class AuthenticatedApp extends StatefulWidget {
 }
 
 class _AuthenticatedAppState extends State<AuthenticatedApp> {
-  bool _isLoading = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadData();
-  }
-
   Future<void> _loadData() async {
-    try {
       await DataInitializer().loadAllData(context);
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
-    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return MainLayout(
-      screens: const [
-        HomeScreen(),
-        WalletScreen(),
-        CreateTransactionScreen(),
-        ReportScreen(),
-        OtherScreen(),
-      ]
+    return FutureBuilder(
+      future: _loadData(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting){
+          return const Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        }
+
+        return MainLayout(
+          screens: const [
+            HomeScreen(),
+            WalletScreen(),
+            CreateTransactionScreen(),
+            ReportScreen(),
+            OtherScreen(),
+          ]
+        );
+      }
     );
   }
 }

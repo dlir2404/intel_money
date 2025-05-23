@@ -152,10 +152,12 @@ class StatisticState extends ChangeNotifier {
       int categoryIndex = _todayStatisticData!.byCategoryExpense.indexWhere((element) => element.category.id == categoryId);
       if (categoryIndex != -1) {
         _todayStatisticData!.byCategoryExpense[categoryIndex].amount += newTransaction.amount;
+        _todayStatisticData!.byCategoryExpense[categoryIndex].transactions.add(newTransaction);
       } else {
         _todayStatisticData!.byCategoryExpense.add(ByCategoryData(
           category: Category.fromContext(categoryId),
           amount: newTransaction.amount,
+          transactions: [newTransaction],
         ));
       }
 
@@ -166,10 +168,12 @@ class StatisticState extends ChangeNotifier {
       int categoryIndex = _todayStatisticData!.byCategoryIncome.indexWhere((element) => element.category.id == categoryId);
       if (categoryIndex != -1) {
         _todayStatisticData!.byCategoryIncome[categoryIndex].amount += newTransaction.amount;
+        _todayStatisticData!.byCategoryIncome[categoryIndex].transactions.add(newTransaction);
       } else {
         _todayStatisticData!.byCategoryIncome.add(ByCategoryData(
           category: Category.fromContext(categoryId),
           amount: newTransaction.amount,
+          transactions: [newTransaction],
         ));
       }
     }
@@ -187,10 +191,12 @@ class StatisticState extends ChangeNotifier {
       int categoryIndex = _thisWeekStatisticData!.byCategoryExpense.indexWhere((element) => element.category.id == categoryId);
       if (categoryIndex != -1) {
         _thisWeekStatisticData!.byCategoryExpense[categoryIndex].amount += newTransaction.amount;
+        _thisWeekStatisticData!.byCategoryExpense[categoryIndex].transactions.add(newTransaction);
       } else {
         _thisWeekStatisticData!.byCategoryExpense.add(ByCategoryData(
           category: Category.fromContext(categoryId),
           amount: newTransaction.amount,
+          transactions: [newTransaction],
         ));
       }
 
@@ -201,10 +207,12 @@ class StatisticState extends ChangeNotifier {
       int categoryIndex = _thisWeekStatisticData!.byCategoryIncome.indexWhere((element) => element.category.id == categoryId);
       if (categoryIndex != -1) {
         _thisWeekStatisticData!.byCategoryIncome[categoryIndex].amount += newTransaction.amount;
+        _thisWeekStatisticData!.byCategoryIncome[categoryIndex].transactions.add(newTransaction);
       } else {
         _thisWeekStatisticData!.byCategoryIncome.add(ByCategoryData(
           category: Category.fromContext(categoryId),
           amount: newTransaction.amount,
+          transactions: [newTransaction],
         ));
       }
     }
@@ -222,10 +230,12 @@ class StatisticState extends ChangeNotifier {
       int categoryIndex = _thisMonthStatisticData!.byCategoryExpense.indexWhere((element) => element.category.id == categoryId);
       if (categoryIndex != -1) {
         _thisMonthStatisticData!.byCategoryExpense[categoryIndex].amount += newTransaction.amount;
+        _thisMonthStatisticData!.byCategoryExpense[categoryIndex].transactions.add(newTransaction);
       } else {
         _thisMonthStatisticData!.byCategoryExpense.add(ByCategoryData(
           category: Category.fromContext(categoryId),
           amount: newTransaction.amount,
+          transactions: [newTransaction],
         ));
       }
 
@@ -236,10 +246,12 @@ class StatisticState extends ChangeNotifier {
       int categoryIndex = _thisMonthStatisticData!.byCategoryIncome.indexWhere((element) => element.category.id == categoryId);
       if (categoryIndex != -1) {
         _thisMonthStatisticData!.byCategoryIncome[categoryIndex].amount += newTransaction.amount;
+        _thisMonthStatisticData!.byCategoryIncome[categoryIndex].transactions.add(newTransaction);
       } else {
         _thisMonthStatisticData!.byCategoryIncome.add(ByCategoryData(
           category: Category.fromContext(categoryId),
           amount: newTransaction.amount,
+          transactions: [newTransaction],
         ));
       }
     }
@@ -257,10 +269,12 @@ class StatisticState extends ChangeNotifier {
       int categoryIndex = _thisQuarterStatisticData!.byCategoryExpense.indexWhere((element) => element.category.id == categoryId);
       if (categoryIndex != -1) {
         _thisQuarterStatisticData!.byCategoryExpense[categoryIndex].amount += newTransaction.amount;
+        _thisQuarterStatisticData!.byCategoryExpense[categoryIndex].transactions.add(newTransaction);
       } else {
         _thisQuarterStatisticData!.byCategoryExpense.add(ByCategoryData(
           category: Category.fromContext(categoryId),
           amount: newTransaction.amount,
+          transactions: [newTransaction],
         ));
       }
 
@@ -271,10 +285,12 @@ class StatisticState extends ChangeNotifier {
       int categoryIndex = _thisQuarterStatisticData!.byCategoryIncome.indexWhere((element) => element.category.id == categoryId);
       if (categoryIndex != -1) {
         _thisQuarterStatisticData!.byCategoryIncome[categoryIndex].amount += newTransaction.amount;
+        _thisQuarterStatisticData!.byCategoryIncome[categoryIndex].transactions.add(newTransaction);
       } else {
         _thisQuarterStatisticData!.byCategoryIncome.add(ByCategoryData(
           category: Category.fromContext(categoryId),
           amount: newTransaction.amount,
+          transactions: [newTransaction],
         ));
       }
     }
@@ -293,10 +309,12 @@ class StatisticState extends ChangeNotifier {
       //by category expense
       if (categoryIndex != -1) {
         _thisYearStatisticData!.byCategoryExpense[categoryIndex].amount += newTransaction.amount;
+        _thisYearStatisticData!.byCategoryExpense[categoryIndex].transactions.add(newTransaction);
       } else {
         _thisYearStatisticData!.byCategoryExpense.add(ByCategoryData(
           category: Category.fromContext(categoryId),
           amount: newTransaction.amount,
+          transactions: [newTransaction],
         ));
       }
 
@@ -315,10 +333,12 @@ class StatisticState extends ChangeNotifier {
       // by category income
       if (categoryIndex != -1) {
         _thisYearStatisticData!.byCategoryIncome[categoryIndex].amount += newTransaction.amount;
+        _thisYearStatisticData!.byCategoryIncome[categoryIndex].transactions.add(newTransaction);
       } else {
         _thisYearStatisticData!.byCategoryIncome.add(ByCategoryData(
           category: Category.fromContext(categoryId),
           amount: newTransaction.amount,
+          transactions: [newTransaction],
         ));
       }
 

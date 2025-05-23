@@ -1,3 +1,5 @@
+import 'package:intel_money/core/models/transaction.dart';
+
 import 'category.dart';
 
 class StatisticData {
@@ -63,16 +65,21 @@ class StatisticData {
 class ByCategoryData {
   final Category category;
   double amount;
+  List<Transaction> transactions;
 
   ByCategoryData({
     required this.category,
     required this.amount,
+    required this.transactions,
   });
 
   factory ByCategoryData.fromJson(Map<String, dynamic> json) {
     return ByCategoryData(
       category: Category.fromContext(json['id']),
       amount: json['amount'].toDouble(),
+      transactions: ((json['transactionIds'] ?? []) as List)
+          .map((e) => Transaction.fromContext(e))
+          .toList(),
     );
   }
 }

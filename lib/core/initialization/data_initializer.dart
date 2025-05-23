@@ -33,12 +33,15 @@ class DataInitializer {
         _loadUserData(appState),
         _loadWallets(),
         _loadCategories(),
-        _loadTodayStatistics(),
         _loadRelatedUsers(),
       ]);
 
       // Load transactions separately as it might be heavy and have references to wallets, categories, etc.
       await _loadTransactions();
+
+      // Load today statistics separately as it might be heavy and have references to transactions
+      await _loadTodayStatistics();
+
 
       debugPrint('>>>>>>>>> All app data loaded successfully');
     } catch (e) {
