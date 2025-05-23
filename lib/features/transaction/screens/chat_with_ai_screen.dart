@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:intel_money/core/services/ai_service.dart';
 import 'package:intel_money/shared/component/typos/currency_double_text.dart';
 
@@ -34,7 +35,36 @@ class _ChatWithAiScreenState extends State<ChatWithAiScreen> {
   }
 
   Widget _buildEmptyMessage() {
-    return Center(child: Text("No messages yet"));
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SvgPicture.asset(
+            'assets/images/empty_chat.svg',
+            width: 200,
+            height: 200,
+          ),
+          const SizedBox(height: 16),
+          Text(
+            "Start record your income and expenses",
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.grey[800],
+            ),
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            "Ex: Buy clothes 200k, breakfast 30k,...",
+            style: TextStyle(
+              fontSize: 12,
+              color: Colors.grey,
+            ),
+          ),
+
+          const SizedBox(height: 60),
+        ],
+      ),
+    );
   }
 
   Widget _buildUserMessage(Message message) {
@@ -226,6 +256,7 @@ class _ChatWithAiScreenState extends State<ChatWithAiScreen> {
       controller: _scrollController,
       child: Column(
         children: [
+          const SizedBox(height: 16),
           for (var message in _messages)
             message.role == MessageRole.user
                 ? _buildUserMessage(message)
@@ -241,6 +272,18 @@ class _ChatWithAiScreenState extends State<ChatWithAiScreen> {
         Message(
           role: MessageRole.agent,
           body: MessageBody(content: "Loading..."),
+        ),
+      );
+    });
+    _scrollToBottom();
+  }
+
+  void _addErrorMessage() {
+    setState(() {
+      _messages.add(
+        Message(
+          role: MessageRole.agent,
+          body: MessageBody(content: "Cannot detect transaction, please try format: Category + Amount + Time + ..."),
         ),
       );
     });
@@ -284,6 +327,8 @@ class _ChatWithAiScreenState extends State<ChatWithAiScreen> {
       _removeLoadingMessage();
       // Handle error
       print(e);
+
+      _addErrorMessage();
     } finally {
       _scrollToBottom();
     }
@@ -303,63 +348,38 @@ class _ChatWithAiScreenState extends State<ChatWithAiScreen> {
           Expanded(child: _buildMessages()),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12.0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(24),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
-                          spreadRadius: 0,
-                          blurRadius: 5,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
+            child: Expanded(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(24),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.05),
+                      spreadRadius: 0,
+                      blurRadius: 5,
+                      offset: const Offset(0, 2),
                     ),
-                    child: TextField(
-                      controller: _textController,
-                      decoration: InputDecoration(
-                        hintText: 'Type your message...',
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-                        border: InputBorder.none,
-                        suffixIcon: IconButton(
-                          icon: const Icon(Icons.send_rounded, color: Colors.blue),
-                          onPressed: () {
-                            _handleSendMessage();
-                          },
-                        ),
-                      ),
-                      onSubmitted: (value) {
+                  ],
+                ),
+                child: TextField(
+                  controller: _textController,
+                  decoration: InputDecoration(
+                    hintText: 'Breakfast 20k at 7am',
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                    border: InputBorder.none,
+                    suffixIcon: IconButton(
+                      icon: const Icon(Icons.send_rounded, color: Colors.blue),
+                      onPressed: () {
                         _handleSendMessage();
                       },
                     ),
                   ),
+                  onSubmitted: (value) {
+                    _handleSendMessage();
+                  },
                 ),
-                const SizedBox(width: 8),
-                Container(
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).primaryColor,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        spreadRadius: 0,
-                        blurRadius: 5,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: IconButton(
-                    icon: const Icon(Icons.mic, color: Colors.white),
-                    onPressed: () {
-                      // Handle voice recording
-                    },
-                  ),
-                ),
-              ],
+              ),
             ),
           )
         ],
