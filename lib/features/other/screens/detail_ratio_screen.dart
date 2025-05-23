@@ -147,37 +147,39 @@ class _DetailRatioScreenState extends State<DetailRatioScreen>
 
     return Container(
       color: Colors.grey[200],
-      child: Column(
-        children: [
-          Container(
-            color: Colors.white,
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [Text(totalTitle), CurrencyDoubleText(value: total)],
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
+              color: Colors.white,
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [Text(totalTitle), CurrencyDoubleText(value: total)],
+              ),
             ),
-          ),
-          const SizedBox(height: 12),
+            const SizedBox(height: 12),
 
-          Container(
-            color: Colors.white,
-            padding: const EdgeInsets.symmetric(vertical: 18),
-            child: AppDonutChart(
-              dataMap: dataMap,
-              width: 150,
-              height: 150,
-              ringStrokeWidth: 32,
-              showLegends: false,
-              showLegendsInRow: true,
-              centerChart: true,
+            Container(
+              color: Colors.white,
+              padding: const EdgeInsets.symmetric(vertical: 18),
+              child: AppDonutChart(
+                dataMap: dataMap,
+                width: 150,
+                height: 150,
+                ringStrokeWidth: 32,
+                showLegends: false,
+                showLegendsInRow: true,
+                centerChart: true,
+              ),
             ),
-          ),
-          const SizedBox(height: 12),
+            const SizedBox(height: 12),
 
-          _buildDescription(total, data),
-        ],
-      ),
+            _buildDescription(total, data),
+          ],
+        ),
+      )
     );
   }
 
@@ -216,8 +218,6 @@ class _DetailRatioScreenState extends State<DetailRatioScreen>
               ],
             ),
           ),
-
-          const SizedBox(height: 80),
         ],
       ),
     );

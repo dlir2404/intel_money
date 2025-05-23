@@ -33,32 +33,27 @@ class _CurrentExpenseVsIncomeState extends State<CurrentExpenseVsIncome> {
             children: [
               ExpenseVsIncomeItem(
                 title: "Today",
-                totalIncome: today.totalIncome,
-                totalExpense: today.totalExpense,
+                statisticData: today,
               ),
 
               ExpenseVsIncomeItem(
                 title: "This week",
-                totalIncome: thisWeek.totalIncome,
-                totalExpense: thisWeek.totalExpense,
+                statisticData: thisWeek,
               ),
 
               ExpenseVsIncomeItem(
                 title: "This month",
-                totalIncome: thisMonth.totalIncome,
-                totalExpense: thisMonth.totalExpense,
+                statisticData: thisMonth,
               ),
 
               ExpenseVsIncomeItem(
                 title: "This quarter",
-                totalIncome: thisQuarter.totalIncome,
-                totalExpense: thisQuarter.totalExpense,
+                statisticData: thisQuarter,
               ),
 
               ExpenseVsIncomeItem(
                 title: "This year",
-                totalIncome: thisYear.totalIncome,
-                totalExpense: thisYear.totalExpense,
+                statisticData: thisYear,
               ),
             ],
           );

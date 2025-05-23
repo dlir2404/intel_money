@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 
 import '../../../core/config/routes.dart';
 import '../../../core/models/statistic_data.dart';
+import '../../../core/services/ad_service.dart';
 import '../../../core/state/app_state.dart';
 import '../../../core/state/statistic_state.dart';
 import '../../../shared/component/charts/donut_chart.dart';
@@ -188,6 +189,7 @@ class _ExpenseIncomeChartState extends State<ExpenseIncomeChart> {
       padding: const EdgeInsets.all(16),
       child: InkWell(
         onTap: () {
+          AdService().showAdIfEligible();
           Navigator.of(context).push(
             MaterialPageRoute(builder: (context) => DetailRatioScreen(title: type.name, statisticData: statisticData,)),
           );

@@ -3,7 +3,6 @@ import 'category.dart';
 class StatisticData {
   double totalIncome;
   double totalExpense;
-  double totalBalance;
 
   List<ByCategoryData> byCategoryIncome;
   List<ByCategoryData> byCategoryExpense;
@@ -15,7 +14,6 @@ class StatisticData {
   StatisticData({
     required this.totalIncome,
     required this.totalExpense,
-    required this.totalBalance,
     required this.byCategoryIncome,
     required this.byCategoryExpense,
     this.byMonthStatistic,
@@ -26,7 +24,6 @@ class StatisticData {
     final data = StatisticData(
       totalIncome: json['totalIncome'].toDouble(),
       totalExpense: json['totalExpense'].toDouble(),
-      totalBalance: json['totalBalance'] != null ? json['totalBalance'].toDouble() : 0,
       byCategoryIncome: ((json['byCategoryIncome'] ?? []) as List)
           .map((e) => ByCategoryData.fromJson(e))
           .toList(),
@@ -54,7 +51,6 @@ class StatisticData {
     return StatisticData(
       totalIncome: 0,
       totalExpense: 0,
-      totalBalance: 0,
       byCategoryIncome: [],
       byCategoryExpense: [],
       byMonthStatistic: [],

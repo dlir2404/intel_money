@@ -22,8 +22,7 @@ class MonthExpenseVsIncomeOverview extends StatelessWidget {
         data.add(
           PreparedData(
             title: Month.values.firstWhere((e) => e.value == i + 1).name,
-            totalIncome: monthData.totalIncome,
-            totalExpense: monthData.totalExpense,
+            statisticData: monthData
           ),
         );
       }
@@ -45,8 +44,7 @@ class MonthExpenseVsIncomeOverview extends StatelessWidget {
               data.map((monthData) {
                 return ExpenseVsIncomeItem(
                   title: monthData.title,
-                  totalIncome: monthData.totalIncome,
-                  totalExpense: monthData.totalExpense,
+                  statisticData: monthData.statisticData,
                 );
               }).toList(),
         );
@@ -57,12 +55,10 @@ class MonthExpenseVsIncomeOverview extends StatelessWidget {
 
 class PreparedData {
   final String title;
-  final double totalIncome;
-  final double totalExpense;
+  final StatisticData statisticData;
 
   PreparedData({
     required this.title,
-    required this.totalIncome,
-    required this.totalExpense,
+    required this.statisticData,
   });
 }

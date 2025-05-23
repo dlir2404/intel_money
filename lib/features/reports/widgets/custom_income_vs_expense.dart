@@ -80,8 +80,7 @@ class _CustomIncomeVsExpenseState extends State<CustomIncomeVsExpense> {
           ExpenseVsIncomeItem(
             title:
                 "${AppTime.format(time: _startDate)} - ${AppTime.format(time: _endDate)}",
-            totalIncome: _data.totalIncome,
-            totalExpense: _data.totalExpense,
+            statisticData: _data,
           ),
         ],
       ),

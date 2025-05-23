@@ -18,8 +18,7 @@ class YearExpenseVsIncomeOverview extends StatelessWidget {
     List<PreparedData> data = [
       PreparedData(
         title: "2025",
-        totalIncome: yearData.totalIncome,
-        totalExpense: yearData.totalExpense,
+        statisticData: yearData,
       )
     ];
 
@@ -39,8 +38,7 @@ class YearExpenseVsIncomeOverview extends StatelessWidget {
               data.map((yearData) {
                 return ExpenseVsIncomeItem(
                   title: yearData.title,
-                  totalIncome: yearData.totalIncome,
-                  totalExpense: yearData.totalExpense,
+                  statisticData: yearData.statisticData,
                 );
               }).toList(),
         );
@@ -51,12 +49,10 @@ class YearExpenseVsIncomeOverview extends StatelessWidget {
 
 class PreparedData {
   final String title;
-  final double totalIncome;
-  final double totalExpense;
+  final StatisticData statisticData;
 
   PreparedData({
     required this.title,
-    required this.totalIncome,
-    required this.totalExpense,
+    required this.statisticData,
   });
 }

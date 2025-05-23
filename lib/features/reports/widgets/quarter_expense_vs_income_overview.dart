@@ -23,8 +23,7 @@ class QuarterExpenseVsIncomeOverview extends StatelessWidget {
         data.add(
           PreparedData(
             title: Quarter.values.firstWhere((e) => e.value == i + 1).name,
-            totalIncome: quarterData.totalIncome,
-            totalExpense: quarterData.totalExpense,
+            statisticData: quarterData
           ),
         );
       }
@@ -46,8 +45,7 @@ class QuarterExpenseVsIncomeOverview extends StatelessWidget {
               data.map((quarterData) {
                 return ExpenseVsIncomeItem(
                   title: quarterData.title,
-                  totalIncome: quarterData.totalIncome,
-                  totalExpense: quarterData.totalExpense,
+                  statisticData: quarterData.statisticData,
                 );
               }).toList(),
         );
@@ -58,12 +56,10 @@ class QuarterExpenseVsIncomeOverview extends StatelessWidget {
 
 class PreparedData {
   final String title;
-  final double totalIncome;
-  final double totalExpense;
+  final StatisticData statisticData;
 
   PreparedData({
     required this.title,
-    required this.totalIncome,
-    required this.totalExpense,
+    required this.statisticData,
   });
 }
