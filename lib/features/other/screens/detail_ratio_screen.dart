@@ -61,9 +61,7 @@ class _DetailRatioScreenState extends State<DetailRatioScreen>
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(builder: (context) => TransactionsOfCategories(
-                    category: item.category,
-                    from: AppTime.startOfToday(),
-                    to: AppTime.endOfToday(),
+                    byCategoryData: item,
                   )),
                 );
               },

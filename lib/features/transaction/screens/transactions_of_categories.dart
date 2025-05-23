@@ -2,30 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:intel_money/core/models/category.dart';
 import 'package:intel_money/features/transaction/widgets/transaction_item_v2.dart';
 import 'package:intel_money/shared/const/enum/category_type.dart';
-import 'package:provider/provider.dart';
 
+import '../../../core/models/statistic_data.dart';
 import '../../../core/models/transaction.dart';
-import '../../../core/state/transaction_state.dart';
 import '../../../shared/component/typos/currency_double_text.dart';
 
-class TransactionsOfCategories extends StatefulWidget {
-  final Category category;
-  final DateTime from;
-  final DateTime to;
+class TransactionsOfCategories extends StatelessWidget {
+  final ByCategoryData byCategoryData;
 
-  const TransactionsOfCategories({
-    super.key,
-    required this.category,
-    required this.from,
-    required this.to,
-  });
+  const TransactionsOfCategories({super.key, required this.byCategoryData});
 
-  @override
-  State<TransactionsOfCategories> createState() =>
-      _TransactionsOfCategoriesState();
-}
-
-class _TransactionsOfCategoriesState extends State<TransactionsOfCategories> {
   Widget _buildGroupTransactions(
     Category category,
     List<Transaction> transactions,
@@ -101,59 +87,56 @@ class _TransactionsOfCategoriesState extends State<TransactionsOfCategories> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<TransactionState>(
-      builder: (context, state, _) {
-        final transactions = state.filterTransactions(
-          widget.from,
-          widget.to,
-          widget.category,
-        );
+    final category = byCategoryData.category;
 
-        final groupedData = [];
-        if (transactions.isNotEmpty) {
+    final transactions =
+        byCategoryData.transactions.where((item) {
+          return item.category!.id == category.id;
+        }).toList();
+
+    final groupedData = [];
+    if (transactions.isNotEmpty) {
+      groupedData.add({'category': category, 'transactions': transactions});
+    }
+
+    if (category.children.isNotEmpty) {
+      for (var child in category.children) {
+        final childTransactions =
+            byCategoryData.transactions.where((item) {
+              return item.category!.id == child.id;
+            }).toList();
+
+        if (childTransactions.isNotEmpty) {
           groupedData.add({
-            'category': widget.category,
-            'transactions': transactions,
+            'category': child,
+            'transactions': childTransactions,
           });
         }
+      }
+    }
 
-        if (widget.category.children.isNotEmpty) {
-          for (var child in widget.category.children) {
-            final childTransactions = state.filterTransactions(
-              widget.from,
-              widget.to,
-              child,
-            );
-
-            if (childTransactions.isNotEmpty) {
-              groupedData.add({
-                'category': child,
-                'transactions': childTransactions,
-              });
-            }
-          }
-        }
-
-        return Scaffold(
-          appBar: AppBar(
-            title: Text(widget.category.name),
-            backgroundColor: Theme.of(context).primaryColor,
-            foregroundColor: Colors.white,
-            centerTitle: true,
-          ),
-          body: Container(
-            color: Colors.grey[200],
-            child: Column(children: [
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(category.name),
+        backgroundColor: Theme.of(context).primaryColor,
+        foregroundColor: Colors.white,
+        centerTitle: true,
+      ),
+      body: Container(
+        color: Colors.grey[200],
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
               ...groupedData.map((item) {
                 return _buildGroupTransactions(
                   item['category'],
                   item['transactions'],
                 );
-              })
-            ]),
+              }),
+            ],
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 }
