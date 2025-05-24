@@ -8,16 +8,18 @@ import '../../../shared/const/enum/category_type.dart';
 class CreateTransactionAppbar extends StatefulWidget
     implements PreferredSizeWidget {
   final TransactionType selectedTransactionType;
-  final Function(TransactionType transactionType) onTransactionTypeChanged;
+  final Function(TransactionType transactionType)? onTransactionTypeChanged;
   final bool isLoading;
   final Function() onSave;
+  final bool selectable;
 
-  const   CreateTransactionAppbar({
+  const CreateTransactionAppbar({
     super.key,
     required this.selectedTransactionType,
-    required this.onTransactionTypeChanged,
+    this.onTransactionTypeChanged,
     required this.isLoading,
     required this.onSave,
+    this.selectable = true,
   });
 
   @override
@@ -48,7 +50,11 @@ class _CreateTransactionAppbarState extends State<CreateTransactionAppbar> {
                           ListTile(
                             title: Text(transactionType.name),
                             onTap: () {
-                              widget.onTransactionTypeChanged(transactionType);
+                              if (widget.onTransactionTypeChanged != null) {
+                                widget.onTransactionTypeChanged!(
+                                  transactionType,
+                                );
+                              }
                               Navigator.pop(context);
                             },
                             leading: Container(
@@ -105,7 +111,7 @@ class _CreateTransactionAppbarState extends State<CreateTransactionAppbar> {
               ),
             ),
           ),
-          onPressed: () => _showChooseTransactionTypeBottomSheet(),
+          onPressed: widget.selectable ? () => _showChooseTransactionTypeBottomSheet() : null,
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -113,18 +119,22 @@ class _CreateTransactionAppbarState extends State<CreateTransactionAppbar> {
                 widget.selectedTransactionType.name,
                 style: const TextStyle(color: Colors.white, fontSize: 16),
               ),
-              const Icon(Icons.arrow_drop_down, color: Colors.white),
+              if (widget.selectable)
+                const Icon(Icons.arrow_drop_down, color: Colors.white),
             ],
           ),
         ),
       ),
-      leading: IconButton(
-        icon: const Icon(Icons.history),
-        onPressed: () {
-          AdService().showAdIfEligible();
-          AppRoutes.navigateToTransactionHistory(context);
-        },
-      ),
+      leading:
+          widget.selectable
+              ? IconButton(
+                icon: const Icon(Icons.history),
+                onPressed: () {
+                  AdService().showAdIfEligible();
+                  AppRoutes.navigateToTransactionHistory(context);
+                },
+              )
+              : null,
       actions: [
         widget.isLoading
             ? const SizedBox(

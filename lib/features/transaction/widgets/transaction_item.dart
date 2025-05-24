@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intel_money/features/transaction/screens/edit_transaction_screen.dart';
 import 'package:intel_money/shared/component/typos/currency_double_text.dart';
 import 'package:intel_money/shared/const/enum/transaction_type.dart';
 
@@ -60,22 +61,31 @@ class TransactionItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(8),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          const SizedBox(width: 12),
+    return InkWell(
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => EditTransactionScreen(transaction: transaction),
+          ),
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.all(8),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const SizedBox(width: 12),
 
-          _buildIcon(),
-          const SizedBox(width: 12),
+            _buildIcon(),
+            const SizedBox(width: 12),
 
-          _buildName(),
-          const SizedBox(width: 12),
+            _buildName(),
+            const SizedBox(width: 12),
 
-          _buildValue(),
-          const SizedBox(width: 6),
-        ],
+            _buildValue(),
+            const SizedBox(width: 6),
+          ],
+        ),
       ),
     );
   }
