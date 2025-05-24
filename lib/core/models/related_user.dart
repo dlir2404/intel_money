@@ -6,11 +6,11 @@ class RelatedUser {
   final String? email;
   final String? phone;
 
-  //total value that main user loaned to this user
   double totalLoan;
+  double totalPaid;
 
-  //total value that main user borrowed from this user
   double totalDebt;
+  double totalCollected;
 
   bool isTemporary;
 
@@ -21,6 +21,8 @@ class RelatedUser {
     this.phone,
     this.totalLoan = 0.0,
     this.totalDebt = 0.0,
+    this.totalPaid = 0.0,
+    this.totalCollected = 0.0,
     this.isTemporary = false,
   });
 
@@ -36,6 +38,8 @@ class RelatedUser {
       phone: json['phone'],
       totalLoan: json['totalLoan']?.toDouble() ?? 0.0,
       totalDebt: json['totalDebt']?.toDouble() ?? 0.0,
+      totalPaid: json['totalPaid']?.toDouble() ?? 0.0,
+      totalCollected: json['totalCollected']?.toDouble() ?? 0.0,
     );
   }
 
@@ -47,6 +51,8 @@ class RelatedUser {
       phone: null,
       totalLoan: 0.0,
       totalDebt: 0.0,
+      totalPaid: 0.0,
+      totalCollected: 0.0,
       isTemporary: true,
     );
   }

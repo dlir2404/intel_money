@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:intel_money/features/home/widgets/expense_income_chart.dart';
 import 'package:intel_money/features/home/widgets/home_balance.dart';
+import 'package:intel_money/features/home/widgets/home_section.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/state/app_state.dart';
 import '../../reports/widgets/month_income_vs_expense_chart.dart';
+import '../widgets/recent_lend_borrow.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -47,29 +49,20 @@ class _HomeScreenState extends State<HomeScreen> {
               width: double.infinity,
               color: Colors.grey[200],
               child: Column(
-                children: [
-                  const SizedBox(height: 16),
-                  ExpenseIncomeChart(),
-                ],
+                children: [const SizedBox(height: 16), ExpenseIncomeChart()],
               ),
             ),
             const SizedBox(height: 16),
 
-            Container(
-              color: Colors.white,
-              padding: const EdgeInsets.all(12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text("This year expense analysis", style: TextStyle(
-                    fontWeight: FontWeight.w500,
-                    fontSize: 18,
-                  ),),
-                  const SizedBox(height: 16),
+            HomeSection(
+              title: "This year expense analysis",
+              child: MonthIncomeVsExpenseChart(),
+            ),
+            const SizedBox(height: 16),
 
-                  MonthIncomeVsExpenseChart(),
-                ],
-              ),
+            HomeSection(
+              title: "Money lent/borrowed",
+              child: RecentLendBorrow(),
             ),
             const SizedBox(height: 80),
           ],
