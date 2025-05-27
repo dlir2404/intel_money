@@ -14,7 +14,7 @@ class Transaction {
   DateTime transactionDate;
   String? description;
   bool notAddToReport;
-  List<String>? images;
+  String? image;
 
   Transaction({
     required this.id,
@@ -25,7 +25,7 @@ class Transaction {
     required this.transactionDate,
     this.description,
     this.notAddToReport = false,
-    this.images,
+    this.image,
   });
 
   factory Transaction.fromContext(int id) {
@@ -55,7 +55,7 @@ class Transaction {
       transactionDate: AppTime.parseFromApi(json['transactionDate']),
       description: json['description'],
       notAddToReport: json['notAddToReport'] == true ? true : false,
-      images: json['images'] is List ? List<String>.from(json['images']) : [],
+      image: json['image'],
     );
   }
 
@@ -69,7 +69,7 @@ class Transaction {
       'transactionDate': AppTime.toUtcIso8601String(transactionDate),
       'description': description,
       'notAddToReport': notAddToReport,
-      'images': images,
+      'image': image,
     };
   }
 }

@@ -111,11 +111,6 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
     });
 
     try {
-      final List<File> images = [];
-      if (_image != null) {
-        images.add(_image!);
-      }
-
       if (_selectedTransactionType == TransactionType.lend &&
           _borrower!.isTemporary) {
         //save the borrower first
@@ -137,7 +132,7 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
         sourceWalletId: _sourceWallet!.id,
         destinationWalletId: _destinationWallet?.id,
         notAddToReport: false,
-        images: images,
+        image: _image,
         borrowerId: _borrower?.id,
         lenderId: _lender?.id,
       );

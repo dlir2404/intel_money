@@ -44,14 +44,13 @@ class TransactionService {
     required int sourceWalletId,
     int? destinationWalletId,
     bool? notAddToReport,
-    required List<File> images,
+    required File? image,
     int? borrowerId,
     int? lenderId,
   }) async {
-    List<String> imageUrls = [];
-    for (var image in images) {
-      final imageUrl = await CloudinaryService().uploadImage(image.path);
-      imageUrls.add(imageUrl);
+    String? imageUrl;
+    if (image != null) {
+      imageUrl = await CloudinaryService().uploadImage(image.path);
     }
 
     switch (transactionType) {
@@ -62,7 +61,7 @@ class TransactionService {
           description,
           transactionDate,
           sourceWalletId,
-          imageUrls,
+          imageUrl,
           notAddToReport: notAddToReport ?? false,
         );
         break;
@@ -73,7 +72,7 @@ class TransactionService {
           description,
           transactionDate,
           sourceWalletId,
-          imageUrls,
+          imageUrl,
           notAddToReport: notAddToReport ?? false,
         );
         break;
@@ -84,7 +83,7 @@ class TransactionService {
           transactionDate,
           sourceWalletId,
           destinationWalletId!,
-          imageUrls,
+          imageUrl,
           notAddToReport: notAddToReport ?? false,
         );
         break;
@@ -96,7 +95,7 @@ class TransactionService {
           sourceWalletId,
           categoryId!,
           borrowerId!,
-          imageUrls,
+          imageUrl,
         );
         break;
       case TransactionType.borrow:
@@ -107,7 +106,7 @@ class TransactionService {
           sourceWalletId,
           categoryId!,
           lenderId!,
-          imageUrls,
+          imageUrl,
         );
         break;
       case TransactionType.modifyBalance:
@@ -122,7 +121,7 @@ class TransactionService {
       DateTime transactionDate,
       int sourceWalletId,
       int destinationWalletId,
-      List<String> images, {
+      String? image, {
         bool notAddToReport = false,
       }) async {
     final response = await _apiClient.post('/transaction/transfer/create', {
@@ -132,7 +131,7 @@ class TransactionService {
       'sourceWalletId': sourceWalletId,
       'destinationWalletId': destinationWalletId,
       'notAddToReport': notAddToReport,
-      'images': images,
+      'image': image,
     });
     final transaction = Transaction.fromJson(response);
 
@@ -148,7 +147,7 @@ class TransactionService {
     String? description,
     DateTime transactionDate,
     int sourceWalletId,
-    List<String> images, {
+    String? image, {
     bool notAddToReport = false,
   }) async {
     final response = await _apiClient.post('/transaction/income/create', {
@@ -158,7 +157,7 @@ class TransactionService {
       'transactionDate': AppTime.toUtcIso8601String(transactionDate),
       'sourceWalletId': sourceWalletId,
       'notAddToReport': notAddToReport,
-      'images': images,
+      'image': image,
     });
     final transaction = Transaction.fromJson(response);
 
@@ -175,7 +174,7 @@ class TransactionService {
     String? description,
     DateTime transactionDate,
     int sourceWalletId,
-    List<String> images, {
+    String? image, {
     bool notAddToReport = false,
   }) async {
     final response = await _apiClient.post('/transaction/expense/create', {
@@ -185,7 +184,7 @@ class TransactionService {
       'transactionDate': AppTime.toUtcIso8601String(transactionDate),
       'sourceWalletId': sourceWalletId,
       'notAddToReport': notAddToReport,
-      'images': images,
+      'image': image,
     });
     final transaction = Transaction.fromJson(response);
 
@@ -203,7 +202,7 @@ class TransactionService {
     int sourceWalletId,
     int categoryId,
     int borrowerId,
-    List<String> images,
+    String? image,
   ) async {
     final response = await _apiClient.post('/transaction/lend/create', {
       'amount': amount,
@@ -212,7 +211,7 @@ class TransactionService {
       'sourceWalletId': sourceWalletId,
       'borrowerId': borrowerId,
       'categoryId': categoryId,
-      'images': images,
+      'image': image,
     });
     final transaction = Transaction.fromJson(response);
 
@@ -234,7 +233,7 @@ class TransactionService {
       int sourceWalletId,
       int categoryId,
       int lenderId,
-      List<String> images,
+      String? image,
       ) async {
     final response = await _apiClient.post('/transaction/borrow/create', {
       'amount': amount,
@@ -243,7 +242,7 @@ class TransactionService {
       'sourceWalletId': sourceWalletId,
       'lenderId': lenderId,
       'categoryId': categoryId,
-      'images': images,
+      'image': image,
     });
     final transaction = Transaction.fromJson(response);
 

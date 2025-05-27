@@ -52,8 +52,8 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
     // _destinationWallet = widget.transaction.destinationWallet;
     _transactionDate = widget.transaction.transactionDate;
     _image =
-        widget.transaction.images!.isNotEmpty
-            ? File(widget.transaction.images!.first)
+        widget.transaction.image != null
+            ? File(widget.transaction.image!)
             : null;
     // _borrower = widget.transaction.borrower;
     // _lender = widget.transaction.lender;
