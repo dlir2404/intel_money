@@ -257,4 +257,11 @@ class TransactionService {
     _relatedUserState.increaseRelatedUserTotalLoan(lenderId, amount);
     return transaction;
   }
+
+  Future<void> deleteTransaction(int transactionId) async {
+    final response = await _apiClient.delete('/transaction/$transactionId');
+    if (response == null || response['result'] != true) {
+      throw Exception('Delete transaction failed');
+    }
+  }
 }

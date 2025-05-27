@@ -9,8 +9,21 @@ import 'package:intel_money/core/services/ai_service.dart';
 import '../../../core/models/category.dart';
 import '../../../core/models/scan_receipt_response.dart';
 import '../../../core/models/wallet.dart';
+import '../../../core/services/transaction_service.dart';
+import '../../../core/state/app_state.dart';
+import '../../../core/state/related_user_state.dart';
+import '../../../core/state/statistic_state.dart';
+import '../../../core/state/transaction_state.dart';
+import '../../../core/state/wallet_state.dart';
 
 class TransactionController {
+  final TransactionService _transactionService = TransactionService();
+  final AppState _appState = AppState();
+  final TransactionState _transactionState = TransactionState();
+  final WalletState _walletState = WalletState();
+  final StatisticState _statisticState = StatisticState();
+  final RelatedUserState _relatedUserState = RelatedUserState();
+
   static Future<TakePictureResponse> extractTransactionDataFromImage(
     CroppedFile image,
   ) async {
@@ -111,5 +124,12 @@ class TransactionController {
       'amount': totalAmount ?? 0.0,
       'fullText': text,
     };
+  }
+
+  Future<void> deleteTransaction(int transactionId) async {
+    await _transactionService.deleteTransaction(transactionId);
+
+    _transactionState.removeTransaction(transactionId);
+    //TODO: change user balance & wallet balance here
   }
 }

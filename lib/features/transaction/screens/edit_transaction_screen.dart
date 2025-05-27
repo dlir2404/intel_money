@@ -10,9 +10,11 @@ import '../../../shared/component/input/date_input.dart';
 import '../../../shared/component/input/form_input.dart';
 import '../../../shared/component/input/main_input.dart';
 import '../../../shared/const/enum/transaction_type.dart';
+import '../../../shared/helper/toast.dart';
 import '../../category/widgets/select_category_input.dart';
 import '../../related_user/widgets/select_related_user_input.dart';
 import '../../wallet/widgets/select_wallet_input.dart';
+import '../controller/transaction_controller.dart';
 import '../widgets/create_transaction_appbar.dart';
 import '../widgets/input_image.dart';
 
@@ -41,6 +43,8 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
   bool _isLoading = false;
 
   final TextEditingController _descriptionController = TextEditingController();
+
+  final TransactionController _transactionController = TransactionController();
 
   @override
   void initState() {
@@ -71,6 +75,54 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
       });
       Navigator.pop(context, widget.transaction);
     });
+  }
+
+  void _deleteTransaction() async {
+    final bool? confirmDelete = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirm Delete'),
+          content: const Text('Are you sure you want to delete this transaction? This action cannot be undone.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.red,
+              ),
+              child: const Text('Delete'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmDelete == true) {
+      setState(() {
+        _isLoading = true;
+      });
+
+      try {
+        await _transactionController.deleteTransaction(widget.transaction.id);
+
+        if (mounted) {
+          Navigator.pop(context);
+          AppToast.showSuccess(context, "Transaction deleted successfully");
+        }
+      } catch (e) {
+        if (mounted) {
+          AppToast.showError(context, e.toString());
+        }
+      } finally {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
   }
 
   @override
@@ -216,7 +268,7 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
                   Expanded(
                     flex: 1,
                     child: OutlinedButton.icon(
-                      onPressed: () {},
+                      onPressed: () => _deleteTransaction(),
                       icon: const Icon(
                         Icons.delete_outline,
                         color: Colors.red,
