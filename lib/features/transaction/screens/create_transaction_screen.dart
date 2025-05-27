@@ -52,6 +52,8 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
 
   bool _isLoading = false;
 
+  final TransactionController _transactionController = TransactionController();
+
   void _clearFields() {
     setState(() {
       _amount = 0;
@@ -61,97 +63,36 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
   }
 
   Future<void> _saveTransaction() async {
-    if (_amount <= 0) {
-      AppToast.showError(context, 'Amount must be greater than 0');
-      return;
-    }
-    if ((_selectedTransactionType == TransactionType.expense ||
-            _selectedTransactionType == TransactionType.income ||
-            _selectedTransactionType == TransactionType.lend ||
-            _selectedTransactionType == TransactionType.borrow) &&
-        _selectedCategory == null) {
-      AppToast.showError(context, 'Please select a category');
-      return;
-    }
-    if (_sourceWallet == null) {
-      AppToast.showError(context, 'Please select a wallet');
-      return;
-    }
-    if (_transactionDate == null) {
-      AppToast.showError(context, 'Please select a transaction date');
-      return;
-    }
-
-    if (_selectedTransactionType == TransactionType.transfer &&
-        _destinationWallet == null) {
-      AppToast.showError(context, "Please choose a destination wallet");
-      return;
-    }
-    if (_selectedTransactionType == TransactionType.transfer &&
-        _sourceWallet == _destinationWallet) {
-      AppToast.showError(
-        context,
-        "Source wallet and destination wallet can not be the same",
-      );
-      return;
-    }
-
-    if (_selectedTransactionType == TransactionType.lend && _borrower == null) {
-      AppToast.showError(context, "Please choose a borrower");
-      return;
-    }
-
-    if (_selectedTransactionType == TransactionType.borrow && _lender == null) {
-      AppToast.showError(context, "Please choose a lender");
-      return;
-    }
-
     setState(() {
       _isLoading = true;
     });
 
     try {
-      if (_selectedTransactionType == TransactionType.lend &&
-          _borrower!.isTemporary) {
-        //save the borrower first
-        await RelatedUserService().create(_borrower!);
-      }
-
-      if (_selectedTransactionType == TransactionType.borrow &&
-          _lender!.isTemporary) {
-        //save the lender first
-        await RelatedUserService().create(_lender!);
-      }
-
-      await TransactionService().createTransaction(
-        transactionType: _selectedTransactionType,
-        amount: _amount,
-        categoryId: _selectedCategory?.id,
-        description: _descriptionController.text,
-        transactionDate: _transactionDate ?? DateTime.now(),
-        sourceWalletId: _sourceWallet!.id,
-        destinationWalletId: _destinationWallet?.id,
-        notAddToReport: false,
-        image: _image,
-        borrowerId: _borrower?.id,
-        lenderId: _lender?.id,
+      await _transactionController.createTransaction(
+          amount: _amount,
+          transactionType: _selectedTransactionType,
+          sourceWallet: _sourceWallet,
+          destinationWallet: _destinationWallet,
+          transactionDate: _transactionDate,
+          category: _selectedCategory,
+          description: _descriptionController.text,
+          lender: _lender,
+          borrower: _borrower,
+          image: _image
       );
 
-      AppToast.showSuccess(context, 'Saved');
+      if (mounted) {
+        AppToast.showSuccess(context, 'Saved');
+      }
 
       // Clear fields after saving
       _clearFields();
 
       AdService().showAdIfEligible();
     } catch (e) {
-      if (e is ApiException) {
-        AppToast.showError(context, e.message);
-      } else {
-        AppToast.showError(
-          context,
-          'An error occurred while saving the transaction',
-        );
-      }
+        if (mounted) {
+          AppToast.showError(context, e.toString());
+        }
     } finally {
       setState(() {
         _isLoading = false;

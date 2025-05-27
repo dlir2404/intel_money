@@ -13,117 +13,36 @@ import '../models/transaction.dart';
 import 'cloudinary_service.dart';
 
 class TransactionService {
-  final AppState _appState = AppState();
   final TransactionState _transactionState = TransactionState();
-  final WalletState _walletState = WalletState();
-  final StatisticState _statisticState = StatisticState();
-  final RelatedUserState _relatedUserState = RelatedUserState();
 
   final ApiClient _apiClient = ApiClient.instance;
 
   static final TransactionService _instance = TransactionService._internal();
+
   factory TransactionService() => _instance;
+
   TransactionService._internal();
 
   Future<void> getTransactions() async {
     final response = await _apiClient.get('/transaction/all/test-only');
 
-    final transactions = (response as List)
-        .map((transaction) => Transaction.fromJson(transaction))
-        .toList();
+    final transactions =
+        (response as List)
+            .map((transaction) => Transaction.fromJson(transaction))
+            .toList();
 
     _transactionState.setTransactions(transactions);
   }
 
-  Future<void> createTransaction({
-    required TransactionType transactionType,
+  Future<Transaction> createTransferTransaction({
     required double amount,
-    int? categoryId,
     String? description,
     required DateTime transactionDate,
     required int sourceWalletId,
-    int? destinationWalletId,
-    bool? notAddToReport,
-    required File? image,
-    int? borrowerId,
-    int? lenderId,
+    required int destinationWalletId,
+    String? image,
+    bool notAddToReport = false,
   }) async {
-    String? imageUrl;
-    if (image != null) {
-      imageUrl = await CloudinaryService().uploadImage(image.path);
-    }
-
-    switch (transactionType) {
-      case TransactionType.expense:
-        await createExpenseTransaction(
-          amount,
-          categoryId,
-          description,
-          transactionDate,
-          sourceWalletId,
-          imageUrl,
-          notAddToReport: notAddToReport ?? false,
-        );
-        break;
-      case TransactionType.income:
-        await createIncomeTransaction(
-          amount,
-          categoryId,
-          description,
-          transactionDate,
-          sourceWalletId,
-          imageUrl,
-          notAddToReport: notAddToReport ?? false,
-        );
-        break;
-      case TransactionType.transfer:
-        await createTransferTransaction(
-          amount,
-          description,
-          transactionDate,
-          sourceWalletId,
-          destinationWalletId!,
-          imageUrl,
-          notAddToReport: notAddToReport ?? false,
-        );
-        break;
-      case TransactionType.lend:
-        await createLendTransaction(
-          amount,
-          description,
-          transactionDate,
-          sourceWalletId,
-          categoryId!,
-          borrowerId!,
-          imageUrl,
-        );
-        break;
-      case TransactionType.borrow:
-        await createBorrowTransaction(
-          amount,
-          description,
-          transactionDate,
-          sourceWalletId,
-          categoryId!,
-          lenderId!,
-          imageUrl,
-        );
-        break;
-      case TransactionType.modifyBalance:
-        // TODO: Handle this case.
-        throw UnimplementedError();
-    }
-  }
-
-  Future<Transaction> createTransferTransaction(
-      double amount,
-      String? description,
-      DateTime transactionDate,
-      int sourceWalletId,
-      int destinationWalletId,
-      String? image, {
-        bool notAddToReport = false,
-      }) async {
     final response = await _apiClient.post('/transaction/transfer/create', {
       'amount': amount,
       'description': description,
@@ -134,20 +53,16 @@ class TransactionService {
       'image': image,
     });
     final transaction = Transaction.fromJson(response);
-
-    _transactionState.addTransaction(transaction);
-    _walletState.decreateWalletBalance(sourceWalletId, amount);
-    _walletState.increaseWalletBalance(destinationWalletId, amount);
     return transaction;
   }
 
-  Future<Transaction> createIncomeTransaction(
-    double amount,
-    int? categoryId,
-    String? description,
-    DateTime transactionDate,
-    int sourceWalletId,
-    String? image, {
+  Future<Transaction> createIncomeTransaction({
+    required double amount,
+    required int? categoryId,
+    required String? description,
+    required DateTime transactionDate,
+    required int sourceWalletId,
+    String? image,
     bool notAddToReport = false,
   }) async {
     final response = await _apiClient.post('/transaction/income/create', {
@@ -160,21 +75,16 @@ class TransactionService {
       'image': image,
     });
     final transaction = Transaction.fromJson(response);
-
-    _transactionState.addTransaction(transaction);
-    _appState.increaseUserBalance(amount);
-    _walletState.increaseWalletBalance(sourceWalletId, amount);
-    _statisticState.updateStatisticData(transaction);
     return transaction;
   }
 
-  Future<Transaction> createExpenseTransaction(
-    double amount,
-    int? categoryId,
-    String? description,
-    DateTime transactionDate,
-    int sourceWalletId,
-    String? image, {
+  Future<Transaction> createExpenseTransaction({
+    required double amount,
+    required int? categoryId,
+    required String? description,
+    required DateTime transactionDate,
+    required int sourceWalletId,
+    String? image,
     bool notAddToReport = false,
   }) async {
     final response = await _apiClient.post('/transaction/expense/create', {
@@ -187,23 +97,18 @@ class TransactionService {
       'image': image,
     });
     final transaction = Transaction.fromJson(response);
-
-    _transactionState.addTransaction(transaction);
-    _appState.decreaseUserBalance(amount);
-    _walletState.decreateWalletBalance(sourceWalletId, amount);
-    _statisticState.updateStatisticData(transaction);
     return transaction;
   }
 
-  Future<Transaction> createLendTransaction(
-    double amount,
+  Future<Transaction> createLendTransaction({
+    required double amount,
     String? description,
-    DateTime transactionDate,
-    int sourceWalletId,
-    int categoryId,
-    int borrowerId,
+    required DateTime transactionDate,
+    required int sourceWalletId,
+    required int categoryId,
+    required int borrowerId,
     String? image,
-  ) async {
+  }) async {
     final response = await _apiClient.post('/transaction/lend/create', {
       'amount': amount,
       'description': description,
@@ -214,27 +119,18 @@ class TransactionService {
       'image': image,
     });
     final transaction = Transaction.fromJson(response);
-
-    _transactionState.addTransaction(transaction);
-    _walletState.decreateWalletBalance(sourceWalletId, amount);
-    _appState.decreaseUserBalance(transaction.amount);
-    //increase user total loan
-    _appState.increaseUserTotalLoan(transaction.amount);
-
-    //increase borrower total debt
-    _relatedUserState.increaseRelatedUserTotalDebt(borrowerId, amount);
     return transaction;
   }
 
-  Future<Transaction> createBorrowTransaction(
-      double amount,
-      String? description,
-      DateTime transactionDate,
-      int sourceWalletId,
-      int categoryId,
-      int lenderId,
-      String? image,
-      ) async {
+  Future<Transaction> createBorrowTransaction({
+    required double amount,
+    String? description,
+    required DateTime transactionDate,
+    required int sourceWalletId,
+    required int categoryId,
+    required int lenderId,
+    String? image,
+  }) async {
     final response = await _apiClient.post('/transaction/borrow/create', {
       'amount': amount,
       'description': description,
@@ -245,16 +141,6 @@ class TransactionService {
       'image': image,
     });
     final transaction = Transaction.fromJson(response);
-
-    _transactionState.addTransaction(transaction);
-    _walletState.increaseWalletBalance(sourceWalletId, amount);
-    _appState.increaseUserBalance(transaction.amount);
-
-    //increase user total debt
-    _appState.increaseUserTotalDebt(transaction.amount);
-
-    //increase lender total loan
-    _relatedUserState.increaseRelatedUserTotalLoan(lenderId, amount);
     return transaction;
   }
 
