@@ -324,6 +324,10 @@ class TransactionController {
     _transactionState.removeTransaction(transactionId);
     //TODO: change user balance & wallet balance here
   }
+
+  Future<Transaction> getTransactionById(int transactionId) async {
+    return await _transactionService.getTransactionById(transactionId);
+  }
 }
 
 class TransactionException implements Exception {

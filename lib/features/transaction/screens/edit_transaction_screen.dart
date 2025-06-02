@@ -42,6 +42,8 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
 
   bool _isLoading = false;
 
+  bool _detailLoaded = false;
+
   final TextEditingController _descriptionController = TextEditingController();
 
   final TransactionController _transactionController = TransactionController();
@@ -125,6 +127,26 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
     }
   }
 
+  Future<void> _loadDetails() async {
+    if (!_detailLoaded) {
+      final transaction = await _transactionController.getTransactionById(widget.transaction.id);
+
+      setState(() {
+        _detailLoaded = true;
+
+        if (transaction.type == TransactionType.lend) {
+          _borrower = (transaction as LendTransaction).borrower;
+        }
+        if (transaction.type == TransactionType.borrow) {
+          _lender = (transaction as BorrowTransaction).lender;
+        }
+        if (transaction.type == TransactionType.transfer) {
+          _destinationWallet = (transaction as TransferTransaction).destinationWallet;
+        }
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -134,183 +156,194 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
         onSave: _saveTransaction,
         selectable: false,
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              MainInput(
-                initialValue: _amount,
-                onChanged: (double newValue) {
-                  setState(() {
-                    _amount = newValue;
-                  });
-                },
-                label: 'Amount',
-              ),
-              const SizedBox(height: 16),
+      body: FutureBuilder(
+        future: _loadDetails(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting){
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
 
-              if (_transactionType == TransactionType.income ||
-                  _transactionType == TransactionType.expense ||
-                  _transactionType == TransactionType.lend ||
-                  _transactionType == TransactionType.borrow)
-                Column(
-                  children: [
-                    SelectCategoryInput(
-                      category: _category,
-                      placeholder: 'Select Category',
-                      categoryType: _transactionType.categoryType,
-                      onCategorySelected: (category) {
-                        setState(() {
-                          _category = category;
-                        });
-                      },
-                      showChildren: true,
-                    ),
-                    const SizedBox(height: 16),
-                  ],
-                ),
-
-              if (_transactionType == TransactionType.lend)
-                Column(
-                  children: [
-                    SelectRelatedUserInput(
-                      placeholder: 'Borrower',
-                      onRelatedUserSelected: (user) {
-                        setState(() {
-                          _borrower = user;
-                        });
-                      },
-                    ),
-                    const SizedBox(height: 16),
-                  ],
-                ),
-
-              if (_transactionType == TransactionType.borrow)
-                Column(
-                  children: [
-                    SelectRelatedUserInput(
-                      placeholder: 'Lender',
-                      onRelatedUserSelected: (user) {
-                        setState(() {
-                          _lender = user;
-                        });
-                      },
-                    ),
-                    const SizedBox(height: 16),
-                  ],
-                ),
-
-              SelectWalletInput(
-                placeholder: "Select Source Wallet",
-                onWalletSelected: (wallet) {
-                  setState(() {
-                    _sourceWallet = wallet;
-                  });
-                },
-              ),
-              const SizedBox(height: 16),
-
-              if (_transactionType == TransactionType.transfer)
-                Column(
-                  children: [
-                    SelectWalletInput(
-                      placeholder: "Select Destination Wallet",
-                      onWalletSelected: (wallet) {
-                        setState(() {
-                          _destinationWallet = wallet;
-                        });
-                      },
-                    ),
-                    const SizedBox(height: 16),
-                  ],
-                ),
-
-              DateInput(
-                selectedDate: _transactionDate,
-                placeholder: 'Transaction Date',
-                onDateSelected: (DateTime date) {
-                  setState(() {
-                    _transactionDate = date;
-                  });
-                },
-              ),
-              const SizedBox(height: 16),
-
-              FormInput(
-                label: 'Description (Optional)',
-                controller: _descriptionController,
-                placeholder: 'Add some notes about this transaction',
-                maxLines: 3,
-                prefixIcon: const Icon(Icons.description),
-              ),
-              const SizedBox(height: 16),
-
-              InputImage(
-                image: _image,
-                onImageSelected: (File image) {
-                  setState(() {
-                    _image = image;
-                  });
-                },
-                onImageRemoved: () {
-                  setState(() {
-                    _image = null;
-                  });
-                },
-              ),
-              const SizedBox(height: 16),
-
-              // Save Button
-              Row(
+          return SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
-                    flex: 1,
-                    child: OutlinedButton.icon(
-                      onPressed: () => _deleteTransaction(),
-                      icon: const Icon(
-                        Icons.delete_outline,
-                        color: Colors.red,
-                      ),
-                      label: const Text(
-                        "Delete Transaction",
-                        style: TextStyle(color: Colors.red),
-                      ),
-                      style: OutlinedButton.styleFrom(
-                        side: const BorderSide(color: Colors.red),
-                        padding: EdgeInsets.all(15),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                    ),
+                  MainInput(
+                    initialValue: _amount,
+                    onChanged: (double newValue) {
+                      setState(() {
+                        _amount = newValue;
+                      });
+                    },
+                    label: 'Amount',
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(height: 16),
 
-                  Expanded(
-                    flex: 1,
-                    child: ElevatedButton.icon(
-                      onPressed: _saveTransaction,
-                      icon: const Icon(Icons.save, color: Colors.white,),
-                      label: const Text("Save Transaction"),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Theme.of(context).primaryColor,
-                        foregroundColor: Colors.white,
-                        padding: EdgeInsets.all(15),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                  if (_transactionType == TransactionType.income ||
+                      _transactionType == TransactionType.expense ||
+                      _transactionType == TransactionType.lend ||
+                      _transactionType == TransactionType.borrow)
+                    Column(
+                      children: [
+                        SelectCategoryInput(
+                          category: _category,
+                          placeholder: 'Select Category',
+                          categoryType: _transactionType.categoryType,
+                          onCategorySelected: (category) {
+                            setState(() {
+                              _category = category;
+                            });
+                          },
+                          showChildren: true,
+                        ),
+                        const SizedBox(height: 16),
+                      ],
+                    ),
+
+                  if (_transactionType == TransactionType.lend)
+                    Column(
+                      children: [
+                        SelectRelatedUserInput(
+                          placeholder: _borrower != null ? _borrower!.name : 'Borrower',
+                          onRelatedUserSelected: (user) {
+                            setState(() {
+                              _borrower = user;
+                            });
+                          },
+                        ),
+                        const SizedBox(height: 16),
+                      ],
+                    ),
+
+                  if (_transactionType == TransactionType.borrow)
+                    Column(
+                      children: [
+                        SelectRelatedUserInput(
+                          placeholder: _lender != null ? _lender!.name : 'Lender',
+                          onRelatedUserSelected: (user) {
+                            setState(() {
+                              _lender = user;
+                            });
+                          },
+                        ),
+                        const SizedBox(height: 16),
+                      ],
+                    ),
+
+                  SelectWalletInput(
+                    placeholder: "Select Source Wallet",
+                    onWalletSelected: (wallet) {
+                      setState(() {
+                        _sourceWallet = wallet;
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 16),
+
+                  if (_transactionType == TransactionType.transfer)
+                    Column(
+                      children: [
+                        SelectWalletInput(
+                          placeholder: "Select Destination Wallet",
+                          onWalletSelected: (wallet) {
+                            setState(() {
+                              _destinationWallet = wallet;
+                            });
+                          },
+                        ),
+                        const SizedBox(height: 16),
+                      ],
+                    ),
+
+                  DateInput(
+                    selectedDate: _transactionDate,
+                    placeholder: 'Transaction Date',
+                    onDateSelected: (DateTime date) {
+                      setState(() {
+                        _transactionDate = date;
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 16),
+
+                  FormInput(
+                    label: 'Description (Optional)',
+                    controller: _descriptionController,
+                    placeholder: 'Add some notes about this transaction',
+                    maxLines: 3,
+                    prefixIcon: const Icon(Icons.description),
+                  ),
+                  const SizedBox(height: 16),
+
+                  InputImage(
+                    image: _image,
+                    onImageSelected: (File image) {
+                      setState(() {
+                        _image = image;
+                      });
+                    },
+                    onImageRemoved: () {
+                      setState(() {
+                        _image = null;
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Save Button
+                  Row(
+                    children: [
+                      Expanded(
+                        flex: 1,
+                        child: OutlinedButton.icon(
+                          onPressed: () => _deleteTransaction(),
+                          icon: const Icon(
+                            Icons.delete_outline,
+                            color: Colors.red,
+                          ),
+                          label: const Text(
+                            "Delete Transaction",
+                            style: TextStyle(color: Colors.red),
+                          ),
+                          style: OutlinedButton.styleFrom(
+                            side: const BorderSide(color: Colors.red),
+                            padding: EdgeInsets.all(15),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
                         ),
                       ),
-                    ),
+                      const SizedBox(width: 8),
+
+                      Expanded(
+                        flex: 1,
+                        child: ElevatedButton.icon(
+                          onPressed: _saveTransaction,
+                          icon: const Icon(Icons.save, color: Colors.white,),
+                          label: const Text("Save Transaction"),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Theme.of(context).primaryColor,
+                            foregroundColor: Colors.white,
+                            padding: EdgeInsets.all(15),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
+
+                  const SizedBox(height: 80),
                 ],
               ),
-
-              const SizedBox(height: 80),
-            ],
-          ),
-        ),
+            ),
+          );
+        }
       ),
     );
   }

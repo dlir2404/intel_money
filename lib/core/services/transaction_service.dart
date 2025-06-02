@@ -23,6 +23,13 @@ class TransactionService {
 
   TransactionService._internal();
 
+  Future<Transaction> getTransactionById(int id) async {
+    final response = await _apiClient.get('/transaction/$id');
+    final transaction = Transaction.fromDetailJson(response);
+
+    return transaction;
+  }
+
   Future<void> getTransactions() async {
     final response = await _apiClient.get('/transaction/all/test-only');
 
