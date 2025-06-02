@@ -58,7 +58,6 @@ class _SelectCategoryInputState extends State<SelectCategoryInput> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
         decoration: BoxDecoration(
-          color: Colors.grey[100],
           borderRadius: BorderRadius.circular(15),
           border: Border.all(color: Colors.grey[300]!),
         ),

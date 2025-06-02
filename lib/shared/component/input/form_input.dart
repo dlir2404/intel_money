@@ -23,7 +23,7 @@ class FormInput extends StatelessWidget {
         hintText: placeholder,
         labelText: label,
         hintStyle: TextStyle(color: Colors.grey),
-        filled: true,
+        filled: false,
         fillColor: Colors.grey[100],
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15),
