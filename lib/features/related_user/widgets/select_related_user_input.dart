@@ -5,12 +5,13 @@ import '../screens/select_related_user_screen.dart';
 
 class SelectRelatedUserInput extends StatefulWidget {
   final String placeholder;
+  final RelatedUser? relatedUser;
   final Function(RelatedUser?) onRelatedUserSelected;
 
   const SelectRelatedUserInput({
     super.key,
     required this.placeholder,
-    required this.onRelatedUserSelected,
+    required this.onRelatedUserSelected, this.relatedUser,
   });
 
   @override
@@ -23,7 +24,7 @@ class _SelectRelatedUserInputState extends State<SelectRelatedUserInput> {
   @override
   void initState() {
     super.initState();
-    _relatedUser = null;
+    _relatedUser = widget.relatedUser;
   }
 
   void _navigateToSelectRelatedUser() async {
@@ -87,7 +88,6 @@ class _SelectRelatedUserInputState extends State<SelectRelatedUserInput> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
         decoration: BoxDecoration(
-          color: Colors.grey[100],
           borderRadius: BorderRadius.circular(15),
           border: Border.all(color: Colors.grey[300]!),
         ),

@@ -207,7 +207,8 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
                     Column(
                       children: [
                         SelectRelatedUserInput(
-                          placeholder: _borrower != null ? _borrower!.name : 'Borrower',
+                          placeholder: 'Borrower',
+                          relatedUser: _borrower,
                           onRelatedUserSelected: (user) {
                             setState(() {
                               _borrower = user;
@@ -222,7 +223,8 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
                     Column(
                       children: [
                         SelectRelatedUserInput(
-                          placeholder: _lender != null ? _lender!.name : 'Lender',
+                          placeholder: 'Lender',
+                          relatedUser: _lender,
                           onRelatedUserSelected: (user) {
                             setState(() {
                               _lender = user;
