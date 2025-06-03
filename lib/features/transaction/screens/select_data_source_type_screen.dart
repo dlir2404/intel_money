@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 import '../../../shared/const/enum/transaction_data_source_type.dart';
 
@@ -120,9 +121,9 @@ class _SelectDataSourceTypeScreenState extends State<SelectDataSourceTypeScreen>
                   ),
                   MonthDataSourceType(
                     type: widget.type,
-                    onSelect: (type) {
+                    onSelect: (type, {Map<String, DateTime>? timeRange}) {
                       if (widget.onSelect != null) {
-                        widget.onSelect!(type);
+                        widget.onSelect!(type, timeRange: timeRange);
                       }
                       Navigator.pop(context);
                     },
@@ -306,9 +307,122 @@ class WeekDataSourceType extends StatelessWidget {
 
 class MonthDataSourceType extends StatelessWidget {
   final TransactionDataSourceType type;
-  final Function(TransactionDataSourceType type)? onSelect;
+  final Function(
+      TransactionDataSourceType type, {
+      Map<String, DateTime>? timeRange,
+      })?
+  onSelect;
 
   const MonthDataSourceType({super.key, required this.type, this.onSelect});
+
+  Future<void> _selectCustomMonth(BuildContext context) async {
+    DateTime? selectedDate;
+
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        final ThemeData theme = Theme.of(context);
+        final bool useMaterial3 = theme.useMaterial3;
+        final MaterialLocalizations localizations = MaterialLocalizations.of(
+          context,
+        );
+        final DatePickerThemeData datePickerTheme = DatePickerTheme.of(context);
+        final DatePickerThemeData defaults = DatePickerTheme.defaults(context);
+
+        final Widget actions = Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: Align(
+            alignment: AlignmentDirectional.centerEnd,
+            child: OverflowBar(
+              spacing: 8,
+              children: <Widget>[
+                TextButton(
+                  style: datePickerTheme.cancelButtonStyle ?? defaults.cancelButtonStyle,
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text(
+                    (useMaterial3
+                        ? localizations.cancelButtonLabel
+                        : localizations.cancelButtonLabel.toUpperCase()),
+                  ),
+                ),
+                TextButton(
+                  style: datePickerTheme.confirmButtonStyle ?? defaults.confirmButtonStyle,
+                  onPressed: () {
+                    Navigator.pop(context, selectedDate);
+                  },
+                  child: Text(localizations.okButtonLabel),
+                ),
+              ],
+            ),
+          ),
+        );
+
+        final DialogThemeData dialogTheme = theme.dialogTheme;
+        return Dialog(
+          backgroundColor: datePickerTheme.backgroundColor ?? defaults.backgroundColor,
+          elevation: useMaterial3
+              ? datePickerTheme.elevation ?? defaults.elevation!
+              : datePickerTheme.elevation ?? dialogTheme.elevation ?? 24,
+          shadowColor: datePickerTheme.shadowColor ?? defaults.shadowColor,
+          surfaceTintColor: datePickerTheme.surfaceTintColor ?? defaults.surfaceTintColor,
+          shape: useMaterial3
+              ? datePickerTheme.shape ?? defaults.shape
+              : datePickerTheme.shape ?? dialogTheme.shape ?? defaults.shape,
+          clipBehavior: Clip.antiAlias,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 16, left: 24, bottom: 16),
+                child: Text(
+                  'Select Month',
+                  style: TextStyle(fontWeight: FontWeight.w500),
+                ),
+              ),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.8,
+                height: 300,
+                child: SfDateRangePicker(
+                  initialDisplayDate: DateTime.now(),
+                  headerStyle: DateRangePickerHeaderStyle(
+                    textAlign: TextAlign.center,
+                    backgroundColor: datePickerTheme.backgroundColor ?? defaults.backgroundColor,
+                  ),
+                  backgroundColor: datePickerTheme.backgroundColor ?? defaults.backgroundColor,
+                  selectionMode: DateRangePickerSelectionMode.single,
+                  view: DateRangePickerView.year,
+                  allowViewNavigation: false,
+                  onSelectionChanged: (DateRangePickerSelectionChangedArgs args) {
+                    if (args.value is DateTime) {
+                      selectedDate = args.value;
+                    }
+                  },
+                ),
+              ),
+              actions,
+            ],
+          ),
+        );
+      },
+    );
+
+    if (selectedDate != null && onSelect != null) {
+      // Calculate the first and last day of the selected month
+      DateTime firstDayOfMonth = DateTime(selectedDate!.year, selectedDate!.month, 1);
+      DateTime lastDayOfMonth = DateTime(selectedDate!.year, selectedDate!.month + 1, 0);
+
+      onSelect!(
+        TransactionDataSourceType.customMonth,
+        timeRange: {
+          "from": firstDayOfMonth,
+          "to": lastDayOfMonth,
+        },
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -354,9 +468,7 @@ class MonthDataSourceType extends StatelessWidget {
         ),
         InkWell(
           onTap: () {
-            if (onSelect != null) {
-              onSelect!(TransactionDataSourceType.customMonth);
-            }
+            _selectCustomMonth(context);
           },
           child: Container(
             color: Colors.white,
