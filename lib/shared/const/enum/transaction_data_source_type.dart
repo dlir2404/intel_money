@@ -13,6 +13,7 @@ enum TransactionDataSourceType {
   quarter2,
   quarter3,
   quarter4,
+  thisYear,
   customFromTo,
   allTime,
 }
@@ -44,6 +45,8 @@ extension TransactionDataSourceTypeExtension on TransactionDataSourceType {
         return "Quarter III";
       case TransactionDataSourceType.quarter4:
         return "Quarter IV";
+      case TransactionDataSourceType.thisYear:
+        return "This year";
       case TransactionDataSourceType.allTime:
         return "All time";
       case TransactionDataSourceType.customFromTo:
@@ -77,6 +80,8 @@ extension TransactionDataSourceTypeExtension on TransactionDataSourceType {
         return "quarter_3";
       case TransactionDataSourceType.quarter4:
         return "quarter_4";
+      case TransactionDataSourceType.thisYear:
+        return "this_year";
       case TransactionDataSourceType.allTime:
         return "all_time";
       case TransactionDataSourceType.customFromTo:
@@ -147,6 +152,11 @@ extension TransactionDataSourceTypeExtension on TransactionDataSourceType {
         startMonth = 10;
         endMonth = 12;
         break;
+      case TransactionDataSourceType.thisYear:
+        return {
+          'from': AppTime.startOfYear(),
+          'to': AppTime.endOfYear(),
+        };
       case TransactionDataSourceType.customFromTo:
         // TODO: Handle this case.
         throw UnimplementedError();

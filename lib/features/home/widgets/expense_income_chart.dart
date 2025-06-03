@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:intel_money/features/other/screens/detail_ratio_screen.dart';
 import 'package:intel_money/shared/component/typos/currency_double_text.dart';
+import 'package:intel_money/shared/const/enum/transaction_data_source_type.dart';
 import 'package:intel_money/shared/helper/formatter.dart';
 import 'package:pie_chart/pie_chart.dart';
 import 'package:provider/provider.dart';
@@ -14,6 +15,8 @@ import '../../../core/state/app_state.dart';
 import '../../../core/state/statistic_state.dart';
 import '../../../shared/component/charts/donut_chart.dart';
 import '../../../shared/const/enum/statistic_type.dart';
+import '../../../shared/helper/app_time.dart';
+import '../../transaction/screens/transaction_history_screen.dart';
 
 class ExpenseIncomeChart extends StatefulWidget {
   const ExpenseIncomeChart({super.key});
@@ -237,7 +240,41 @@ class _ExpenseIncomeChartState extends State<ExpenseIncomeChart> {
             const SizedBox(height: 16),
             GestureDetector(
               onTap: () {
-                AppRoutes.navigateToTransactionHistory(context);
+                TransactionDataSourceType sourceType = TransactionDataSourceType.thisMonth;
+                switch (this.type) {
+                  case StatisticThisTime.today:
+                    sourceType = TransactionDataSourceType.today;
+                    break;
+                  case StatisticThisTime.thisWeek:
+                    sourceType = TransactionDataSourceType.thisWeek;
+                    break;
+                  case StatisticThisTime.thisMonth:
+                    sourceType = TransactionDataSourceType.thisMonth;
+                    break;
+                  case StatisticThisTime.thisQuarter:
+                    final quarter = AppTime.getCurrentQuarter();
+                    if (quarter == 1) {
+                      sourceType = TransactionDataSourceType.quarter1;
+                    } else if (quarter == 2) {
+                      sourceType = TransactionDataSourceType.quarter2;
+                    } else if (quarter == 3) {
+                      sourceType = TransactionDataSourceType.quarter3;
+                    } else if (quarter == 4) {
+                      sourceType = TransactionDataSourceType.quarter4;
+                    }
+                    break;
+                  case StatisticThisTime.thisYear:
+                    sourceType = TransactionDataSourceType.thisYear;
+                    break;
+                }
+
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => TransactionHistoryScreen(
+                      type: sourceType,
+                    ),
+                  ),
+                );
               },
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,

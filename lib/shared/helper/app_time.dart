@@ -157,10 +157,20 @@ class AppTime {
     return DateTime(dateToUse.year, 1, 1);
   }
 
+  static DateTime endOfYear({DateTime? date}) {
+    final dateToUse = date ?? DateTime.now();
+    return DateTime(dateToUse.year, 12, 31, 23, 59, 59);
+  }
+
   static DateTime endOfMonth({DateTime? date}) {
     final dateToUse = date ?? DateTime.now();
     //day 0 is tricky it will represent the last day of dateToUse.month
     return DateTime(dateToUse.year, dateToUse.month + 1, 0, 23, 59, 59);
+  }
+
+  static int getCurrentQuarter() {
+    final now = DateTime.now();
+    return (now.month - 1) ~/ 3 + 1; // 1 for Jan-Mar, 2 for Apr-Jun, etc.
   }
 
   /// isoString from API is in UTC already

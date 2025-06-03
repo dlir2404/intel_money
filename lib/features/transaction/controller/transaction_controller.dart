@@ -40,7 +40,8 @@ class TransactionController {
       to: timeRange["to"]!,
     );
 
-    _transactionState.setTransactionsByKey(type.keyStore, transactions);
+    //we can cache later
+    // _transactionState.setTransactionsByKey(type.keyStore, transactions);
 
     return transactions;
   }

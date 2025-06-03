@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intel_money/features/transaction/controller/transaction_controller.dart';
+import 'package:intel_money/features/transaction/screens/select_data_source_type_screen.dart';
 import 'package:intel_money/features/transaction/widgets/select_data_source_type_button.dart';
 import 'package:intel_money/features/transaction/widgets/transaction_group_by_day.dart';
 import 'package:intel_money/shared/const/enum/transaction_data_source_type.dart';
@@ -11,7 +12,8 @@ import '../../../core/state/transaction_state.dart';
 import '../widgets/total_in_out.dart';
 
 class TransactionHistoryScreen extends StatefulWidget {
-  const TransactionHistoryScreen({super.key});
+  final TransactionDataSourceType? type;
+  const TransactionHistoryScreen({super.key, this.type = TransactionDataSourceType.thisMonth});
 
   @override
   State<TransactionHistoryScreen> createState() =>
@@ -25,7 +27,28 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
 
   bool isDataLoaded = false;
 
+  @override
+  void initState() {
+    super.initState();
+    type = widget.type ?? TransactionDataSourceType.thisMonth;
+    _loadTransactions();
+  }
+
   List<Widget> _buildTransactionList(List<Transaction> transactions) {
+    if (transactions.isEmpty) {
+      return [
+        SizedBox(
+          height: 80,
+          child: const Center(
+            child: Text(
+              'No transactions found',
+              style: TextStyle(fontSize: 16, color: Colors.grey),
+            ),
+          ),
+        ),
+      ];
+    }
+
     // Group transactions by date
     Map<String, List<Transaction>> groupedTransactions = {};
     for (var transaction in transactions) {
@@ -100,12 +123,29 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
       body: FutureBuilder(
         future: _loadTransactions(),
         builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
           return Container(
             color: Colors.grey[200],
             child: Column(
               children: [
-                SelectDataSourceTypeButton(type: type),
+                SelectDataSourceTypeButton(type: type, onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => SelectDataSourceTypeScreen(
+                        type: type,
+                        onSelect: (selectedType) {
+                          setState(() {
+                            type = selectedType;
+                            isDataLoaded = false; // Reset data load state
+                          });
+                        },
+                      ),
+                    ),
+                  );
+                },),
                 const SizedBox(height: 12),
                 TotalInOut(transactions: transactions),
                 const SizedBox(height: 12),
