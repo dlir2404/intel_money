@@ -158,8 +158,10 @@ extension TransactionDataSourceTypeExtension on TransactionDataSourceType {
           'to': AppTime.endOfYear(),
         };
       case TransactionDataSourceType.customFromTo:
-        // TODO: Handle this case.
-        throw UnimplementedError();
+        return {
+          'from': DateTime(2000, 1, 1), // Example start date
+          'to': DateTime(2000, 1, 2), // Example end date
+        };
       case TransactionDataSourceType.allTime:
         // TODO: Handle this case.
         throw UnimplementedError();

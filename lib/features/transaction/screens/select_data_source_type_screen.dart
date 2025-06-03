@@ -144,9 +144,10 @@ class _SelectDataSourceTypeScreenState extends State<SelectDataSourceTypeScreen>
                   ),
                   CustomDataSourceType(
                     type: widget.type,
-                    onSelect: (type) {
+                    customTimeRange: widget.customTimeRange,
+                    onSelect: (type, {Map<String, DateTime>? timeRange}) {
                       if (widget.onSelect != null) {
-                        widget.onSelect!(type);
+                        widget.onSelect!(type, timeRange: timeRange);
                       }
                       Navigator.pop(context);
                     },
@@ -630,9 +631,135 @@ class QuarterDataSourceType extends StatelessWidget {
 
 class CustomDataSourceType extends StatelessWidget {
   final TransactionDataSourceType type;
-  final Function(TransactionDataSourceType type)? onSelect;
+  final Map<String, DateTime>? customTimeRange;
+  final Function(TransactionDataSourceType type, {Map<String, DateTime> timeRange})? onSelect;
 
-  const CustomDataSourceType({super.key, required this.type, this.onSelect});
+  const CustomDataSourceType({super.key, required this.type, this.onSelect, this.customTimeRange});
+
+  Future<void> _selectCustomRange(BuildContext context) async {
+    PickerDateRange? dateRange;
+    showDialog<PickerDateRange>(
+      context: context,
+      builder: (BuildContext context) {
+        final ThemeData theme = Theme.of(context);
+        final bool useMaterial3 = theme.useMaterial3;
+        final MaterialLocalizations localizations = MaterialLocalizations.of(
+          context,
+        );
+        final DatePickerThemeData datePickerTheme = DatePickerTheme.of(context);
+        final DatePickerThemeData defaults = DatePickerTheme.defaults(context);
+
+        final Widget actions = Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: Align(
+            alignment: AlignmentDirectional.centerEnd,
+            child: OverflowBar(
+              spacing: 8,
+              children: <Widget>[
+                TextButton(
+                  style:
+                  datePickerTheme.cancelButtonStyle ??
+                      defaults.cancelButtonStyle,
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text(
+                    (useMaterial3
+                        ? localizations.cancelButtonLabel
+                        : localizations.cancelButtonLabel.toUpperCase()),
+                  ),
+                ),
+                TextButton(
+                  style:
+                  datePickerTheme.confirmButtonStyle ??
+                      defaults.confirmButtonStyle,
+                  onPressed: () {
+                    Navigator.pop(context);
+
+                    if (dateRange != null) {
+                      final from = AppTime.startOfDay(dateRange!.startDate!);
+                      final to = AppTime.endOfDay(dateRange!.endDate!);
+
+                      onSelect!(
+                        TransactionDataSourceType.customFromTo,
+                        timeRange: {
+                          "from": from,
+                          "to": to,
+                        },
+                      );
+                    }
+                  },
+                  child: Text(localizations.okButtonLabel),
+                ),
+              ],
+            ),
+          ),
+        );
+
+        final DialogThemeData dialogTheme = theme.dialogTheme;
+        return Dialog(
+          backgroundColor:
+          datePickerTheme.backgroundColor ?? defaults.backgroundColor,
+          elevation:
+          useMaterial3
+              ? datePickerTheme.elevation ?? defaults.elevation!
+              : datePickerTheme.elevation ?? dialogTheme.elevation ?? 24,
+          shadowColor: datePickerTheme.shadowColor ?? defaults.shadowColor,
+          surfaceTintColor:
+          datePickerTheme.surfaceTintColor ?? defaults.surfaceTintColor,
+          shape:
+          useMaterial3
+              ? datePickerTheme.shape ?? defaults.shape
+              : datePickerTheme.shape ??
+              dialogTheme.shape ??
+              defaults.shape,
+          clipBehavior: Clip.antiAlias,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 16, left: 24, bottom: 16),
+                child: Text(
+                  'Select Date Range',
+                  style: TextStyle(fontWeight: FontWeight.w500),
+                ),
+              ),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.8,
+                height: 300,
+                child: SfDateRangePicker(
+                  initialSelectedRange: PickerDateRange(
+                      customTimeRange != null ? customTimeRange!['from'] : DateTime.now(),
+                      customTimeRange != null ? customTimeRange!['to'] : DateTime.now(),
+                  ),
+                  headerStyle: DateRangePickerHeaderStyle(
+                    textAlign: TextAlign.center,
+                    backgroundColor:
+                    datePickerTheme.backgroundColor ??
+                        defaults.backgroundColor,
+                  ),
+                  backgroundColor:
+                  datePickerTheme.backgroundColor ??
+                      defaults.backgroundColor,
+                  selectionMode: DateRangePickerSelectionMode.range,
+                  view: DateRangePickerView.month,
+                  allowViewNavigation: false,
+                  onSelectionChanged: (
+                      DateRangePickerSelectionChangedArgs args,
+                      ) {
+                    dateRange = args.value as PickerDateRange;
+                  },
+                ),
+              ),
+
+              actions,
+            ],
+          ),
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -652,6 +779,25 @@ class CustomDataSourceType extends StatelessWidget {
               children: [
                 const Text("All time"),
                 if (type == TransactionDataSourceType.allTime)
+                  const Icon(Icons.check, color: Colors.green),
+              ],
+            ),
+          ),
+        ),
+        InkWell(
+          onTap: () {
+            _selectCustomRange(context);
+          },
+          child: Container(
+            color: Colors.white,
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text((type == TransactionDataSourceType.customFromTo && customTimeRange != null)
+                    ? "Other: ${AppTime.format(time: customTimeRange!['from']!)} - ${AppTime.format(time: customTimeRange!['to']!)}"
+                    : "Other"),
+                if (type == TransactionDataSourceType.customFromTo)
                   const Icon(Icons.check, color: Colors.green),
               ],
             ),

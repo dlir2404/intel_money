@@ -103,6 +103,14 @@ class AppTime {
     return DateTime(now.year, now.month, now.day, 0, 0, 0);
   }
 
+  static DateTime startOfDay(DateTime date) {
+    return DateTime(date.year, date.month, date.day, 0, 0, 0);
+  }
+
+  static DateTime endOfDay(DateTime date) {
+    return DateTime(date.year, date.month, date.day, 23, 59, 59);
+  }
+
   static DateTime endOfToday() {
     final now = DateTime.now();
     return DateTime(now.year, now.month, now.day, 23, 59, 59);
