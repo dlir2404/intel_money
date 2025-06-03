@@ -99,7 +99,7 @@ class DataInitializer {
 
   Future<void> _loadTransactions() async {
     try {
-      await TransactionService().getTransactions();
+      await TransactionService().getAllTransactions();
       debugPrint('Transactions loaded successfully');
     } catch (e) {
       debugPrint('Error loading transactions: $e');

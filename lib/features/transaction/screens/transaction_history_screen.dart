@@ -93,16 +93,20 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
       if (transactionState.isLoad(type.keyStore)) {
         transactions = transactionState.getTransactions(type.keyStore);
       } else {
-        Map<String, DateTime> timeRange = type.timeRange;
+        if (type == TransactionDataSourceType.allTime) {
+          transactions = await _transactionController.getAllTransactions();
+        } else {
+          Map<String, DateTime> timeRange = type.timeRange;
 
-        // If the type is custom, use the custom time range
-        if (type == TransactionDataSourceType.customDay ||
-            type == TransactionDataSourceType.customMonth ||
-            type == TransactionDataSourceType.customFromTo) {
-          timeRange = customTimeRange!;
+          // If the type is custom, use the custom time range
+          if (type == TransactionDataSourceType.customDay ||
+              type == TransactionDataSourceType.customMonth ||
+              type == TransactionDataSourceType.customFromTo) {
+            timeRange = customTimeRange!;
+          }
+
+          transactions = await _transactionController.getTransactions(timeRange);
         }
-
-        transactions = await _transactionController.getTransactions(timeRange);
       }
 
       setState(() {
@@ -171,6 +175,7 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
                         builder:
                             (context) => SelectDataSourceTypeScreen(
                               type: type,
+                              customTimeRange: customTimeRange,
                               onSelect: (
                                 selectedType, {
                                 Map<String, DateTime>? timeRange,

@@ -44,6 +44,11 @@ class TransactionController {
     return transactions;
   }
 
+  Future<List<Transaction>> getAllTransactions() async {
+    final transactions = await _transactionService.getAllTransactions();
+    return transactions;
+  }
+
   static Future<TakePictureResponse> extractTransactionDataFromImage(
     CroppedFile image,
   ) async {

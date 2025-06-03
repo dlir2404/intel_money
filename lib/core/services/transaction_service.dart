@@ -35,7 +35,7 @@ class TransactionService {
     required DateTime to,
   }) async {
     final response = await _apiClient.get(
-      '/transaction/all',
+      '/transaction/time-range',
       params: {
         'from': AppTime.toUtcIso8601String(from),
         'to': AppTime.toUtcIso8601String(to),
@@ -50,9 +50,8 @@ class TransactionService {
     return transactions;
   }
 
-  ///LEGACY
-  Future<void> getTransactions() async {
-    final response = await _apiClient.get('/transaction/all/test-only');
+  Future<List<Transaction>> getAllTransactions() async {
+    final response = await _apiClient.get('/transaction/all');
 
     final transactions =
         (response as List)
@@ -60,6 +59,7 @@ class TransactionService {
             .toList();
 
     _transactionState.setTransactions(transactions);
+    return transactions;
   }
 
   Future<Transaction> createTransferTransaction({

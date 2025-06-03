@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 import '../../../shared/const/enum/transaction_data_source_type.dart';
+import '../../../shared/helper/app_time.dart';
 
 class SelectDataSourceTypeScreen extends StatefulWidget {
   final TransactionDataSourceType type;
+  final Map<String, DateTime>? customTimeRange;
   final Function(
     TransactionDataSourceType type, {
     Map<String, DateTime>? timeRange,
@@ -14,6 +16,7 @@ class SelectDataSourceTypeScreen extends StatefulWidget {
   const SelectDataSourceTypeScreen({
     super.key,
     required this.type,
+    this.customTimeRange,
     this.onSelect,
   });
 
@@ -103,6 +106,7 @@ class _SelectDataSourceTypeScreenState extends State<SelectDataSourceTypeScreen>
                 children: [
                   DayDataSourceType(
                     type: widget.type,
+                    customTimeRange: widget.customTimeRange,
                     onSelect: (type, {Map<String, DateTime>? timeRange}) {
                       if (widget.onSelect != null) {
                         widget.onSelect!(type, timeRange: timeRange);
@@ -121,6 +125,7 @@ class _SelectDataSourceTypeScreenState extends State<SelectDataSourceTypeScreen>
                   ),
                   MonthDataSourceType(
                     type: widget.type,
+                    customTimeRange: widget.customTimeRange,
                     onSelect: (type, {Map<String, DateTime>? timeRange}) {
                       if (widget.onSelect != null) {
                         widget.onSelect!(type, timeRange: timeRange);
@@ -160,18 +165,25 @@ class _SelectDataSourceTypeScreenState extends State<SelectDataSourceTypeScreen>
 
 class DayDataSourceType extends StatelessWidget {
   final TransactionDataSourceType type;
+  final Map<String, DateTime>? customTimeRange;
   final Function(
     TransactionDataSourceType type, {
     Map<String, DateTime>? timeRange,
   })?
   onSelect;
 
-  const DayDataSourceType({super.key, required this.type, this.onSelect});
+  const DayDataSourceType({
+    super.key,
+    required this.type,
+    this.onSelect,
+    this.customTimeRange,
+  });
 
   Future<void> _selectCustomDay(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
+      initialDate:
+          customTimeRange != null ? customTimeRange!['from']! : DateTime.now(),
       firstDate: DateTime(2000),
       lastDate: DateTime(2101),
     );
@@ -240,7 +252,12 @@ class DayDataSourceType extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text("Custom Day"),
+                Text(
+                  (type == TransactionDataSourceType.customDay &&
+                          customTimeRange != null)
+                      ? "Other: ${AppTime.format(time: customTimeRange!['from']!)}"
+                      : "Other",
+                ),
                 if (type == TransactionDataSourceType.customDay)
                   const Icon(Icons.check, color: Colors.green),
               ],
@@ -307,13 +324,19 @@ class WeekDataSourceType extends StatelessWidget {
 
 class MonthDataSourceType extends StatelessWidget {
   final TransactionDataSourceType type;
+  final Map<String, DateTime>? customTimeRange;
   final Function(
-      TransactionDataSourceType type, {
-      Map<String, DateTime>? timeRange,
-      })?
+    TransactionDataSourceType type, {
+    Map<String, DateTime>? timeRange,
+  })?
   onSelect;
 
-  const MonthDataSourceType({super.key, required this.type, this.onSelect});
+  const MonthDataSourceType({
+    super.key,
+    required this.type,
+    this.onSelect,
+    this.customTimeRange,
+  });
 
   Future<void> _selectCustomMonth(BuildContext context) async {
     DateTime? selectedDate;
@@ -337,7 +360,9 @@ class MonthDataSourceType extends StatelessWidget {
               spacing: 8,
               children: <Widget>[
                 TextButton(
-                  style: datePickerTheme.cancelButtonStyle ?? defaults.cancelButtonStyle,
+                  style:
+                      datePickerTheme.cancelButtonStyle ??
+                      defaults.cancelButtonStyle,
                   onPressed: () {
                     Navigator.pop(context);
                   },
@@ -348,7 +373,9 @@ class MonthDataSourceType extends StatelessWidget {
                   ),
                 ),
                 TextButton(
-                  style: datePickerTheme.confirmButtonStyle ?? defaults.confirmButtonStyle,
+                  style:
+                      datePickerTheme.confirmButtonStyle ??
+                      defaults.confirmButtonStyle,
                   onPressed: () {
                     Navigator.pop(context, selectedDate);
                   },
@@ -361,15 +388,21 @@ class MonthDataSourceType extends StatelessWidget {
 
         final DialogThemeData dialogTheme = theme.dialogTheme;
         return Dialog(
-          backgroundColor: datePickerTheme.backgroundColor ?? defaults.backgroundColor,
-          elevation: useMaterial3
-              ? datePickerTheme.elevation ?? defaults.elevation!
-              : datePickerTheme.elevation ?? dialogTheme.elevation ?? 24,
+          backgroundColor:
+              datePickerTheme.backgroundColor ?? defaults.backgroundColor,
+          elevation:
+              useMaterial3
+                  ? datePickerTheme.elevation ?? defaults.elevation!
+                  : datePickerTheme.elevation ?? dialogTheme.elevation ?? 24,
           shadowColor: datePickerTheme.shadowColor ?? defaults.shadowColor,
-          surfaceTintColor: datePickerTheme.surfaceTintColor ?? defaults.surfaceTintColor,
-          shape: useMaterial3
-              ? datePickerTheme.shape ?? defaults.shape
-              : datePickerTheme.shape ?? dialogTheme.shape ?? defaults.shape,
+          surfaceTintColor:
+              datePickerTheme.surfaceTintColor ?? defaults.surfaceTintColor,
+          shape:
+              useMaterial3
+                  ? datePickerTheme.shape ?? defaults.shape
+                  : datePickerTheme.shape ??
+                      dialogTheme.shape ??
+                      defaults.shape,
           clipBehavior: Clip.antiAlias,
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -386,16 +419,22 @@ class MonthDataSourceType extends StatelessWidget {
                 width: MediaQuery.of(context).size.width * 0.8,
                 height: 300,
                 child: SfDateRangePicker(
-                  initialDisplayDate: DateTime.now(),
+                  initialSelectedDate: customTimeRange != null ? customTimeRange!['from']! :  DateTime.now(),
                   headerStyle: DateRangePickerHeaderStyle(
                     textAlign: TextAlign.center,
-                    backgroundColor: datePickerTheme.backgroundColor ?? defaults.backgroundColor,
+                    backgroundColor:
+                        datePickerTheme.backgroundColor ??
+                        defaults.backgroundColor,
                   ),
-                  backgroundColor: datePickerTheme.backgroundColor ?? defaults.backgroundColor,
+                  backgroundColor:
+                      datePickerTheme.backgroundColor ??
+                      defaults.backgroundColor,
                   selectionMode: DateRangePickerSelectionMode.single,
                   view: DateRangePickerView.year,
                   allowViewNavigation: false,
-                  onSelectionChanged: (DateRangePickerSelectionChangedArgs args) {
+                  onSelectionChanged: (
+                    DateRangePickerSelectionChangedArgs args,
+                  ) {
                     if (args.value is DateTime) {
                       selectedDate = args.value;
                     }
@@ -411,15 +450,20 @@ class MonthDataSourceType extends StatelessWidget {
 
     if (selectedDate != null && onSelect != null) {
       // Calculate the first and last day of the selected month
-      DateTime firstDayOfMonth = DateTime(selectedDate!.year, selectedDate!.month, 1);
-      DateTime lastDayOfMonth = DateTime(selectedDate!.year, selectedDate!.month + 1, 0);
+      DateTime firstDayOfMonth = DateTime(
+        selectedDate!.year,
+        selectedDate!.month,
+        1,
+      );
+      DateTime lastDayOfMonth = DateTime(
+        selectedDate!.year,
+        selectedDate!.month + 1,
+        0,
+      );
 
       onSelect!(
         TransactionDataSourceType.customMonth,
-        timeRange: {
-          "from": firstDayOfMonth,
-          "to": lastDayOfMonth,
-        },
+        timeRange: {"from": firstDayOfMonth, "to": lastDayOfMonth},
       );
     }
   }
@@ -476,7 +520,12 @@ class MonthDataSourceType extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text("Other"),
+                Text(
+                  (type == TransactionDataSourceType.customMonth &&
+                          customTimeRange != null)
+                      ? "Other: ${AppTime.format(time: customTimeRange!['from']!, pattern: "MM/YYYY")}"
+                      : "Other",
+                ),
                 if (type == TransactionDataSourceType.customMonth)
                   const Icon(Icons.check, color: Colors.green),
               ],
