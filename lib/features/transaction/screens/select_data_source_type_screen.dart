@@ -4,7 +4,11 @@ import '../../../shared/const/enum/transaction_data_source_type.dart';
 
 class SelectDataSourceTypeScreen extends StatefulWidget {
   final TransactionDataSourceType type;
-  final Function(TransactionDataSourceType type)? onSelect;
+  final Function(
+    TransactionDataSourceType type, {
+    Map<String, DateTime>? timeRange,
+  })?
+  onSelect;
 
   const SelectDataSourceTypeScreen({
     super.key,
@@ -25,7 +29,11 @@ class _SelectDataSourceTypeScreenState extends State<SelectDataSourceTypeScreen>
   void initState() {
     super.initState();
     int initialIndex = _getInitialTabIndex();
-    _tabController = TabController(length: 5, vsync: this, initialIndex: initialIndex);
+    _tabController = TabController(
+      length: 5,
+      vsync: this,
+      initialIndex: initialIndex,
+    );
   }
 
   int _getInitialTabIndex() {
@@ -94,6 +102,15 @@ class _SelectDataSourceTypeScreenState extends State<SelectDataSourceTypeScreen>
                 children: [
                   DayDataSourceType(
                     type: widget.type,
+                    onSelect: (type, {Map<String, DateTime>? timeRange}) {
+                      if (widget.onSelect != null) {
+                        widget.onSelect!(type, timeRange: timeRange);
+                      }
+                      Navigator.pop(context);
+                    },
+                  ),
+                  WeekDataSourceType(
+                    type: widget.type,
                     onSelect: (type) {
                       if (widget.onSelect != null) {
                         widget.onSelect!(type);
@@ -101,30 +118,33 @@ class _SelectDataSourceTypeScreenState extends State<SelectDataSourceTypeScreen>
                       Navigator.pop(context);
                     },
                   ),
-                  WeekDataSourceType(type: widget.type, onSelect: (type) {
-                    if (widget.onSelect != null) {
-                      widget.onSelect!(type);
-                    }
-                    Navigator.pop(context);
-                  }),
-                  MonthDataSourceType(type: widget.type, onSelect: (type) {
-                    if (widget.onSelect != null) {
-                      widget.onSelect!(type);
-                    }
-                    Navigator.pop(context);
-                  }),
-                  QuarterDataSourceType(type: widget.type, onSelect: (type) {
-                    if (widget.onSelect != null) {
-                      widget.onSelect!(type);
-                    }
-                    Navigator.pop(context);
-                  }),
-                  CustomDataSourceType(type: widget.type, onSelect: (type) {
-                    if (widget.onSelect != null) {
-                      widget.onSelect!(type);
-                    }
-                    Navigator.pop(context);
-                  }),
+                  MonthDataSourceType(
+                    type: widget.type,
+                    onSelect: (type) {
+                      if (widget.onSelect != null) {
+                        widget.onSelect!(type);
+                      }
+                      Navigator.pop(context);
+                    },
+                  ),
+                  QuarterDataSourceType(
+                    type: widget.type,
+                    onSelect: (type) {
+                      if (widget.onSelect != null) {
+                        widget.onSelect!(type);
+                      }
+                      Navigator.pop(context);
+                    },
+                  ),
+                  CustomDataSourceType(
+                    type: widget.type,
+                    onSelect: (type) {
+                      if (widget.onSelect != null) {
+                        widget.onSelect!(type);
+                      }
+                      Navigator.pop(context);
+                    },
+                  ),
                 ],
               ),
             ),
@@ -139,9 +159,33 @@ class _SelectDataSourceTypeScreenState extends State<SelectDataSourceTypeScreen>
 
 class DayDataSourceType extends StatelessWidget {
   final TransactionDataSourceType type;
-  final Function(TransactionDataSourceType type)? onSelect;
+  final Function(
+    TransactionDataSourceType type, {
+    Map<String, DateTime>? timeRange,
+  })?
+  onSelect;
 
   const DayDataSourceType({super.key, required this.type, this.onSelect});
+
+  Future<void> _selectCustomDay(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+    if (picked != null) {
+      if (onSelect != null) {
+        onSelect!(
+          TransactionDataSourceType.customDay,
+          timeRange: {
+            "from": picked,
+            "to": picked.add(const Duration(days: 1)),
+          },
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -182,14 +226,12 @@ class DayDataSourceType extends StatelessWidget {
                 if (type == TransactionDataSourceType.yesterday)
                   const Icon(Icons.check, color: Colors.green),
               ],
-            )
+            ),
           ),
         ),
         InkWell(
           onTap: () {
-            if (onSelect != null) {
-              onSelect!(TransactionDataSourceType.customDay);
-            }
+            _selectCustomDay(context);
           },
           child: Container(
             color: Colors.white,
@@ -212,6 +254,7 @@ class DayDataSourceType extends StatelessWidget {
 class WeekDataSourceType extends StatelessWidget {
   final TransactionDataSourceType type;
   final Function(TransactionDataSourceType type)? onSelect;
+
   const WeekDataSourceType({super.key, required this.type, this.onSelect});
 
   @override
@@ -244,18 +287,18 @@ class WeekDataSourceType extends StatelessWidget {
             }
           },
           child: Container(
-              color: Colors.white,
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(TransactionDataSourceType.lastWeek.name),
-                  if (type == TransactionDataSourceType.lastWeek)
-                    const Icon(Icons.check, color: Colors.green),
-                ],
-              )
+            color: Colors.white,
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(TransactionDataSourceType.lastWeek.name),
+                if (type == TransactionDataSourceType.lastWeek)
+                  const Icon(Icons.check, color: Colors.green),
+              ],
+            ),
           ),
-        )
+        ),
       ],
     );
   }
@@ -264,6 +307,7 @@ class WeekDataSourceType extends StatelessWidget {
 class MonthDataSourceType extends StatelessWidget {
   final TransactionDataSourceType type;
   final Function(TransactionDataSourceType type)? onSelect;
+
   const MonthDataSourceType({super.key, required this.type, this.onSelect});
 
   @override
@@ -296,16 +340,16 @@ class MonthDataSourceType extends StatelessWidget {
             }
           },
           child: Container(
-              color: Colors.white,
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text("Last month"),
-                  if (type == TransactionDataSourceType.lastMonth)
-                    const Icon(Icons.check, color: Colors.green),
-                ],
-              )
+            color: Colors.white,
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text("Last month"),
+                if (type == TransactionDataSourceType.lastMonth)
+                  const Icon(Icons.check, color: Colors.green),
+              ],
+            ),
           ),
         ),
         InkWell(
@@ -315,18 +359,18 @@ class MonthDataSourceType extends StatelessWidget {
             }
           },
           child: Container(
-              color: Colors.white,
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text("Other"),
-                  if (type == TransactionDataSourceType.customMonth)
-                    const Icon(Icons.check, color: Colors.green),
-                ],
-              )
+            color: Colors.white,
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text("Other"),
+                if (type == TransactionDataSourceType.customMonth)
+                  const Icon(Icons.check, color: Colors.green),
+              ],
+            ),
           ),
-        )
+        ),
       ],
     );
   }
@@ -335,6 +379,7 @@ class MonthDataSourceType extends StatelessWidget {
 class QuarterDataSourceType extends StatelessWidget {
   final TransactionDataSourceType type;
   final Function(TransactionDataSourceType type)? onSelect;
+
   const QuarterDataSourceType({super.key, required this.type, this.onSelect});
 
   @override
@@ -367,16 +412,16 @@ class QuarterDataSourceType extends StatelessWidget {
             }
           },
           child: Container(
-              color: Colors.white,
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(TransactionDataSourceType.quarter2.name),
-                  if (type == TransactionDataSourceType.quarter2)
-                    const Icon(Icons.check, color: Colors.green),
-                ],
-              )
+            color: Colors.white,
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(TransactionDataSourceType.quarter2.name),
+                if (type == TransactionDataSourceType.quarter2)
+                  const Icon(Icons.check, color: Colors.green),
+              ],
+            ),
           ),
         ),
         InkWell(
@@ -386,16 +431,16 @@ class QuarterDataSourceType extends StatelessWidget {
             }
           },
           child: Container(
-              color: Colors.white,
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(TransactionDataSourceType.quarter3.name),
-                  if (type == TransactionDataSourceType.quarter3)
-                    const Icon(Icons.check, color: Colors.green),
-                ],
-              )
+            color: Colors.white,
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(TransactionDataSourceType.quarter3.name),
+                if (type == TransactionDataSourceType.quarter3)
+                  const Icon(Icons.check, color: Colors.green),
+              ],
+            ),
           ),
         ),
         InkWell(
@@ -405,16 +450,16 @@ class QuarterDataSourceType extends StatelessWidget {
             }
           },
           child: Container(
-              color: Colors.white,
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(TransactionDataSourceType.quarter4.name),
-                  if (type == TransactionDataSourceType.quarter4)
-                    const Icon(Icons.check, color: Colors.green),
-                ],
-              )
+            color: Colors.white,
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(TransactionDataSourceType.quarter4.name),
+                if (type == TransactionDataSourceType.quarter4)
+                  const Icon(Icons.check, color: Colors.green),
+              ],
+            ),
           ),
         ),
       ],

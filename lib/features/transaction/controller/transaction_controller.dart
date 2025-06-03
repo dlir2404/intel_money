@@ -32,9 +32,7 @@ class TransactionController {
   final StatisticState _statisticState = StatisticState();
   final RelatedUserState _relatedUserState = RelatedUserState();
 
-  Future<List<Transaction>> getTransactions(TransactionDataSourceType type) async {
-    final timeRange = type.timeRange;
-
+  Future<List<Transaction>> getTransactions(Map<String, DateTime> timeRange) async {
     final transactions = await _transactionService.getTransactionsInTimeRange(
       from: timeRange["from"]!,
       to: timeRange["to"]!,

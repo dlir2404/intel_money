@@ -9,11 +9,16 @@ import 'package:provider/provider.dart';
 
 import '../../../core/models/transaction.dart';
 import '../../../core/state/transaction_state.dart';
+import '../../../shared/helper/app_time.dart';
 import '../widgets/total_in_out.dart';
 
 class TransactionHistoryScreen extends StatefulWidget {
   final TransactionDataSourceType? type;
-  const TransactionHistoryScreen({super.key, this.type = TransactionDataSourceType.thisMonth});
+
+  const TransactionHistoryScreen({
+    super.key,
+    this.type = TransactionDataSourceType.thisMonth,
+  });
 
   @override
   State<TransactionHistoryScreen> createState() =>
@@ -23,6 +28,8 @@ class TransactionHistoryScreen extends StatefulWidget {
 class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
   final TransactionController _transactionController = TransactionController();
   TransactionDataSourceType type = TransactionDataSourceType.thisMonth;
+  Map<String, DateTime>? customTimeRange;
+
   List<Transaction> transactions = [];
 
   bool isDataLoaded = false;
@@ -78,12 +85,24 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
 
   Future<void> _loadTransactions() async {
     if (!isDataLoaded) {
-      final transactionState = Provider.of<TransactionState>(context, listen: false);
+      final transactionState = Provider.of<TransactionState>(
+        context,
+        listen: false,
+      );
 
       if (transactionState.isLoad(type.keyStore)) {
         transactions = transactionState.getTransactions(type.keyStore);
       } else {
-        transactions = await _transactionController.getTransactions(type);
+        Map<String, DateTime> timeRange = type.timeRange;
+
+        // If the type is custom, use the custom time range
+        if (type == TransactionDataSourceType.customDay ||
+            type == TransactionDataSourceType.customMonth ||
+            type == TransactionDataSourceType.customFromTo) {
+          timeRange = customTimeRange!;
+        }
+
+        transactions = await _transactionController.getTransactions(timeRange);
       }
 
       setState(() {
@@ -127,25 +146,49 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
             return const Center(child: CircularProgressIndicator());
           }
 
+          String buttonDisplayText = type.name;
+          if (type == TransactionDataSourceType.customDay) {
+            buttonDisplayText = AppTime.format(time: customTimeRange!['from']!);
+          } else if (type == TransactionDataSourceType.customMonth) {
+            buttonDisplayText = AppTime.format(
+              time: customTimeRange!['from']!,
+              pattern: "MM/YYYY",
+            );
+          } else if (type == TransactionDataSourceType.customFromTo) {
+            buttonDisplayText =
+                "${AppTime.format(time: customTimeRange!['from']!)} - ${AppTime.format(time: customTimeRange!['to']!)}";
+          }
+
           return Container(
             color: Colors.grey[200],
             child: Column(
               children: [
-                SelectDataSourceTypeButton(type: type, onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => SelectDataSourceTypeScreen(
-                        type: type,
-                        onSelect: (selectedType) {
-                          setState(() {
-                            type = selectedType;
-                            isDataLoaded = false; // Reset data load state
-                          });
-                        },
+                SelectDataSourceTypeButton(
+                  displayText: buttonDisplayText,
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder:
+                            (context) => SelectDataSourceTypeScreen(
+                              type: type,
+                              onSelect: (
+                                selectedType, {
+                                Map<String, DateTime>? timeRange,
+                              }) {
+                                if (timeRange != null) {
+                                  customTimeRange = timeRange;
+                                }
+
+                                setState(() {
+                                  type = selectedType;
+                                  isDataLoaded = false; // Reset data load state
+                                });
+                              },
+                            ),
                       ),
-                    ),
-                  );
-                },),
+                    );
+                  },
+                ),
                 const SizedBox(height: 12),
                 TotalInOut(transactions: transactions),
                 const SizedBox(height: 12),
@@ -153,16 +196,14 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
                 Expanded(
                   child: SingleChildScrollView(
                     child: Column(
-                      children: [
-                        ..._buildTransactionList(transactions),
-                      ],
+                      children: [..._buildTransactionList(transactions)],
                     ),
                   ),
                 ),
               ],
             ),
           );
-        }
+        },
       ),
     );
   }

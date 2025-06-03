@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:intel_money/shared/const/enum/transaction_data_source_type.dart';
 
 class SelectDataSourceTypeButton extends StatelessWidget {
   final Function() onTap;
-  final TransactionDataSourceType type;
+  final String displayText;
 
-  const SelectDataSourceTypeButton({super.key, required this.type, required this.onTap});
+  const SelectDataSourceTypeButton({
+    super.key,
+    required this.displayText,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +22,7 @@ class SelectDataSourceTypeButton extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                type.name,
+                displayText,
                 style: TextStyle(
                   fontWeight: FontWeight.w500,
                   color: Theme.of(context).primaryColor,
