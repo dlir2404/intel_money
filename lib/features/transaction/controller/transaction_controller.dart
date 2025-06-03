@@ -19,6 +19,7 @@ import '../../../core/state/related_user_state.dart';
 import '../../../core/state/statistic_state.dart';
 import '../../../core/state/transaction_state.dart';
 import '../../../core/state/wallet_state.dart';
+import '../../../shared/const/enum/transaction_data_source_type.dart';
 import '../../../shared/const/enum/transaction_type.dart';
 
 class TransactionController {
@@ -30,6 +31,19 @@ class TransactionController {
   final WalletState _walletState = WalletState();
   final StatisticState _statisticState = StatisticState();
   final RelatedUserState _relatedUserState = RelatedUserState();
+
+  Future<List<Transaction>> getTransactions(TransactionDataSourceType type) async {
+    final timeRange = type.timeRange;
+
+    final transactions = await _transactionService.getTransactionsInTimeRange(
+      from: timeRange["from"]!,
+      to: timeRange["to"]!,
+    );
+
+    _transactionState.setTransactionsByKey(type.keyStore, transactions);
+
+    return transactions;
+  }
 
   static Future<TakePictureResponse> extractTransactionDataFromImage(
     CroppedFile image,

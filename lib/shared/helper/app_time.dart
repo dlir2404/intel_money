@@ -9,6 +9,14 @@ class AppTime {
         date.day == now.day;
   }
 
+  static bool isYesterday(DateTime date) {
+    final now = DateTime.now();
+    final yesterday = DateTime(now.year, now.month, now.day - 1);
+    return date.year == yesterday.year &&
+        date.month == yesterday.month &&
+        date.day == yesterday.day;
+  }
+
   static bool isThisWeek(DateTime date) {
     final now = DateTime.now();
     // Get start of current week (Monday)
@@ -98,6 +106,50 @@ class AppTime {
   static DateTime endOfToday() {
     final now = DateTime.now();
     return DateTime(now.year, now.month, now.day, 23, 59, 59);
+  }
+
+  static DateTime startOfThisWeek() {
+    final now = DateTime.now();
+    // Get start of current week (Monday)
+    return DateTime(
+      now.year,
+      now.month,
+      now.day,
+    ).subtract(Duration(days: now.weekday - 1));
+  }
+
+  static DateTime endOfThisWeek() {
+    final now = DateTime.now();
+    // Get start of current week (Monday)
+    final startOfWeek = DateTime(
+      now.year,
+      now.month,
+      now.day,
+    ).subtract(Duration(days: now.weekday - 1));
+    // Get end of current week (Sunday)
+    return startOfWeek.add(Duration(days: 6, hours: 23, minutes: 59, seconds: 59));
+  }
+
+  static DateTime startOfThisMonth() {
+    final now = DateTime.now();
+    return DateTime(now.year, now.month, 1);
+  }
+
+  static DateTime endOfThisMonth() {
+    final now = DateTime.now();
+    //day 0 is tricky it will represent the last day of now.month
+    return DateTime(now.year, now.month + 1, 0, 23, 59, 59);
+  }
+
+  static DateTime startOfLastMonth() {
+    final now = DateTime.now();
+    return DateTime(now.year, now.month - 1, 1);
+  }
+
+  static DateTime endOfLastMonth() {
+    final now = DateTime.now();
+    //day 0 is tricky it will represent the last day of (now.month - 1)
+    return DateTime(now.year, now.month, 0, 23, 59, 59);
   }
 
   static DateTime startOfYear({DateTime? date}) {

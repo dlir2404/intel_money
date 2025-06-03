@@ -30,6 +30,27 @@ class TransactionService {
     return transaction;
   }
 
+  Future<List<Transaction>> getTransactionsInTimeRange({
+    required DateTime from,
+    required DateTime to,
+  }) async {
+    final response = await _apiClient.get(
+      '/transaction/all',
+      params: {
+        'from': AppTime.toUtcIso8601String(from),
+        'to': AppTime.toUtcIso8601String(to),
+      },
+    );
+
+    final transactions =
+        (response as List)
+            .map((transaction) => Transaction.fromJson(transaction))
+            .toList();
+
+    return transactions;
+  }
+
+  ///LEGACY
   Future<void> getTransactions() async {
     final response = await _apiClient.get('/transaction/all/test-only');
 

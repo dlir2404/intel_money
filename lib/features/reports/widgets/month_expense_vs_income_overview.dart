@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:intel_money/shared/const/enum/month.dart';
+import 'package:intel_money/shared/const/enum/time/month.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/models/statistic_data.dart';

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:intel_money/shared/const/enum/month.dart';
+import 'package:intel_money/shared/const/enum/time/month.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/models/statistic_data.dart';
 import '../../../core/state/statistic_state.dart';
-import '../../../shared/const/enum/quarter.dart';
+import '../../../shared/const/enum/time/quarter.dart';
 import 'expense_vs_income_item.dart';
 
 class YearExpenseVsIncomeOverview extends StatelessWidget {

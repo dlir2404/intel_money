@@ -7,6 +7,7 @@ class TransactionState extends ChangeNotifier {
   factory TransactionState() => _instance;
   TransactionState._internal();
 
+  /// LEGACY - BEGIN
   //transactions in decreasing order by date
   List<Transaction> _transactions = [];
 
@@ -37,6 +38,25 @@ class TransactionState extends ChangeNotifier {
 
   void removeTransaction(int id) {
     _transactions.removeWhere((t) => t.id == id);
+    notifyListeners();
+  }
+
+  ///LEGACY - END
+
+
+  /// NEW - BEGIN
+  Map<String, List<Transaction>> _store = {};
+
+  bool isLoad(String key) {
+    return _store.containsKey(key);
+  }
+
+  List<Transaction> getTransactions(String key) {
+    return _store[key] ?? [];
+  }
+
+  void setTransactionsByKey(String key, List<Transaction> transactions) {
+    _store[key] = transactions;
     notifyListeners();
   }
 }

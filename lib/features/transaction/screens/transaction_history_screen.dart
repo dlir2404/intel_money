@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intel_money/features/transaction/controller/transaction_controller.dart';
 import 'package:intel_money/features/transaction/widgets/select_data_source_type_button.dart';
 import 'package:intel_money/features/transaction/widgets/transaction_group_by_day.dart';
 import 'package:intel_money/shared/const/enum/transaction_data_source_type.dart';
@@ -18,7 +19,11 @@ class TransactionHistoryScreen extends StatefulWidget {
 }
 
 class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
+  final TransactionController _transactionController = TransactionController();
   TransactionDataSourceType type = TransactionDataSourceType.thisMonth;
+  List<Transaction> transactions = [];
+
+  bool isDataLoaded = false;
 
   List<Widget> _buildTransactionList(List<Transaction> transactions) {
     // Group transactions by date
@@ -46,6 +51,22 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
     }
 
     return widgets;
+  }
+
+  Future<void> _loadTransactions() async {
+    if (!isDataLoaded) {
+      final transactionState = Provider.of<TransactionState>(context, listen: false);
+
+      if (transactionState.isLoad(type.keyStore)) {
+        transactions = transactionState.getTransactions(type.keyStore);
+      } else {
+        transactions = await _transactionController.getTransactions(type);
+      }
+
+      setState(() {
+        isDataLoaded = true;
+      });
+    }
   }
 
   @override
@@ -76,9 +97,9 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
           ),
         ],
       ),
-      body: Consumer<TransactionState>(
-        builder: (context, state, _) {
-          final transactions = state.transactions;
+      body: FutureBuilder(
+        future: _loadTransactions(),
+        builder: (context, snapshot) {
 
           return Container(
             color: Colors.grey[200],

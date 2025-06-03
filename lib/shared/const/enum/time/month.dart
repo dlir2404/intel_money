@@ -1,3 +1,5 @@
+import '../../../helper/app_time.dart';
+
 enum Month {
   january,
   february,
@@ -98,6 +100,45 @@ extension MonthExtension on Month{
         return 'Nov';
       case Month.december:
         return 'Dec';
+    }
+  }
+}
+
+enum MonthRelative {
+  thisMonth,
+  lastMonth,
+  other,
+}
+
+extension MonthRelativeExtension on MonthRelative {
+  String get name {
+    switch (this) {
+      case MonthRelative.thisMonth:
+        return 'This Month';
+      case MonthRelative.lastMonth:
+        return 'Last Month';
+      case MonthRelative.other:
+        return 'Other';
+    }
+  }
+
+  Map<String, DateTime> get timeRange {
+    switch (this) {
+      case MonthRelative.thisMonth:
+        return {
+          'from': AppTime.startOfThisMonth(),
+          'to': AppTime.endOfThisMonth(),
+        };
+      case MonthRelative.lastMonth:
+        return {
+          'from': AppTime.startOfLastMonth(),
+          'to': AppTime.endOfLastMonth(),
+        };
+      case MonthRelative.other:
+        return {
+          'start': DateTime(2000, 1, 1), // Example start date
+          'end': DateTime(2000, 1, 2), // Example end date
+        };
     }
   }
 }

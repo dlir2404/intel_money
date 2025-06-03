@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intel_money/features/transaction/widgets/transaction_item.dart';
 import 'package:intel_money/shared/component/typos/currency_double_text.dart';
+import 'package:intel_money/shared/helper/app_time.dart';
 
 import '../../../core/models/transaction.dart';
 import '../../../shared/const/enum/transaction_type.dart';
-import '../../../shared/helper/AppDate.dart';
-import '../../../shared/helper/formatter.dart';
 
 class TransactionGroupByDay extends StatelessWidget {
   final List<Transaction> transactions;
@@ -32,9 +31,9 @@ class TransactionGroupByDay extends StatelessWidget {
             ? "Saturday"
             : "Sunday";
 
-    if (AppDate.isToday(date)) {
+    if (AppTime.isToday(date)) {
       dayName = "Today";
-    } else if (AppDate.isYesterday(date)) {
+    } else if (AppTime.isYesterday(date)) {
       dayName = "Yesterday";
     }
 
@@ -74,7 +73,7 @@ class TransactionGroupByDay extends StatelessWidget {
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
             ),
             Text(
-              AppDate.monthYearFormat(date),
+              AppTime.format(time: date, pattern: "MM/YYYY"),
               style: TextStyle(color: Colors.grey[600], fontSize: 16),
             ),
           ],
