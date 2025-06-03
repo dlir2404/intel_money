@@ -8,7 +8,7 @@ import '../../../core/models/scan_receipt_response.dart';
 import '../screens/take_picture_screen.dart';
 
 class InputImage extends StatefulWidget {
-  final File? image;
+  final dynamic image;
   final Function(File image) onImageSelected;
   final Function() onImageRemoved;
 
@@ -26,7 +26,7 @@ class InputImage extends StatefulWidget {
 }
 
 class _InputImageState extends State<InputImage> {
-  File? _image;
+  dynamic _image;
 
   @override
   void initState() {
@@ -54,11 +54,8 @@ class _InputImageState extends State<InputImage> {
       _image = result.receiptImage;
     });
 
-    if (widget.onImageSelected != null) {
-      widget.onImageSelected!(_image!);
-    }
+    widget.onImageSelected(_image!);
   }
-
 
   Future<void> _pickImageFromGallery() async {
     final ImagePicker picker = ImagePicker();
@@ -71,9 +68,7 @@ class _InputImageState extends State<InputImage> {
         _image = file;
       });
 
-      if (widget.onImageSelected != null) {
-        widget.onImageSelected!(file);
-      }
+      widget.onImageSelected(file);
     }
   }
 
@@ -86,9 +81,7 @@ class _InputImageState extends State<InputImage> {
             setState(() {
               _image = null;
             });
-            if (widget.onImageRemoved != null) {
-              widget.onImageRemoved!();
-            }
+            widget.onImageRemoved();
           },
         )
         : Container(

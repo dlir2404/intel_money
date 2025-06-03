@@ -35,7 +35,7 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
   late Wallet? _destinationWallet;
   late DateTime _transactionDate;
 
-  late File? _image;
+  late dynamic _image;
 
   late RelatedUser? _borrower;
   late RelatedUser? _lender;
@@ -57,10 +57,9 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
     _sourceWallet = widget.transaction.sourceWallet;
     // _destinationWallet = widget.transaction.destinationWallet;
     _transactionDate = widget.transaction.transactionDate;
-    _image =
-        widget.transaction.image != null
-            ? File(widget.transaction.image!)
-            : null;
+    _image = (widget.transaction.image != null && widget.transaction.image!.isNotEmpty)
+        ? widget.transaction.image
+        : null;
     // _borrower = widget.transaction.borrower;
     // _lender = widget.transaction.lender;
   }
