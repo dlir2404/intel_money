@@ -20,7 +20,7 @@ class TransactionImage extends StatelessWidget {
         // Try to launch URL, fallback to preview on error
         try {
           final url = Uri.parse(imageUrl);
-          if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+          if (!await launchUrl(url)) {
             _showImagePreview(context);
           }
         } on PlatformException catch (e) {
