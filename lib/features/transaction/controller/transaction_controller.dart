@@ -66,7 +66,10 @@ class TransactionController {
     final ExtractTransactionInfoResponse transInfo =
         await extractTransactionDataFromText(scannedText);
 
-    final Category category = Category.fromContext(transInfo.categoryId);
+    Category? category;
+    if (transInfo.categoryId != null) {
+      category = Category.fromContext(transInfo.categoryId!);
+    }
     final Wallet wallet = Wallet.fromContext(transInfo.walletId);
 
     return TakePictureResponse(

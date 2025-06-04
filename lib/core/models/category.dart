@@ -22,7 +22,7 @@ class Category{
     required this.editable,
   });
 
-  factory Category.fromContext(int? id) {
+  factory Category.fromContext(int id) {
     final List<Category> nestedCategories = CategoryState().categories;
     for (var i = 0; i < nestedCategories.length; i++) {
       if (nestedCategories[i].id == id) {

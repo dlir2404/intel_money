@@ -41,12 +41,6 @@ class Transaction {
   }
 
   factory Transaction.fromJson(Map<String, dynamic> json) {
-    Category? category;
-    if (json['categoryId'] != null) {
-      category = Category.fromContext(json['categoryId']);
-    }
-    final sourceWallet = Wallet.fromContext(json['sourceWalletId']);
-
     final transactionType = TransactionType.values.firstWhere((e) => e.value == json['type']);
     switch (transactionType) {
       case TransactionType.lend:
@@ -58,6 +52,12 @@ class Transaction {
       default:
         break;
     }
+
+    Category? category;
+    if (json['categoryId'] != null) {
+      category = Category.fromContext(json['categoryId']);
+    }
+    final sourceWallet = Wallet.fromContext(json['sourceWalletId']);
 
     return Transaction(
       id: json['id'],
@@ -82,6 +82,7 @@ class LendTransaction extends Transaction {
     required this.borrower,
     required super.transactionDate,
     required super.sourceWallet,
+    super.category,
     super.description,
     super.image,
   }) : super(type: TransactionType.lend);
@@ -94,6 +95,7 @@ class LendTransaction extends Transaction {
       borrower: borrower,
       transactionDate: AppTime.parseFromApi(json['transactionDate']),
       sourceWallet: Wallet.fromContext(json['sourceWalletId']),
+      category: Category.fromContext(json['categoryId']),
       description: json['description'],
       image: json['image'],
     );
@@ -109,6 +111,7 @@ class BorrowTransaction extends Transaction {
     required this.lender,
     required super.transactionDate,
     required super.sourceWallet,
+    super.category,
     super.description,
     super.image,
   }) : super(type: TransactionType.borrow);
@@ -121,6 +124,7 @@ class BorrowTransaction extends Transaction {
       lender: lender,
       transactionDate: AppTime.parseFromApi(json['transactionDate']),
       sourceWallet: Wallet.fromContext(json['sourceWalletId']),
+      category: Category.fromContext(json['categoryId']),
       description: json['description'],
       image: json['image'],
     );
