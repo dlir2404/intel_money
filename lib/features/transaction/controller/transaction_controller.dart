@@ -197,9 +197,11 @@ class TransactionController {
       imageUrl = await _cloudinaryService.uploadImage(image.path);
     }
 
+    Transaction newTransaction;
+
     switch (transactionType) {
       case TransactionType.expense:
-        Transaction newTransaction = await _transactionService
+        newTransaction = await _transactionService
             .createExpenseTransaction(
               amount: amount,
               categoryId: category!.id,
@@ -209,14 +211,9 @@ class TransactionController {
               image: imageUrl,
               notAddToReport: false,
             );
-
-        _transactionState.addTransaction(newTransaction);
-        _appState.decreaseUserBalance(amount);
-        _walletState.decreateWalletBalance(sourceWallet.id, amount);
-        _statisticState.updateStatisticDataAfterCreateTransaction(newTransaction);
         break;
       case TransactionType.income:
-        Transaction newTransaction = await _transactionService
+        newTransaction = await _transactionService
             .createIncomeTransaction(
               amount: amount,
               categoryId: category!.id,
@@ -224,27 +221,18 @@ class TransactionController {
               transactionDate: transactionDate!,
               sourceWalletId: sourceWallet!.id,
             );
-
-        _transactionState.addTransaction(newTransaction);
-        _appState.increaseUserBalance(amount);
-        _walletState.increaseWalletBalance(sourceWallet.id, amount);
-        _statisticState.updateStatisticDataAfterCreateTransaction(newTransaction);
         break;
       case TransactionType.transfer:
-        Transaction newTransaction = await _transactionService
+        newTransaction = await _transactionService
             .createTransferTransaction(
               amount: amount,
               transactionDate: transactionDate!,
               sourceWalletId: sourceWallet!.id,
               destinationWalletId: destinationWallet!.id,
             );
-
-        _transactionState.addTransaction(newTransaction);
-        _walletState.decreateWalletBalance(sourceWallet.id, amount);
-        _walletState.increaseWalletBalance(destinationWallet.id, amount);
         break;
       case TransactionType.lend:
-        Transaction newTransaction = await _transactionService
+        newTransaction = await _transactionService
             .createLendTransaction(
               amount: amount,
               transactionDate: transactionDate!,
@@ -252,17 +240,9 @@ class TransactionController {
               categoryId: category!.id,
               borrowerId: borrower!.id!,
             );
-        _transactionState.addTransaction(newTransaction);
-        _walletState.decreateWalletBalance(sourceWallet.id, amount);
-        _appState.decreaseUserBalance(amount);
-        //increase user total loan
-        _appState.increaseUserTotalLoan(amount);
-
-        //increase borrower total debt
-        _relatedUserState.increaseRelatedUserTotalDebt(borrower.id!, amount);
         break;
       case TransactionType.borrow:
-        Transaction newTransaction = await _transactionService
+        newTransaction = await _transactionService
             .createBorrowTransaction(
               amount: amount,
               transactionDate: transactionDate!,
@@ -270,25 +250,18 @@ class TransactionController {
               categoryId: category!.id,
               lenderId: lender!.id!,
             );
-
-        _transactionState.addTransaction(newTransaction);
-        _walletState.increaseWalletBalance(sourceWallet.id, amount);
-        _appState.increaseUserBalance(amount);
-
-        //increase user total debt
-        _appState.increaseUserTotalDebt(amount);
-
-        //increase lender total loan
-        _relatedUserState.increaseRelatedUserTotalLoan(lender.id!, amount);
         break;
       case TransactionType.modifyBalance:
         // TODO: Handle this case.
         throw UnimplementedError();
     }
+
+    _transactionState.addTransaction(newTransaction);
+    updateOtherStatesAfterCreateTransaction(newTransaction);
   }
 
   Future<void> saveTransaction({
-    required int transactionId,
+    required Transaction oldTransaction,
     required double amount,
     required TransactionType transactionType,
     required Wallet? sourceWallet,
@@ -333,10 +306,12 @@ class TransactionController {
       }
     }
 
+    Transaction newTransaction;
+
     switch (transactionType) {
       case TransactionType.expense:
-        await _transactionService.updateExpenseTransaction(
-          transactionId: transactionId,
+        newTransaction = await _transactionService.updateExpenseTransaction(
+          transactionId: oldTransaction.id,
           amount: amount,
           categoryId: category!.id,
           description: description,
@@ -346,8 +321,8 @@ class TransactionController {
         );
         break;
       case TransactionType.income:
-        await _transactionService.updateIncomeTransaction(
-          transactionId: transactionId,
+        newTransaction = await _transactionService.updateIncomeTransaction(
+          transactionId: oldTransaction.id,
           amount: amount,
           categoryId: category!.id,
           description: description,
@@ -356,10 +331,11 @@ class TransactionController {
         );
         break;
       case TransactionType.transfer:
-        break;
+        // TODO: Handle this case.
+        throw UnimplementedError();
       case TransactionType.lend:
-        await _transactionService.updateLendTransaction(
-          transactionId: transactionId,
+        newTransaction = await _transactionService.updateLendTransaction(
+          transactionId: oldTransaction.id,
           amount: amount,
           transactionDate: transactionDate!,
           sourceWalletId: sourceWallet!.id,
@@ -368,8 +344,8 @@ class TransactionController {
         );
         break;
       case TransactionType.borrow:
-        await _transactionService.updateBorrowTransaction(
-          transactionId: transactionId,
+        newTransaction = await _transactionService.updateBorrowTransaction(
+          transactionId: oldTransaction.id,
           amount: amount,
           transactionDate: transactionDate!,
           sourceWalletId: sourceWallet!.id,
@@ -378,8 +354,15 @@ class TransactionController {
         );
         break;
       case TransactionType.modifyBalance:
-        break;
+        // TODO: Handle this case.
+        throw UnimplementedError();
     }
+
+    updateOtherStatesAfterRemoveTransaction(oldTransaction);
+    _transactionState.removeTransaction(oldTransaction.id);
+
+    _transactionState.addTransaction(newTransaction);
+    updateOtherStatesAfterCreateTransaction(newTransaction);
   }
 
   void _validateFields({
@@ -443,6 +426,45 @@ class TransactionController {
     _transactionState.removeTransaction(transaction.id);
   }
 
+  void updateOtherStatesAfterCreateTransaction(Transaction newTransaction) {
+    switch (newTransaction.type) {
+      case TransactionType.expense:
+        _appState.decreaseUserBalance(newTransaction.amount);
+        _walletState.decreateWalletBalance(newTransaction.sourceWallet.id, newTransaction.amount);
+        _statisticState.updateStatisticDataAfterCreateTransaction(newTransaction);
+        break;
+      case TransactionType.income:
+        _appState.increaseUserBalance(newTransaction.amount);
+        _walletState.increaseWalletBalance(newTransaction.sourceWallet.id, newTransaction.amount);
+        _statisticState.updateStatisticDataAfterCreateTransaction(newTransaction);
+        break;
+      case TransactionType.transfer:
+        _walletState.decreateWalletBalance(newTransaction.sourceWallet.id, newTransaction.amount);
+        _walletState.increaseWalletBalance((newTransaction as TransferTransaction).destinationWallet.id, newTransaction.amount);
+        break;
+      case TransactionType.lend:
+        _walletState.decreateWalletBalance(newTransaction.sourceWallet.id, newTransaction.amount);
+        //increase user total loan
+        _appState.increaseUserTotalLoan(newTransaction.amount);
+
+        //increase borrower total debt
+        _relatedUserState.increaseRelatedUserTotalDebt((newTransaction as LendTransaction).borrower.id!, newTransaction.amount);
+        break;
+      case TransactionType.borrow:
+        _walletState.increaseWalletBalance(newTransaction.sourceWallet.id, newTransaction.amount);
+
+        //increase user total debt
+        _appState.increaseUserTotalDebt(newTransaction.amount);
+
+        //increase lender total loan
+        _relatedUserState.increaseRelatedUserTotalLoan((newTransaction as BorrowTransaction).lender.id!, newTransaction.amount);
+        break;
+      case TransactionType.modifyBalance:
+      // TODO: Handle this case.
+        throw UnimplementedError();
+    }
+  }
+
   void updateOtherStatesAfterRemoveTransaction(Transaction transaction) {
     if (transaction.type == TransactionType.expense) {
       _appState.increaseUserBalance(transaction.amount);
@@ -456,15 +478,13 @@ class TransactionController {
       _statisticState.updateStatisticDataAfterRemoveTransaction(transaction);
     } else if (transaction.type == TransactionType.lend) {
       _walletState.increaseWalletBalance(transaction.sourceWallet.id, transaction.amount);
-      _appState.increaseUserBalance(transaction.amount);
       //decrease user total loan
-      _appState.decreaseUserBalance(transaction.amount);
+      _appState.decreaseUserTotalLoan(transaction.amount);
 
       //decrease borrower total debt
       _relatedUserState.decreaseRelatedUserTotalDebt((transaction as LendTransaction).borrower.id!, transaction.amount);
     } else if (transaction.type == TransactionType.borrow) {
       _walletState.decreateWalletBalance(transaction.sourceWallet.id, transaction.amount);
-      _appState.decreaseUserBalance(transaction.amount);
 
       //decrease user total debt
       _appState.decreaseUserTotalDebt(transaction.amount);

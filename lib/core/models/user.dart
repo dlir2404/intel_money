@@ -37,7 +37,7 @@ class User {
       picture: json['picture'],
       totalBalance: json['totalBalance']?.toDouble() ?? 0.0,
       totalLoan: json['totalLoan']?.toDouble() ?? 0.0,
-      totalDebt: json['totalBorrowed']?.toDouble() ?? 0.0,
+      totalDebt: json['totalDebt']?.toDouble() ?? 0.0,
       preferences: UserPreferences.fromJson(json['preferences']),
       isVip: json['isVip'] == 1 ? true : false,
       vipExpirationDate:

@@ -22,127 +22,138 @@ class _FinancialStatementScreenState extends State<FinancialStatementScreen> {
 
         return Container(
           color: Colors.white,
-          child: Column(
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-                decoration: BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(width: 0.2, color: Color(0xFFBDBDBD)),
-                  ),
-                ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    const Text("Assets", style: TextStyle(fontSize: 16)),
-                    const SizedBox(width: 4),
-                    Column(
+          child: Consumer<WalletState>(
+            builder: (context, walletState, _) {
+              final wallets = walletState.wallets;
+
+              final sumWalletAmount = wallets.fold(
+                0.0,
+                (sum, wallet) => sum + wallet.balance,
+              );
+
+              return Column(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                    decoration: BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(width: 0.2, color: Color(0xFFBDBDBD)),
+                      ),
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Text(
-                          "(1)",
-                          style: TextStyle(color: Colors.grey, fontSize: 12),
+                        const Text("Assets", style: TextStyle(fontSize: 16)),
+                        const SizedBox(width: 4),
+                        Column(
+                          children: [
+                            Text(
+                              "(1)",
+                              style: TextStyle(color: Colors.grey, fontSize: 12),
+                            ),
+                            const SizedBox(height: 4),
+                          ],
                         ),
-                        const SizedBox(height: 4),
+                        Expanded(child: const SizedBox(height: 1)),
+
+                        CurrencyDoubleText(
+                          value: sumWalletAmount + (user?.totalLoan ?? 0),
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ],
                     ),
-                    Expanded(child: const SizedBox(height: 1)),
-
-                    CurrencyDoubleText(
-                      value: (user?.totalBalance ?? 0) + (user?.totalLoan ?? 0),
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ],
-                ),
-              ),
-
-              Consumer<WalletState>(
-                builder: (context, state, _) {
-                  final wallets = state.wallets;
-
-                  return Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children:
-                        wallets.map((wallet) {
-                          return Container(
-                            decoration: BoxDecoration(
-                              border: Border(
-                                bottom: BorderSide(
-                                  width: 0.2,
-                                  color: Color(0xFFBDBDBD),
-                                ),
-                              ),
-                            ),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 8,
-                            ),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.all(8),
-                                  decoration: BoxDecoration(
-                                    color: wallet.icon.color.withOpacity(0.1),
-                                    shape: BoxShape.circle,
-                                  ),
-                                  child: Icon(
-                                    wallet.icon.icon,
-                                    color: wallet.icon.color,
-                                    size: 24,
-                                  ),
-                                ),
-                                const SizedBox(width: 16),
-                                Text(wallet.name),
-                                Expanded(child: const SizedBox(height: 1)),
-                                const SizedBox(width: 16),
-                                CurrencyDoubleText(
-                                  value: wallet.balance,
-                                  color:
-                                      wallet.balance >= 0
-                                          ? Colors.green[600]
-                                          : Colors.red[600],
-                                  fontSize: 16,
-                                ),
-                              ],
-                            ),
-                          );
-                        }).toList(),
-                  );
-                },
-              ),
-
-              Container(
-                decoration: BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(width: 0.2, color: Color(0xFFBDBDBD)),
                   ),
-                ),
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: Colors.redAccent.withOpacity(0.1),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        MdiIcons.cashMinus,
-                        color: Colors.redAccent,
-                        size: 24,
+
+                  Consumer<WalletState>(
+                    builder: (context, state, _) {
+                      final wallets = state.wallets;
+
+                      return Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children:
+                            wallets.map((wallet) {
+                              return Container(
+                                decoration: BoxDecoration(
+                                  border: Border(
+                                    bottom: BorderSide(
+                                      width: 0.2,
+                                      color: Color(0xFFBDBDBD),
+                                    ),
+                                  ),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 8,
+                                ),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.all(8),
+                                      decoration: BoxDecoration(
+                                        color: wallet.icon.color.withOpacity(0.1),
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: Icon(
+                                        wallet.icon.icon,
+                                        color: wallet.icon.color,
+                                        size: 24,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 16),
+                                    Text(wallet.name),
+                                    Expanded(child: const SizedBox(height: 1)),
+                                    const SizedBox(width: 16),
+                                    CurrencyDoubleText(
+                                      value: wallet.balance,
+                                      color:
+                                          wallet.balance >= 0
+                                              ? Colors.green[600]
+                                              : Colors.red[600],
+                                      fontSize: 16,
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }).toList(),
+                      );
+                    },
+                  ),
+
+                  Container(
+                    decoration: BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(width: 0.2, color: Color(0xFFBDBDBD)),
                       ),
                     ),
-                    const SizedBox(width: 16),
-                    const Text("Loan"),
-                    Expanded(child: const SizedBox(height: 1)),
-                    const SizedBox(width: 16),
-                    CurrencyDoubleText(value: user?.totalLoan ?? 0, fontSize: 16),
-                  ],
-                ),
-              )
-            ],
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.redAccent.withOpacity(0.1),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            MdiIcons.cashMinus,
+                            color: Colors.redAccent,
+                            size: 24,
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        const Text("Loan"),
+                        Expanded(child: const SizedBox(height: 1)),
+                        const SizedBox(width: 16),
+                        CurrencyDoubleText(value: user?.totalLoan ?? 0, fontSize: 16),
+                      ],
+                    ),
+                  )
+                ],
+              );
+            }
           ),
         );
       }

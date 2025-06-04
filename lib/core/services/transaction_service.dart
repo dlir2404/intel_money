@@ -105,7 +105,7 @@ class TransactionService {
     return transaction;
   }
 
-  Future<void> updateIncomeTransaction({
+  Future<Transaction> updateIncomeTransaction({
     required int transactionId,
     required double amount,
     required int? categoryId,
@@ -122,6 +122,8 @@ class TransactionService {
       'sourceWalletId': sourceWalletId,
       'image': image,
     });
+
+    return Transaction.fromJson(response);
   }
 
   Future<Transaction> createExpenseTransaction({
@@ -146,7 +148,7 @@ class TransactionService {
     return transaction;
   }
 
-  Future<void> updateExpenseTransaction({
+  Future<Transaction> updateExpenseTransaction({
     required int transactionId,
     required double amount,
     required int? categoryId,
@@ -163,6 +165,8 @@ class TransactionService {
       'sourceWalletId': sourceWalletId,
       'image': image,
     });
+
+    return Transaction.fromJson(response);
   }
 
   Future<Transaction> createLendTransaction({
@@ -187,7 +191,7 @@ class TransactionService {
     return transaction;
   }
 
-  Future<void> updateLendTransaction({
+  Future<Transaction> updateLendTransaction({
     required int transactionId,
     required double amount,
     String? description,
@@ -207,6 +211,8 @@ class TransactionService {
       'categoryId': categoryId,
       'image': image,
     });
+
+    return Transaction.fromJson(response);
   }
 
   Future<Transaction> createBorrowTransaction({
@@ -231,7 +237,7 @@ class TransactionService {
     return transaction;
   }
 
-  Future<void> updateBorrowTransaction({
+  Future<Transaction> updateBorrowTransaction({
     required int transactionId,
     required double amount,
     String? description,
@@ -251,6 +257,8 @@ class TransactionService {
       'categoryId': categoryId,
       'image': image,
     });
+
+    return Transaction.fromJson(response);
   }
 
   Future<void> deleteTransaction(int transactionId) async {

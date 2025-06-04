@@ -77,7 +77,7 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
 
     try {
       await _transactionController.saveTransaction(
-        transactionId: widget.transaction.id,
+        oldTransaction: widget.transaction,
         amount: _amount,
         transactionType: _transactionType,
         sourceWallet: _sourceWallet,
