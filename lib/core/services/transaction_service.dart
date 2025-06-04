@@ -25,7 +25,7 @@ class TransactionService {
 
   Future<Transaction> getTransactionById(int id) async {
     final response = await _apiClient.get('/transaction/$id');
-    final transaction = Transaction.fromDetailJson(response);
+    final transaction = Transaction.fromJson(response);
 
     return transaction;
   }
@@ -58,7 +58,6 @@ class TransactionService {
             .map((transaction) => Transaction.fromJson(transaction))
             .toList();
 
-    _transactionState.setTransactions(transactions);
     return transactions;
   }
 

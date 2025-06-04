@@ -46,6 +46,8 @@ class TransactionController {
 
   Future<List<Transaction>> getAllTransactions() async {
     final transactions = await _transactionService.getAllTransactions();
+
+    _transactionState.setTransactions(transactions);
     return transactions;
   }
 

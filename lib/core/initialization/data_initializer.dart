@@ -1,6 +1,7 @@
 // lib/core/initialization/data_initializer.dart
 
 import 'package:flutter/material.dart';
+import 'package:intel_money/features/transaction/controller/transaction_controller.dart';
 import 'package:provider/provider.dart';
 import 'package:intel_money/core/state/app_state.dart';
 import 'package:intel_money/core/services/wallet_service.dart';
@@ -9,7 +10,6 @@ import 'package:intel_money/core/services/auth_service.dart';
 
 import '../services/related_user_service.dart';
 import '../services/statistic_service.dart';
-import '../services/transaction_service.dart';
 
 /// Handles loading all limited data sets when the app starts (after authentication)
 class DataInitializer {
@@ -99,7 +99,7 @@ class DataInitializer {
 
   Future<void> _loadTransactions() async {
     try {
-      await TransactionService().getAllTransactions();
+      await TransactionController().getAllTransactions();
       debugPrint('Transactions loaded successfully');
     } catch (e) {
       debugPrint('Error loading transactions: $e');

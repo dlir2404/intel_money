@@ -26,19 +26,15 @@ class TransactionHistoryScreen extends StatefulWidget {
 }
 
 class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
-  final TransactionController _transactionController = TransactionController();
   TransactionDataSourceType type = TransactionDataSourceType.thisMonth;
   Map<String, DateTime>? customTimeRange;
 
   List<Transaction> transactions = [];
 
-  bool isDataLoaded = false;
-
   @override
   void initState() {
     super.initState();
     type = widget.type ?? TransactionDataSourceType.thisMonth;
-    _loadTransactions();
   }
 
   List<Widget> _buildTransactionList(List<Transaction> transactions) {
@@ -83,36 +79,34 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
     return widgets;
   }
 
-  Future<void> _loadTransactions() async {
-    if (!isDataLoaded) {
-      final transactionState = Provider.of<TransactionState>(
-        context,
-        listen: false,
-      );
+  Future<void> _filterTransactions(List<Transaction> allTransactions) async {
+    if (type == TransactionDataSourceType.allTime) {
+      transactions = allTransactions;
+    } else {
+      Map<String, DateTime> timeRange = type.timeRange;
 
-      if (transactionState.isLoad(type.keyStore)) {
-        transactions = transactionState.getTransactions(type.keyStore);
-      } else {
-        if (type == TransactionDataSourceType.allTime) {
-          transactions = await _transactionController.getAllTransactions();
-        } else {
-          Map<String, DateTime> timeRange = type.timeRange;
+      // If the type is custom, use the custom time range
+      if (type == TransactionDataSourceType.customDay ||
+          type == TransactionDataSourceType.customMonth ||
+          type == TransactionDataSourceType.customFromTo) {
+        timeRange = customTimeRange!;
+      }
 
-          // If the type is custom, use the custom time range
-          if (type == TransactionDataSourceType.customDay ||
-              type == TransactionDataSourceType.customMonth ||
-              type == TransactionDataSourceType.customFromTo) {
-            timeRange = customTimeRange!;
-          }
-
-          transactions = await _transactionController.getTransactions(timeRange);
+      List<Transaction> result = [];
+      for (var transaction in allTransactions) {
+        // Include transactions on or after 'from' date and on or before 'to' date
+        if ((transaction.transactionDate.isAtSameMomentAs(timeRange['from']!) ||
+                transaction.transactionDate.isAfter(timeRange['from']!)) &&
+            (transaction.transactionDate.isAtSameMomentAs(timeRange['to']!) ||
+                transaction.transactionDate.isBefore(timeRange['to']!))) {
+          result.add(transaction);
         }
       }
 
-      setState(() {
-        isDataLoaded = true;
-      });
+      transactions = result;
     }
+
+    setState(() {});
   }
 
   @override
@@ -143,70 +137,77 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
           ),
         ],
       ),
-      body: FutureBuilder(
-        future: _loadTransactions(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
+      body: Consumer<TransactionState>(
+        builder: (context, state, _) {
+          final allTransactions = state.transactions;
 
-          String buttonDisplayText = type.name;
-          if (type == TransactionDataSourceType.customDay) {
-            buttonDisplayText = AppTime.format(time: customTimeRange!['from']!);
-          } else if (type == TransactionDataSourceType.customMonth) {
-            buttonDisplayText = AppTime.format(
-              time: customTimeRange!['from']!,
-              pattern: "MM/YYYY",
-            );
-          } else if (type == TransactionDataSourceType.customFromTo) {
-            buttonDisplayText =
-                "${AppTime.format(time: customTimeRange!['from']!)} - ${AppTime.format(time: customTimeRange!['to']!)}";
-          }
+          return FutureBuilder(
+            future: _filterTransactions(allTransactions),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
 
-          return Container(
-            color: Colors.grey[200],
-            child: Column(
-              children: [
-                SelectDataSourceTypeButton(
-                  displayText: buttonDisplayText,
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder:
-                            (context) => SelectDataSourceTypeScreen(
-                              type: type,
-                              customTimeRange: customTimeRange,
-                              onSelect: (
-                                selectedType, {
-                                Map<String, DateTime>? timeRange,
-                              }) {
-                                if (timeRange != null) {
-                                  customTimeRange = timeRange;
-                                }
+              String buttonDisplayText = type.name;
+              if (type == TransactionDataSourceType.customDay) {
+                buttonDisplayText = AppTime.format(
+                  time: customTimeRange!['from']!,
+                );
+              } else if (type == TransactionDataSourceType.customMonth) {
+                buttonDisplayText = AppTime.format(
+                  time: customTimeRange!['from']!,
+                  pattern: "MM/YYYY",
+                );
+              } else if (type == TransactionDataSourceType.customFromTo) {
+                buttonDisplayText =
+                    "${AppTime.format(time: customTimeRange!['from']!)} - ${AppTime.format(time: customTimeRange!['to']!)}";
+              }
 
-                                setState(() {
-                                  type = selectedType;
-                                  isDataLoaded = false; // Reset data load state
-                                });
-                              },
-                            ),
-                      ),
-                    );
-                  },
-                ),
-                const SizedBox(height: 12),
-                TotalInOut(transactions: transactions),
-                const SizedBox(height: 12),
+              return Container(
+                color: Colors.grey[200],
+                child: Column(
+                  children: [
+                    SelectDataSourceTypeButton(
+                      displayText: buttonDisplayText,
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder:
+                                (context) => SelectDataSourceTypeScreen(
+                                  type: type,
+                                  customTimeRange: customTimeRange,
+                                  onSelect: (
+                                    selectedType, {
+                                    Map<String, DateTime>? timeRange,
+                                  }) {
+                                    if (timeRange != null) {
+                                      customTimeRange = timeRange;
+                                    }
 
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [..._buildTransactionList(transactions)],
+                                    setState(() {
+                                      type = selectedType;
+                                    });
+                                  },
+                                ),
+                          ),
+                        );
+                      },
                     ),
-                  ),
+                    const SizedBox(height: 12),
+                    TotalInOut(transactions: transactions),
+                    const SizedBox(height: 12),
+
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: [..._buildTransactionList(transactions)],
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              );
+            },
           );
         },
       ),

@@ -47,6 +47,18 @@ class Transaction {
     }
     final sourceWallet = Wallet.fromContext(json['sourceWalletId']);
 
+    final transactionType = TransactionType.values.firstWhere((e) => e.value == json['type']);
+    switch (transactionType) {
+      case TransactionType.lend:
+        return LendTransaction.fromJson(json);
+      case TransactionType.borrow:
+        return BorrowTransaction.fromJson(json);
+      case TransactionType.transfer:
+        return TransferTransaction.fromJson(json);
+      default:
+        break;
+    }
+
     return Transaction(
       id: json['id'],
       type: TransactionType.values.firstWhere((e) => e.value == json['type']),
@@ -58,20 +70,6 @@ class Transaction {
       notAddToReport: json['notAddToReport'] == true ? true : false,
       image: json['image'],
     );
-  }
-
-  factory Transaction.fromDetailJson(Map<String, dynamic> json) {
-    final transaction = Transaction.fromJson(json);
-
-    if (transaction.type == TransactionType.lend) {
-      return LendTransaction.fromJson(json);
-    } else if (transaction.type == TransactionType.borrow) {
-      return BorrowTransaction.fromJson(json);
-    } else if (transaction.type == TransactionType.transfer) {
-      return TransferTransaction.fromJson(json);
-    }
-
-    return transaction;
   }
 }
 
