@@ -436,11 +436,40 @@ class TransactionController {
     }
   }
 
-  Future<void> deleteTransaction(int transactionId) async {
-    await _transactionService.deleteTransaction(transactionId);
+  Future<void> deleteTransaction(Transaction transaction) async {
+    await _transactionService.deleteTransaction(transaction.id);
 
-    _transactionState.removeTransaction(transactionId);
-    //TODO: change user balance & wallet balance here
+    updateOtherStatesAfterRemoveTransaction(transaction);
+    _transactionState.removeTransaction(transaction.id);
+  }
+
+  void updateOtherStatesAfterRemoveTransaction(Transaction transaction) {
+    if (transaction.type == TransactionType.expense) {
+      _appState.increaseUserBalance(transaction.amount);
+      _walletState.increaseWalletBalance(transaction.sourceWallet.id, transaction.amount);
+      // _statisticState.updateStatisticData(newTransaction);
+    } else if (transaction.type == TransactionType.income) {
+      _appState.decreaseUserBalance(transaction.amount);
+      _walletState.decreateWalletBalance(transaction.sourceWallet.id, transaction.amount);
+      // _statisticState.updateStatisticData(newTransaction);
+    } else if (transaction.type == TransactionType.lend) {
+      _walletState.increaseWalletBalance(transaction.sourceWallet.id, transaction.amount);
+      _appState.increaseUserBalance(transaction.amount);
+      //decrease user total loan
+      _appState.decreaseUserBalance(transaction.amount);
+
+      //decrease borrower total debt
+      _relatedUserState.decreaseRelatedUserTotalDebt((transaction as LendTransaction).borrower.id!, transaction.amount);
+    } else if (transaction.type == TransactionType.borrow) {
+      _walletState.decreateWalletBalance(transaction.sourceWallet.id, transaction.amount);
+      _appState.decreaseUserBalance(transaction.amount);
+
+      //decrease user total debt
+      _appState.decreaseUserTotalDebt(transaction.amount);
+
+      //decrease lender total loan
+      _relatedUserState.decreaseRelatedUserTotalLoan((transaction as BorrowTransaction).lender.id!, transaction.amount);
+    }
   }
 
   Future<Transaction> getTransactionById(int transactionId) async {

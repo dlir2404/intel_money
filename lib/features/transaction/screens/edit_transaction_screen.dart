@@ -136,7 +136,7 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
       });
 
       try {
-        await _transactionController.deleteTransaction(widget.transaction.id);
+        await _transactionController.deleteTransaction(widget.transaction);
 
         if (mounted) {
           Navigator.pop(context);
