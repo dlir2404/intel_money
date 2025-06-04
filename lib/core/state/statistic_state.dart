@@ -120,31 +120,83 @@ class StatisticState extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateStatisticData(Transaction newTransaction) {
+  void updateStatisticDataAfterCreateTransaction(Transaction newTransaction) {
     if (AppTime.isToday(newTransaction.transactionDate)) {
-      updateTodayStatisticData(newTransaction);
+      updateTodayStatisticDataAfterCreateTransaction(newTransaction);
     }
 
     if (AppTime.isThisWeek(newTransaction.transactionDate)) {
-      updateThisWeekStatisticData(newTransaction);
+      updateThisWeekStatisticDataAfterCreateTransaction(newTransaction);
     }
 
     if (AppTime.isThisMonth(newTransaction.transactionDate)) {
-      updateThisMonthStatisticData(newTransaction);
+      updateThisMonthStatisticDataAfterCreateTransaction(newTransaction);
     }
 
     if (AppTime.isThisQuarter(newTransaction.transactionDate)) {
-      updateThisQuarterStatisticData(newTransaction);
+      updateThisQuarterStatisticDataAfterCreateTransaction(newTransaction);
     }
 
     if (AppTime.isThisYear(newTransaction.transactionDate)) {
-      updateThisYearStatisticData(newTransaction);
+      updateThisYearStatisticDataAfterCreateTransaction(newTransaction);
     }
 
     notifyListeners();
   }
 
-  void updateTodayStatisticData(Transaction newTransaction) {
+  void updateStatisticDataAfterRemoveTransaction(Transaction removedTransaction) {
+    if (AppTime.isToday(removedTransaction.transactionDate)) {
+      updateTodayStatisticDataAfterRemoveTransaction(removedTransaction);
+    }
+
+    if (AppTime.isThisWeek(removedTransaction.transactionDate)) {
+      updateThisWeekStatisticDataAfterRemoveTransaction(removedTransaction);
+    }
+
+    if (AppTime.isThisMonth(removedTransaction.transactionDate)) {
+      updateThisMonthStatisticDataAfterRemoveTransaction(removedTransaction);
+    }
+
+    if (AppTime.isThisQuarter(removedTransaction.transactionDate)) {
+      updateThisQuarterStatisticDataAfterRemoveTransaction(removedTransaction);
+    }
+
+    if (AppTime.isThisYear(removedTransaction.transactionDate)) {
+      updateThisYearStatisticDataAfterRemoveTransaction(removedTransaction);
+    }
+  }
+
+  void updateTodayStatisticDataAfterRemoveTransaction(Transaction removedTransaction) {
+    if (removedTransaction.type == TransactionType.expense) {
+      _todayStatisticData!.totalExpense -= removedTransaction.amount;
+
+      int categoryId = removedTransaction.category!.parentId ?? removedTransaction.category!.id;
+      int categoryIndex = _todayStatisticData!.byCategoryExpense.indexWhere((element) => element.category.id == categoryId);
+      if (categoryIndex != -1) {
+        if (_todayStatisticData!.byCategoryExpense[categoryIndex].transactions.length > 1) {
+          _todayStatisticData!.byCategoryExpense[categoryIndex].amount -= removedTransaction.amount;
+          _todayStatisticData!.byCategoryExpense[categoryIndex].transactions.removeWhere((element) => element.id == removedTransaction.id);
+        } else {
+          _todayStatisticData!.byCategoryExpense.removeAt(categoryIndex);
+        }
+      }
+    } else if (removedTransaction.type == TransactionType.income) {
+      _todayStatisticData!.totalIncome -= removedTransaction.amount;
+
+      int categoryId = removedTransaction.category!.parentId ?? removedTransaction.category!.id;
+      int categoryIndex = _todayStatisticData!.byCategoryIncome.indexWhere((element) => element.category.id == categoryId);
+      if (categoryIndex != -1) {
+        if (_todayStatisticData!.byCategoryIncome[categoryIndex].transactions.length > 1) {
+          _todayStatisticData!.byCategoryIncome[categoryIndex].amount -= removedTransaction.amount;
+          _todayStatisticData!.byCategoryIncome[categoryIndex].transactions.removeWhere((element) => element.id == removedTransaction.id);
+        } else {
+          _todayStatisticData!.byCategoryIncome.removeAt(categoryIndex);
+        }
+      }
+    }
+  }
+
+  void updateTodayStatisticDataAfterCreateTransaction(Transaction newTransaction) {
     if (newTransaction.type == TransactionType.expense) {
       _todayStatisticData!.totalExpense += newTransaction.amount;
 
@@ -179,7 +231,7 @@ class StatisticState extends ChangeNotifier {
     }
   }
 
-  void updateThisWeekStatisticData(Transaction newTransaction) {
+  void updateThisWeekStatisticDataAfterCreateTransaction(Transaction newTransaction) {
     if (_thisWeekStatisticData == null){
       return;
     }
@@ -218,7 +270,41 @@ class StatisticState extends ChangeNotifier {
     }
   }
 
-  void updateThisMonthStatisticData(Transaction newTransaction) {
+  void updateThisWeekStatisticDataAfterRemoveTransaction(Transaction removedTransaction) {
+    if (_thisWeekStatisticData == null){
+      return;
+    }
+
+    if (removedTransaction.type == TransactionType.expense) {
+      _thisWeekStatisticData!.totalExpense -= removedTransaction.amount;
+
+      int categoryId = removedTransaction.category!.parentId ?? removedTransaction.category!.id;
+      int categoryIndex = _thisWeekStatisticData!.byCategoryExpense.indexWhere((element) => element.category.id == categoryId);
+      if (categoryIndex != -1) {
+        if (_thisWeekStatisticData!.byCategoryExpense[categoryIndex].transactions.length > 1) {
+          _thisWeekStatisticData!.byCategoryExpense[categoryIndex].amount -= removedTransaction.amount;
+          _thisWeekStatisticData!.byCategoryExpense[categoryIndex].transactions.removeWhere((element) => element.id == removedTransaction.id);
+        } else {
+          _thisWeekStatisticData!.byCategoryExpense.removeAt(categoryIndex);
+        }
+      }
+    } else if (removedTransaction.type == TransactionType.income) {
+      _thisWeekStatisticData!.totalIncome -= removedTransaction.amount;
+
+      int categoryId = removedTransaction.category!.parentId ?? removedTransaction.category!.id;
+      int categoryIndex = _thisWeekStatisticData!.byCategoryIncome.indexWhere((element) => element.category.id == categoryId);
+      if (categoryIndex != -1) {
+        if (_thisWeekStatisticData!.byCategoryIncome[categoryIndex].transactions.length > 1) {
+          _thisWeekStatisticData!.byCategoryIncome[categoryIndex].amount -= removedTransaction.amount;
+          _thisWeekStatisticData!.byCategoryIncome[categoryIndex].transactions.removeWhere((element) => element.id == removedTransaction.id);
+        } else {
+          _thisWeekStatisticData!.byCategoryIncome.removeAt(categoryIndex);
+        }
+      }
+    }
+  }
+
+  void updateThisMonthStatisticDataAfterCreateTransaction(Transaction newTransaction) {
     if (_thisMonthStatisticData == null){
       return;
     }
@@ -257,7 +343,41 @@ class StatisticState extends ChangeNotifier {
     }
   }
 
-  void updateThisQuarterStatisticData(Transaction newTransaction) {
+  void updateThisMonthStatisticDataAfterRemoveTransaction(Transaction removedTransaction) {
+    if (_thisMonthStatisticData == null){
+      return;
+    }
+
+    if (removedTransaction.type == TransactionType.expense) {
+      _thisMonthStatisticData!.totalExpense -= removedTransaction.amount;
+
+      int categoryId = removedTransaction.category!.parentId ?? removedTransaction.category!.id;
+      int categoryIndex = _thisMonthStatisticData!.byCategoryExpense.indexWhere((element) => element.category.id == categoryId);
+      if (categoryIndex != -1) {
+        if (_thisMonthStatisticData!.byCategoryExpense[categoryIndex].transactions.length > 1) {
+          _thisMonthStatisticData!.byCategoryExpense[categoryIndex].amount -= removedTransaction.amount;
+          _thisMonthStatisticData!.byCategoryExpense[categoryIndex].transactions.removeWhere((element) => element.id == removedTransaction.id);
+        } else {
+          _thisMonthStatisticData!.byCategoryExpense.removeAt(categoryIndex);
+        }
+      }
+    } else if (removedTransaction.type == TransactionType.income) {
+      _thisMonthStatisticData!.totalIncome -= removedTransaction.amount;
+
+      int categoryId = removedTransaction.category!.parentId ?? removedTransaction.category!.id;
+      int categoryIndex = _thisMonthStatisticData!.byCategoryIncome.indexWhere((element) => element.category.id == categoryId);
+      if (categoryIndex != -1) {
+        if (_thisMonthStatisticData!.byCategoryIncome[categoryIndex].transactions.length > 1) {
+          _thisMonthStatisticData!.byCategoryIncome[categoryIndex].amount -= removedTransaction.amount;
+          _thisMonthStatisticData!.byCategoryIncome[categoryIndex].transactions.removeWhere((element) => element.id == removedTransaction.id);
+        } else {
+          _thisMonthStatisticData!.byCategoryIncome.removeAt(categoryIndex);
+        }
+      }
+    }
+  }
+
+  void updateThisQuarterStatisticDataAfterCreateTransaction(Transaction newTransaction) {
     if (_thisQuarterStatisticData == null){
       return;
     }
@@ -296,7 +416,42 @@ class StatisticState extends ChangeNotifier {
     }
   }
 
-  void updateThisYearStatisticData(Transaction newTransaction) {
+  void updateThisQuarterStatisticDataAfterRemoveTransaction(Transaction removedTransaction) {
+    if (_thisQuarterStatisticData == null){
+      return;
+    }
+
+    if (removedTransaction.type == TransactionType.expense) {
+      _thisQuarterStatisticData!.totalExpense -= removedTransaction.amount;
+
+      int categoryId = removedTransaction.category!.parentId ?? removedTransaction.category!.id;
+      int categoryIndex = _thisQuarterStatisticData!.byCategoryExpense.indexWhere((element) => element.category.id == categoryId);
+      if (categoryIndex != -1) {
+        if (_thisQuarterStatisticData!.byCategoryExpense[categoryIndex].transactions.length > 1) {
+          _thisQuarterStatisticData!.byCategoryExpense[categoryIndex].amount -= removedTransaction.amount;
+          _thisQuarterStatisticData!.byCategoryExpense[categoryIndex].transactions.removeWhere((element) => element.id == removedTransaction.id);
+        } else {
+          _thisQuarterStatisticData!.byCategoryExpense.removeAt(categoryIndex);
+        }
+      }
+    } else if (removedTransaction.type == TransactionType.income) {
+      _thisQuarterStatisticData!.totalIncome -= removedTransaction.amount;
+
+      int categoryId = removedTransaction.category!.parentId ?? removedTransaction.category!.id;
+      int categoryIndex = _thisQuarterStatisticData!.byCategoryIncome.indexWhere((element) => element.category.id == categoryId);
+      if (categoryIndex != -1) {
+        if (_thisQuarterStatisticData!.byCategoryIncome[categoryIndex].transactions.length > 1) {
+          _thisQuarterStatisticData!.byCategoryIncome[categoryIndex].amount -= removedTransaction.amount;
+          _thisQuarterStatisticData!.byCategoryIncome[categoryIndex].transactions.removeWhere((element) => element.id == removedTransaction.id);
+        } else {
+          _thisQuarterStatisticData!.byCategoryIncome.removeAt(categoryIndex);
+        }
+      }
+    }
+  }
+
+  ///This data is the most complex one cause it has by month and by quarter statistic
+  void updateThisYearStatisticDataAfterCreateTransaction(Transaction newTransaction) {
     if (_thisYearStatisticData == null){
       return;
     }
@@ -349,6 +504,58 @@ class StatisticState extends ChangeNotifier {
       //by quarter statistic
       final quarter = (newTransaction.transactionDate.month / 3).toInt() + 1;
       _thisYearStatisticData!.byQuarterStatistic![quarter - 1].totalIncome += newTransaction.amount;
+    }
+  }
+
+  void updateThisYearStatisticDataAfterRemoveTransaction(Transaction removedTransaction) {
+    if (_thisYearStatisticData == null) {
+      return;
+    }
+
+    if (removedTransaction.type == TransactionType.expense) {
+      _thisYearStatisticData!.totalExpense -= removedTransaction.amount;
+
+      int categoryId = removedTransaction.category!.parentId ?? removedTransaction.category!.id;
+      int categoryIndex = _thisYearStatisticData!.byCategoryExpense.indexWhere((element) => element.category.id == categoryId);
+      //by category expense
+      if (categoryIndex != -1) {
+        if (_thisYearStatisticData!.byCategoryExpense[categoryIndex].transactions.length > 1) {
+          _thisYearStatisticData!.byCategoryExpense[categoryIndex].amount -= removedTransaction.amount;
+          _thisYearStatisticData!.byCategoryExpense[categoryIndex].transactions.removeWhere((element) => element.id == removedTransaction.id);
+        } else {
+          _thisYearStatisticData!.byCategoryExpense.removeAt(categoryIndex);
+        }
+      }
+
+      //by month statistic
+      final month = removedTransaction.transactionDate.month;
+      _thisYearStatisticData!.byMonthStatistic![month - 1].totalExpense -= removedTransaction.amount;
+
+      //by quarter statistic
+      final quarter = (removedTransaction.transactionDate.month / 3).toInt() + 1;
+      _thisYearStatisticData!.byQuarterStatistic![quarter - 1].totalExpense -= removedTransaction.amount;
+    } else if (removedTransaction.type == TransactionType.income) {
+      _thisYearStatisticData!.totalIncome -= removedTransaction.amount;
+
+      int categoryId = removedTransaction.category!.parentId ?? removedTransaction.category!.id;
+      int categoryIndex = _thisYearStatisticData!.byCategoryIncome.indexWhere((element) => element.category.id == categoryId);
+      // by category income
+      if (categoryIndex != -1) {
+        if (_thisYearStatisticData!.byCategoryIncome[categoryIndex].transactions.length > 1) {
+          _thisYearStatisticData!.byCategoryIncome[categoryIndex].amount -= removedTransaction.amount;
+          _thisYearStatisticData!.byCategoryIncome[categoryIndex].transactions.removeWhere((element) => element.id == removedTransaction.id);
+        } else {
+          _thisYearStatisticData!.byCategoryIncome.removeAt(categoryIndex);
+        }
+      }
+
+      //by month statistic
+      final month = removedTransaction.transactionDate.month;
+      _thisYearStatisticData!.byMonthStatistic![month - 1].totalIncome -= removedTransaction.amount;
+
+      //by quarter statistic
+      final quarter = (removedTransaction.transactionDate.month / 3).toInt() + 1;
+      _thisYearStatisticData!.byQuarterStatistic![quarter - 1].totalIncome -= removedTransaction.amount;
     }
   }
 }

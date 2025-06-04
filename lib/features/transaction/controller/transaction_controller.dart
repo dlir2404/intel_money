@@ -213,7 +213,7 @@ class TransactionController {
         _transactionState.addTransaction(newTransaction);
         _appState.decreaseUserBalance(amount);
         _walletState.decreateWalletBalance(sourceWallet.id, amount);
-        _statisticState.updateStatisticData(newTransaction);
+        _statisticState.updateStatisticDataAfterCreateTransaction(newTransaction);
         break;
       case TransactionType.income:
         Transaction newTransaction = await _transactionService
@@ -228,7 +228,7 @@ class TransactionController {
         _transactionState.addTransaction(newTransaction);
         _appState.increaseUserBalance(amount);
         _walletState.increaseWalletBalance(sourceWallet.id, amount);
-        _statisticState.updateStatisticData(newTransaction);
+        _statisticState.updateStatisticDataAfterCreateTransaction(newTransaction);
         break;
       case TransactionType.transfer:
         Transaction newTransaction = await _transactionService
@@ -447,11 +447,13 @@ class TransactionController {
     if (transaction.type == TransactionType.expense) {
       _appState.increaseUserBalance(transaction.amount);
       _walletState.increaseWalletBalance(transaction.sourceWallet.id, transaction.amount);
-      // _statisticState.updateStatisticData(newTransaction);
+
+      _statisticState.updateStatisticDataAfterRemoveTransaction(transaction);
     } else if (transaction.type == TransactionType.income) {
       _appState.decreaseUserBalance(transaction.amount);
       _walletState.decreateWalletBalance(transaction.sourceWallet.id, transaction.amount);
-      // _statisticState.updateStatisticData(newTransaction);
+
+      _statisticState.updateStatisticDataAfterRemoveTransaction(transaction);
     } else if (transaction.type == TransactionType.lend) {
       _walletState.increaseWalletBalance(transaction.sourceWallet.id, transaction.amount);
       _appState.increaseUserBalance(transaction.amount);

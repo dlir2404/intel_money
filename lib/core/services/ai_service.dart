@@ -50,11 +50,11 @@ class AIService {
       if (transaction.type == TransactionType.expense) {
         _appState.decreaseUserBalance(transaction.amount);
         _walletState.decreateWalletBalance(transaction.sourceWallet.id, transaction.amount);
-        _statisticState.updateStatisticData(transaction);
+        _statisticState.updateStatisticDataAfterCreateTransaction(transaction);
       } else if (transaction.type == TransactionType.income) {
         _appState.increaseUserBalance(transaction.amount);
         _walletState.increaseWalletBalance(transaction.sourceWallet.id, transaction.amount);
-        _statisticState.updateStatisticData(transaction);
+        _statisticState.updateStatisticDataAfterCreateTransaction(transaction);
       }
     }
 
