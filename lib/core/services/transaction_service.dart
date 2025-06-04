@@ -105,6 +105,25 @@ class TransactionService {
     return transaction;
   }
 
+  Future<void> updateIncomeTransaction({
+    required int transactionId,
+    required double amount,
+    required int? categoryId,
+    required String? description,
+    required DateTime transactionDate,
+    required int sourceWalletId,
+    String? image,
+  }) async {
+    final response = await _apiClient.put('/transaction/income/update/$transactionId', {
+      'amount': amount,
+      'categoryId': categoryId,
+      'description': description,
+      'transactionDate': AppTime.toUtcIso8601String(transactionDate),
+      'sourceWalletId': sourceWalletId,
+      'image': image,
+    });
+  }
+
   Future<Transaction> createExpenseTransaction({
     required double amount,
     required int? categoryId,
@@ -125,6 +144,25 @@ class TransactionService {
     });
     final transaction = Transaction.fromJson(response);
     return transaction;
+  }
+
+  Future<void> updateExpenseTransaction({
+    required int transactionId,
+    required double amount,
+    required int? categoryId,
+    required String? description,
+    required DateTime transactionDate,
+    required int sourceWalletId,
+    String? image,
+  }) async {
+    final response = await _apiClient.put('/transaction/expense/update/$transactionId', {
+      'amount': amount,
+      'categoryId': categoryId,
+      'description': description,
+      'transactionDate': AppTime.toUtcIso8601String(transactionDate),
+      'sourceWalletId': sourceWalletId,
+      'image': image,
+    });
   }
 
   Future<Transaction> createLendTransaction({
@@ -149,6 +187,28 @@ class TransactionService {
     return transaction;
   }
 
+  Future<void> updateLendTransaction({
+    required int transactionId,
+    required double amount,
+    String? description,
+    required DateTime transactionDate,
+    required int sourceWalletId,
+    required int categoryId,
+    required int borrowerId,
+    String? image,
+  }) async {
+    final response = await _apiClient.put('/transaction/lend/update/$transactionId', {
+      'amount': amount,
+      'description': description,
+      'transactionDate': AppTime.toUtcIso8601String(transactionDate),
+      'sourceWalletId': sourceWalletId,
+      'borrowerId': borrowerId,
+      // 'notAddToReport'
+      'categoryId': categoryId,
+      'image': image,
+    });
+  }
+
   Future<Transaction> createBorrowTransaction({
     required double amount,
     String? description,
@@ -169,6 +229,28 @@ class TransactionService {
     });
     final transaction = Transaction.fromJson(response);
     return transaction;
+  }
+
+  Future<void> updateBorrowTransaction({
+    required int transactionId,
+    required double amount,
+    String? description,
+    required DateTime transactionDate,
+    required int sourceWalletId,
+    required int categoryId,
+    required int lenderId,
+    String? image,
+  }) async {
+    final response = await _apiClient.put('/transaction/borrow/update/$transactionId', {
+      'amount': amount,
+      'description': description,
+      'transactionDate': AppTime.toUtcIso8601String(transactionDate),
+      'sourceWalletId': sourceWalletId,
+      'lenderId': lenderId,
+      // 'repaymentDate'
+      'categoryId': categoryId,
+      'image': image,
+    });
   }
 
   Future<void> deleteTransaction(int transactionId) async {

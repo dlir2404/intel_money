@@ -287,6 +287,101 @@ class TransactionController {
     }
   }
 
+  Future<void> saveTransaction({
+    required int transactionId,
+    required double amount,
+    required TransactionType transactionType,
+    required Wallet? sourceWallet,
+    required Wallet? destinationWallet,
+    required DateTime? transactionDate,
+    required Category? category,
+    required String? description,
+    required RelatedUser? lender,
+    required RelatedUser? borrower,
+    required dynamic image,
+  }) async {
+    _validateFields(
+      amount: amount,
+      transactionType: transactionType,
+      sourceWallet: sourceWallet,
+      destinationWallet: destinationWallet,
+      transactionDate: transactionDate,
+      category: category,
+      description: description,
+      lender: lender,
+      borrower: borrower,
+      image: image,
+    );
+
+    //create borrower if not exists
+    if (transactionType == TransactionType.lend && borrower!.isTemporary) {
+      await _relatedUserService.create(borrower);
+    }
+
+    //create lender if not exists
+    if (transactionType == TransactionType.borrow && lender!.isTemporary) {
+      await _relatedUserService.create(lender);
+    }
+
+    String imageUrl = '';
+    if (image != null) {
+      if (image is File) {
+        imageUrl = await _cloudinaryService.uploadImage(image.path);
+      } else if (image is String) {
+        // If image is a URL, we can use it directly
+        imageUrl = image;
+      }
+    }
+
+    switch (transactionType) {
+      case TransactionType.expense:
+        await _transactionService.updateExpenseTransaction(
+          transactionId: transactionId,
+          amount: amount,
+          categoryId: category!.id,
+          description: description,
+          transactionDate: transactionDate!,
+          sourceWalletId: sourceWallet!.id,
+          image: imageUrl,
+        );
+        break;
+      case TransactionType.income:
+        await _transactionService.updateIncomeTransaction(
+          transactionId: transactionId,
+          amount: amount,
+          categoryId: category!.id,
+          description: description,
+          transactionDate: transactionDate!,
+          sourceWalletId: sourceWallet!.id,
+        );
+        break;
+      case TransactionType.transfer:
+        break;
+      case TransactionType.lend:
+        await _transactionService.updateLendTransaction(
+          transactionId: transactionId,
+          amount: amount,
+          transactionDate: transactionDate!,
+          sourceWalletId: sourceWallet!.id,
+          categoryId: category!.id,
+          borrowerId: borrower!.id!,
+        );
+        break;
+      case TransactionType.borrow:
+        await _transactionService.updateBorrowTransaction(
+          transactionId: transactionId,
+          amount: amount,
+          transactionDate: transactionDate!,
+          sourceWalletId: sourceWallet!.id,
+          categoryId: category!.id,
+          lenderId: lender!.id!,
+        );
+        break;
+      case TransactionType.modifyBalance:
+        break;
+    }
+  }
+
   void _validateFields({
     required double amount,
     required TransactionType transactionType,

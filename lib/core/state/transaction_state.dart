@@ -34,6 +34,16 @@ class TransactionState extends ChangeNotifier {
     notifyListeners();
   }
 
+  void updateTransaction(Transaction newTransaction) {
+    for (var i = 0; i < _transactions.length; i++) {
+      if (_transactions[i].id == newTransaction.id) {
+        _transactions[i] = newTransaction;
+        notifyListeners();
+        return;
+      }
+    }
+  }
+
   void removeTransaction(int id) {
     _transactions.removeWhere((t) => t.id == id);
     notifyListeners();

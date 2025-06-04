@@ -6,6 +6,7 @@ import '../../../core/models/category.dart';
 import '../../../core/models/related_user.dart';
 import '../../../core/models/transaction.dart';
 import '../../../core/models/wallet.dart';
+import '../../../core/services/ad_service.dart';
 import '../../../shared/component/input/date_input.dart';
 import '../../../shared/component/input/form_input.dart';
 import '../../../shared/component/input/main_input.dart';
@@ -32,13 +33,13 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
   late double _amount;
   late Category? _category;
   late Wallet _sourceWallet;
-  late Wallet? _destinationWallet;
+  Wallet? _destinationWallet;
   late DateTime _transactionDate;
 
   late dynamic _image;
 
-  late RelatedUser? _borrower;
-  late RelatedUser? _lender;
+  RelatedUser? _borrower;
+  RelatedUser? _lender;
 
   bool _isLoading = false;
 
@@ -54,30 +55,55 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
     _category = widget.transaction.category;
     _sourceWallet = widget.transaction.sourceWallet;
     _transactionDate = widget.transaction.transactionDate;
-    _image = (widget.transaction.image != null && widget.transaction.image!.isNotEmpty)
-        ? widget.transaction.image
-        : null;
+    _image =
+        (widget.transaction.image != null &&
+                widget.transaction.image!.isNotEmpty)
+            ? widget.transaction.image
+            : null;
     if (widget.transaction is LendTransaction) {
       _borrower = (widget.transaction as LendTransaction).borrower;
     } else if (widget.transaction is BorrowTransaction) {
       _lender = (widget.transaction as BorrowTransaction).lender;
     } else if (widget.transaction is TransferTransaction) {
-      _destinationWallet = (widget.transaction as TransferTransaction).destinationWallet;
+      _destinationWallet =
+          (widget.transaction as TransferTransaction).destinationWallet;
     }
   }
 
-  void _saveTransaction() {
+  Future<void> _saveTransaction() async {
     setState(() {
       _isLoading = true;
     });
 
-    // Simulate a save operation
-    Future.delayed(const Duration(seconds: 2), () {
+    try {
+      await _transactionController.saveTransaction(
+        transactionId: widget.transaction.id,
+        amount: _amount,
+        transactionType: _transactionType,
+        sourceWallet: _sourceWallet,
+        destinationWallet: _destinationWallet,
+        transactionDate: _transactionDate,
+        category: _category,
+        description: _descriptionController.text,
+        lender: _lender,
+        borrower: _borrower,
+        image: _image,
+      );
+
+      AdService().showAdIfEligible();
+      if (mounted) {
+        AppToast.showSuccess(context, 'Saved');
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      if (mounted) {
+        AppToast.showError(context, e.toString());
+      }
+    } finally {
       setState(() {
         _isLoading = false;
       });
-      Navigator.pop(context, widget.transaction);
-    });
+    }
   }
 
   void _deleteTransaction() async {
@@ -86,7 +112,9 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Confirm Delete'),
-          content: const Text('Are you sure you want to delete this transaction? This action cannot be undone.'),
+          content: const Text(
+            'Are you sure you want to delete this transaction? This action cannot be undone.',
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
@@ -94,9 +122,7 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
             ),
             TextButton(
               onPressed: () => Navigator.of(context).pop(true),
-              style: TextButton.styleFrom(
-                foregroundColor: Colors.red,
-              ),
+              style: TextButton.styleFrom(foregroundColor: Colors.red),
               child: const Text('Delete'),
             ),
           ],
@@ -272,42 +298,48 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
                 children: [
                   Expanded(
                     flex: 1,
-                    child: OutlinedButton.icon(
-                      onPressed: () => _deleteTransaction(),
-                      icon: const Icon(
-                        Icons.delete_outline,
-                        color: Colors.red,
-                      ),
-                      label: const Text(
-                        "Delete Transaction",
-                        style: TextStyle(color: Colors.red),
-                      ),
-                      style: OutlinedButton.styleFrom(
-                        side: const BorderSide(color: Colors.red),
-                        padding: EdgeInsets.all(15),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                    ),
+                    child:
+                        _isLoading
+                            ? const Center(child: CircularProgressIndicator())
+                            : OutlinedButton.icon(
+                              onPressed: () => _deleteTransaction(),
+                              icon: const Icon(
+                                Icons.delete_outline,
+                                color: Colors.red,
+                              ),
+                              label: const Text(
+                                "Delete Transaction",
+                                style: TextStyle(color: Colors.red),
+                              ),
+                              style: OutlinedButton.styleFrom(
+                                side: const BorderSide(color: Colors.red),
+                                padding: EdgeInsets.all(15),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                            ),
                   ),
                   const SizedBox(width: 8),
 
                   Expanded(
                     flex: 1,
-                    child: ElevatedButton.icon(
-                      onPressed: _saveTransaction,
-                      icon: const Icon(Icons.save, color: Colors.white,),
-                      label: const Text("Save Transaction"),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Theme.of(context).primaryColor,
-                        foregroundColor: Colors.white,
-                        padding: EdgeInsets.all(15),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                    ),
+                    child:
+                        _isLoading
+                            ? const Center(child: CircularProgressIndicator())
+                            : ElevatedButton.icon(
+                              onPressed: _saveTransaction,
+                              icon: const Icon(Icons.save, color: Colors.white),
+                              label: const Text("Save Transaction"),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Theme.of(context).primaryColor,
+                                foregroundColor: Colors.white,
+                                padding: EdgeInsets.all(15),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                            ),
                   ),
                 ],
               ),
@@ -316,7 +348,7 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
             ],
           ),
         ),
-      )
+      ),
     );
   }
 }
