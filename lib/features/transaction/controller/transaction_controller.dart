@@ -358,7 +358,7 @@ class TransactionController {
         throw UnimplementedError();
     }
 
-    updateOtherStatesAfterRemoveTransaction(oldTransaction);
+    updateOtherStatesBeforeRemoveTransaction(oldTransaction);
     _transactionState.removeTransaction(oldTransaction.id);
 
     _transactionState.addTransaction(newTransaction);
@@ -422,7 +422,7 @@ class TransactionController {
   Future<void> deleteTransaction(Transaction transaction) async {
     await _transactionService.deleteTransaction(transaction.id);
 
-    updateOtherStatesAfterRemoveTransaction(transaction);
+    updateOtherStatesBeforeRemoveTransaction(transaction);
     _transactionState.removeTransaction(transaction.id);
   }
 
@@ -465,7 +465,7 @@ class TransactionController {
     }
   }
 
-  void updateOtherStatesAfterRemoveTransaction(Transaction transaction) {
+  void updateOtherStatesBeforeRemoveTransaction(Transaction transaction) {
     if (transaction.type == TransactionType.expense) {
       _appState.increaseUserBalance(transaction.amount);
       _walletState.increaseWalletBalance(transaction.sourceWallet.id, transaction.amount);
@@ -491,6 +491,9 @@ class TransactionController {
 
       //decrease lender total loan
       _relatedUserState.decreaseRelatedUserTotalLoan((transaction as BorrowTransaction).lender.id!, transaction.amount);
+    } else if (transaction.type == TransactionType.transfer) {
+      _walletState.increaseWalletBalance(transaction.sourceWallet.id, transaction.amount);
+      _walletState.decreateWalletBalance((transaction as TransferTransaction).destinationWallet.id, transaction.amount);
     }
   }
 
