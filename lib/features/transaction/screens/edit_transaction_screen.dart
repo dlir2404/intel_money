@@ -234,6 +234,7 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
                 ),
 
               SelectWalletInput(
+                wallet: _sourceWallet,
                 placeholder: "Select Source Wallet",
                 onWalletSelected: (wallet) {
                   setState(() {
@@ -247,6 +248,7 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
                 Column(
                   children: [
                     SelectWalletInput(
+                      wallet: _destinationWallet,
                       placeholder: "Select Destination Wallet",
                       onWalletSelected: (wallet) {
                         setState(() {

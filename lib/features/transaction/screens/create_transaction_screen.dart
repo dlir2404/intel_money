@@ -37,7 +37,7 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
   TransactionType _selectedTransactionType = TransactionType.expense;
   double _amount = 0;
   Category? _selectedCategory;
-  Wallet? _sourceWallet;
+  Wallet? _sourceWallet = WalletState().defaultWallet;
   Wallet? _destinationWallet;
   DateTime? _transactionDate = DateTime.now();
   final TextEditingController _descriptionController = TextEditingController();
@@ -276,6 +276,7 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
                 ),
 
               SelectWalletInput(
+                wallet: _sourceWallet,
                 placeholder: "Select Source Wallet",
                 onWalletSelected: (wallet) {
                   setState(() {
@@ -289,6 +290,7 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
                 Column(
                   children: [
                     SelectWalletInput(
+                      wallet: _destinationWallet,
                       placeholder: "Select Destination Wallet",
                       onWalletSelected: (wallet) {
                         setState(() {

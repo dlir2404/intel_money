@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:intel_money/core/state/wallet_state.dart';
 import '../../../core/models/wallet.dart';
-import '../screens/select_wallet_screen.dart';
 import '../../../shared/const/icons/wallet_icon.dart';
+import '../screens/select_wallet_screen.dart';
 
 class SelectWalletInput extends StatefulWidget {
   final String placeholder;
+  final Wallet? wallet;
   final Function(Wallet) onWalletSelected;
 
   const SelectWalletInput({
     super.key,
     required this.placeholder,
     required this.onWalletSelected,
+    this.wallet,
   });
 
   @override
@@ -19,46 +20,15 @@ class SelectWalletInput extends StatefulWidget {
 }
 
 class _SelectWalletInputState extends State<SelectWalletInput> {
-  Wallet? _wallet;
-  final WalletState _walletState = WalletState();
-
-  @override
-  void initState() {
-    super.initState();
-    _wallet = _walletState.defaultWallet;
-    _walletState.addListener(_onWalletStateChanged);
-  }
-
-  @override
-  void dispose() {
-    _walletState.removeListener(_onWalletStateChanged);
-    super.dispose();
-  }
-
-  void _onWalletStateChanged() {
-    if (mounted) {
-      setState(() {
-        // Only update if we're using the default wallet (not a custom selection)
-        if (_wallet == null || _wallet == _walletState.defaultWallet) {
-          _wallet = _walletState.defaultWallet;
-          widget.onWalletSelected(_wallet!);
-        }
-      });
-    }
-  }
-
   void _navigateToSelectWallet() async {
     final selectedWallet = await Navigator.push<Wallet>(
       context,
       MaterialPageRoute(
-        builder: (context) => SelectWalletScreen(selectedWallet: _wallet),
+        builder: (context) => SelectWalletScreen(selectedWallet: widget.wallet),
       ),
     );
 
     if (selectedWallet != null) {
-      setState(() {
-        _wallet = selectedWallet;
-      });
       widget.onWalletSelected(selectedWallet);
     }
   }
@@ -79,22 +49,22 @@ class _SelectWalletInputState extends State<SelectWalletInput> {
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
                 color:
-                    _wallet?.icon.color.withOpacity(0.15) ??
+                    widget.wallet?.icon.color.withOpacity(0.15) ??
                     Colors.grey.withOpacity(0.15),
                 shape: BoxShape.circle,
               ),
               child: Icon(
-                _wallet?.icon.icon ?? WalletIcon.defaultIcon().icon,
-                color: _wallet?.icon.color ?? Colors.grey,
+                widget.wallet?.icon.icon ?? WalletIcon.defaultIcon().icon,
+                color: widget.wallet?.icon.color ?? Colors.grey,
                 size: 24,
               ),
             ),
             const SizedBox(width: 10),
             Expanded(
               child: Text(
-                _wallet?.name ?? widget.placeholder,
+                widget.wallet?.name ?? widget.placeholder,
                 style: TextStyle(
-                  color: _wallet == null ? Colors.grey : Colors.black,
+                  color: widget.wallet == null ? Colors.grey : Colors.black,
                 ),
               ),
             ),
