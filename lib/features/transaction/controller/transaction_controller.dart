@@ -331,8 +331,14 @@ class TransactionController {
         );
         break;
       case TransactionType.transfer:
-        // TODO: Handle this case.
-        throw UnimplementedError();
+        newTransaction = await _transactionService.updateTransferTransaction(
+          transactionId: oldTransaction.id,
+          amount: amount,
+          transactionDate: transactionDate!,
+          sourceWalletId: sourceWallet!.id,
+          destinationWalletId: destinationWallet!.id,
+        );
+        break;
       case TransactionType.lend:
         newTransaction = await _transactionService.updateLendTransaction(
           transactionId: oldTransaction.id,

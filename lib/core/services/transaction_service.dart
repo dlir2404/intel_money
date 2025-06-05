@@ -83,6 +83,27 @@ class TransactionService {
     return transaction;
   }
 
+  Future<Transaction> updateTransferTransaction({
+    required int transactionId,
+    required double amount,
+    String? description,
+    required DateTime transactionDate,
+    required int sourceWalletId,
+    required int destinationWalletId,
+    String? image,
+  }) async {
+    final response = await _apiClient.put('/transaction/transfer/update/$transactionId', {
+      'amount': amount,
+      'description': description,
+      'transactionDate': AppTime.toUtcIso8601String(transactionDate),
+      'sourceWalletId': sourceWalletId,
+      'destinationWalletId': destinationWalletId,
+      'image': image,
+    });
+
+    return Transaction.fromJson(response);
+  }
+
   Future<Transaction> createIncomeTransaction({
     required double amount,
     required int? categoryId,
