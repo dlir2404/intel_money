@@ -140,7 +140,16 @@ class _DetailRatioScreenState extends State<DetailRatioScreen>
     );
   }
 
-  Widget _buildTab(String totalTitle, double total, List<ByCategoryData> data) {
+  Widget _buildTab(String totalTitle, String emptyTitle, double total, List<ByCategoryData> data) {
+    if (total == 0 || data.isEmpty) {
+      return Center(
+        child: Text(
+          emptyTitle,
+          style: TextStyle(color: Colors.grey[600], fontSize: 16),
+        ),
+      );
+    }
+
     final dataMap = _prepareData(total, data);
 
     return Container(
@@ -205,11 +214,13 @@ class _DetailRatioScreenState extends State<DetailRatioScreen>
               children: [
                 _buildTab(
                   "Total Expense",
+                  "No expense record found",
                   _statisticData.totalExpense,
                   _statisticData.byCategoryExpense,
                 ),
                 _buildTab(
                   "Total Income",
+                  "No income record found",
                   _statisticData.totalIncome,
                   _statisticData.byCategoryIncome,
                 ),
