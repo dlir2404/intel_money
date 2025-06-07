@@ -1,0 +1,94 @@
+import 'package:flutter/material.dart';
+import 'package:intel_money/shared/component/typos/currency_double_text.dart';
+
+import '../../../core/models/analysis_data.dart';
+import '../../../shared/helper/app_time.dart';
+
+class DayDetailAnalysis extends StatelessWidget {
+  final List<AnalysisData> data;
+  final AnalysisType type;
+
+  const DayDetailAnalysis({super.key, required this.data, required this.type});
+
+  List<Widget> _buildDetails() {
+    if (data.isEmpty) {
+      return [
+        SizedBox(
+          height: 80,
+          child: const Center(
+            child: Text(
+              'No details available',
+              style: TextStyle(fontSize: 16, color: Colors.grey),
+            ),
+          ),
+        ),
+      ];
+    }
+
+    return data.map((item) {
+      if ((type == AnalysisType.income && item.compactStatisticData.totalIncome == 0) ||
+          (type == AnalysisType.expense && item.compactStatisticData.totalExpense == 0)) {
+        return const SizedBox.shrink();
+      }
+
+      return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                CircleAvatar(
+                  backgroundColor:
+                      type == AnalysisType.income ? Colors.green : Colors.redAccent,
+                  radius: 20,
+                  child: Text(
+                    AppTime.format(time: item.date, pattern: "dd"),
+                    style: const TextStyle(color: Colors.white, fontSize: 16),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  AppTime.format(time: item.date),
+                  style: const TextStyle(fontSize: 16),
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                type == AnalysisType.income
+                    ? CurrencyDoubleText(
+                      value: item.compactStatisticData.totalIncome,
+                      color: Colors.green,
+                    )
+                    : CurrencyDoubleText(
+                      value: item.compactStatisticData.totalExpense,
+                      color: Colors.redAccent,
+                    ),
+                const SizedBox(width: 8),
+                Icon(Icons.arrow_forward_ios, color: Colors.grey[400], size: 16,),
+              ],
+            ),
+          ],
+        ),
+      );
+    }).toList();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: const Text("Details"),
+        ),
+        const SizedBox(height: 8),
+        ..._buildDetails(),
+      ],
+    );
+  }
+}
+
+enum AnalysisType { income, expense }

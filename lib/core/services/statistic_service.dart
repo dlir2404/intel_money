@@ -66,7 +66,7 @@ class StatisticService {
     return statisticData;
   }
 
-  Future<void> getByDayAnalysisData(DateTime from, DateTime to) async {
+  Future<List<AnalysisData>> getByDayAnalysisData(DateTime from, DateTime to) async {
     final response = await _apiClient.get(
       '/statistic/by-day',
       params: {'from': AppTime.toUtcIso8601String(from), 'to': AppTime.toUtcIso8601String(to)},
@@ -77,10 +77,10 @@ class StatisticService {
             .map((analysisData) => AnalysisData.fromJson(analysisData))
             .toList();
 
-    _state.setByDayAnalysisData(analysisData);
+    return analysisData;
   }
 
-  Future<void> getByMonthAnalysisData(DateTime from, DateTime to) async {
+  Future<List<AnalysisData>> getByMonthAnalysisData(DateTime from, DateTime to) async {
     final response = await _apiClient.get(
       '/statistic/by-month',
       params: {'from': AppTime.toUtcIso8601String(from), 'to': AppTime.toUtcIso8601String(to)},
@@ -92,6 +92,8 @@ class StatisticService {
             .toList();
 
     _state.setByMonthAnalysisData(analysisData);
+
+    return analysisData;
   }
 
   Future<void> getByYearAnalysisData(DateTime from, DateTime to) async {

@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:intel_money/core/models/analysis_data.dart';
-import 'package:intel_money/core/state/statistic_state.dart';
-import 'package:provider/provider.dart';
 
 import '../../../shared/component/charts/time_series.dart';
 
 class DayExpenseAnalysisChart extends StatelessWidget {
-  const DayExpenseAnalysisChart({super.key});
+  final List<AnalysisData> data;
+  const DayExpenseAnalysisChart({super.key, required this.data});
 
   List<TimeSeriesData> _prepareChartData(List<AnalysisData> data) {
     if (data.isEmpty) return [];
@@ -39,18 +38,13 @@ class DayExpenseAnalysisChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<StatisticState>(
-      builder: (context, state, _) {
-        final dayData = state.byDayAnalysisData ?? [];
-        final data = _prepareChartData(dayData);
+    final preparedData = _prepareChartData(data);
 
-        return TimeSeries(
-          data,
-          height: 300,
-          totalTitle: "Total Expense",
-          averageTitle: "Average spending/day",
-        );
-      },
+    return TimeSeries(
+      preparedData,
+      height: 300,
+      totalTitle: "Total Expense",
+      averageTitle: "Average spending/day",
     );
   }
 }
