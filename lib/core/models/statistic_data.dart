@@ -63,7 +63,7 @@ class StatisticData {
 
 
 class ByCategoryData {
-  final Category category;
+  Category category;
   double amount;
   List<Transaction> transactions;
 

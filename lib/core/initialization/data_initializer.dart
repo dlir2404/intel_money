@@ -109,7 +109,7 @@ class DataInitializer {
 
   Future<void> _loadTodayStatistics() async {
     try {
-      await StatisticService().getTodayStatisticData();
+      await StatisticService().getTodayStatisticDataV2();
       debugPrint('Today statistics loaded successfully');
     } catch (e) {
       debugPrint('Error loading today statistics: $e');

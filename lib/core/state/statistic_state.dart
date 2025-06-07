@@ -73,7 +73,7 @@ class StatisticState extends ChangeNotifier {
       return _thisWeekStatisticData;
     }
 
-    StatisticService().getThisWeekStatisticData();
+    StatisticService().getThisWeekStatisticDataV2();
     return _thisWeekStatisticData;
   }
   void setThisWeekStatisticData(StatisticData statisticData) {
@@ -86,7 +86,7 @@ class StatisticState extends ChangeNotifier {
       return _thisMonthStatisticData;
     }
 
-    StatisticService().getThisMonthStatisticData();
+    StatisticService().getThisMonthStatisticDataV2();
     return _thisMonthStatisticData;
   }
   void setThisMonthStatisticData(StatisticData statisticData) {
@@ -99,7 +99,7 @@ class StatisticState extends ChangeNotifier {
       return _thisQuarterStatisticData;
     }
 
-    StatisticService().getThisQuarterStatisticData();
+    StatisticService().getThisQuarterStatisticDataV2();
     return _thisQuarterStatisticData;
   }
   void setThisQuarterStatisticData(StatisticData statisticData) {
