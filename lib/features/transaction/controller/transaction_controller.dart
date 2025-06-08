@@ -819,6 +819,50 @@ class TransactionController {
     }
   }
 
+  double calculateBalanceAtDate({
+    required Wallet sourceWallet,
+    required DateTime date,
+  }) {
+    double baseBalance = 0;
+    double diff = 0;
+
+    final transactions = _transactionState.transactions;
+    for (var i = 0; i < transactions.length; i++) {
+      if (transactions[i].transactionDate.isAfter(date)) {
+        continue;
+      }
+
+      // only filter transactions that are related to the source wallet
+      // can be source wallet of transaction or destination wallet in case of transfer
+      if (!((transactions[i].sourceWallet.id == sourceWallet.id) ||
+          (transactions[i].type == TransactionType.transfer &&
+              (transactions[i] as TransferTransaction).destinationWallet.id ==
+                  sourceWallet.id))) {
+        continue;
+      }
+
+      if (transactions[i].type == TransactionType.income) {
+        diff += transactions[i].amount;
+      } else if (transactions[i].type == TransactionType.expense) {
+        diff -= transactions[i].amount;
+      } else if (transactions[i].type == TransactionType.transfer) {
+        if (transactions[i].sourceWallet.id == sourceWallet.id) {
+          diff -= transactions[i].amount; // transfer out
+        } else {
+          diff += transactions[i].amount; // transfer in
+        }
+      } else if (transactions[i].type == TransactionType.lend) {
+        diff -= transactions[i].amount; // lend out
+      } else if (transactions[i].type == TransactionType.borrow) {
+        diff += transactions[i].amount; // borrow in
+      } else if (transactions[i].type == TransactionType.modifyBalance) {
+        baseBalance =
+            (transactions[i] as ModifyBalanceTransaction).newRealBalance;
+      }
+    }
+    return baseBalance + diff;
+  }
+
   void updateMostSoonModifyBalanceTransactionAfterCreateTransaction({
     required Transaction transaction,
     required ModifyBalanceTransaction mostSoonModifyBalanceTransaction,

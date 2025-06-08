@@ -48,6 +48,7 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
   RelatedUser? _borrower;
   RelatedUser? _lender;
 
+  double _currentBalance = 0;
   double _newRealBalance = 0;
 
   bool _isLoading = false;
@@ -165,6 +166,21 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
     }
   }
 
+  void getCurrentBalance() {
+    if (_selectedTransactionType != TransactionType.modifyBalance) {
+      return;
+    }
+
+    final currentBalance = _transactionController.calculateBalanceAtDate(
+      sourceWallet: _sourceWallet!,
+      date: _transactionDate!,
+    );
+
+    setState(() {
+      _currentBalance = currentBalance;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -184,6 +200,8 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
               _selectedCategory = null;
             }
           });
+
+          getCurrentBalance();
         },
         onSave: _saveTransaction,
       ),
@@ -233,15 +251,18 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
                     label: 'Amount',
                   )
                   : DifferentInput(
-                    oldValue: _sourceWallet!.balance,
+                    oldValue: _currentBalance,
                     newValue: _amount,
                     oldLabel: 'Balance in the account',
                     newLabel: 'Actual Balance',
                     onValueChanged: (double newValue) {
                       if (_selectedCategory != null) {
-                        if (_selectedCategory!.type == CategoryType.income && newValue - _sourceWallet!.balance < 0) {
+                        if (_selectedCategory!.type == CategoryType.income &&
+                            newValue - _sourceWallet!.balance < 0) {
                           _selectedCategory = null;
-                        } else if (_selectedCategory!.type == CategoryType.expense && newValue - _sourceWallet!.balance > 0) {
+                        } else if (_selectedCategory!.type ==
+                                CategoryType.expense &&
+                            newValue - _sourceWallet!.balance > 0) {
                           _selectedCategory = null;
                         }
                       }
@@ -314,6 +335,8 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
                   setState(() {
                     _sourceWallet = wallet;
                   });
+
+                  getCurrentBalance();
                 },
               ),
               const SizedBox(height: 16),
@@ -341,6 +364,8 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
                   setState(() {
                     _transactionDate = date;
                   });
+
+                  getCurrentBalance();
                 },
               ),
               const SizedBox(height: 16),
