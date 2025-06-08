@@ -448,16 +448,17 @@ class TransactionController {
   void updateOtherStatesAfterCreateTransaction(Transaction newTransaction) {
     final mostSoonModifyBalanceTransaction =
         getMostSoonModifyBalanceTransactionAfterDate(
-      sourceWallet: newTransaction.sourceWallet,
-      date: newTransaction.transactionDate,
-    );
+          sourceWallet: newTransaction.sourceWallet,
+          date: newTransaction.transactionDate,
+        );
 
     switch (newTransaction.type) {
       case TransactionType.expense:
         if (mostSoonModifyBalanceTransaction != null) {
           updateMostSoonModifyBalanceTransactionAfterCreateTransaction(
             transaction: newTransaction,
-            mostSoonModifyBalanceTransaction: mostSoonModifyBalanceTransaction as ModifyBalanceTransaction,
+            mostSoonModifyBalanceTransaction:
+                mostSoonModifyBalanceTransaction as ModifyBalanceTransaction,
           );
         } else {
           _appState.decreaseUserBalance(newTransaction.amount);
@@ -473,7 +474,11 @@ class TransactionController {
         break;
       case TransactionType.income:
         if (mostSoonModifyBalanceTransaction != null) {
-          updateMostSoonModifyBalanceTransactionAfterCreateTransaction(transaction: newTransaction, mostSoonModifyBalanceTransaction: mostSoonModifyBalanceTransaction as ModifyBalanceTransaction);
+          updateMostSoonModifyBalanceTransactionAfterCreateTransaction(
+            transaction: newTransaction,
+            mostSoonModifyBalanceTransaction:
+                mostSoonModifyBalanceTransaction as ModifyBalanceTransaction,
+          );
         } else {
           _appState.increaseUserBalance(newTransaction.amount);
 
@@ -489,14 +494,17 @@ class TransactionController {
         break;
       case TransactionType.transfer:
         //REALLY SPECIAL CASE
-        final mostSoonModifyBalanceTransactionOfSourceWallet = mostSoonModifyBalanceTransaction;
+        final mostSoonModifyBalanceTransactionOfSourceWallet =
+            mostSoonModifyBalanceTransaction;
         final mostSoonModifyBalanceTransactionOfDestinationWallet =
             getMostSoonModifyBalanceTransactionAfterDate(
-          sourceWallet: (newTransaction as TransferTransaction).destinationWallet,
-          date: newTransaction.transactionDate,
-        );
+              sourceWallet:
+                  (newTransaction as TransferTransaction).destinationWallet,
+              date: newTransaction.transactionDate,
+            );
 
-        if (mostSoonModifyBalanceTransactionOfSourceWallet == null && mostSoonModifyBalanceTransactionOfDestinationWallet == null) {
+        if (mostSoonModifyBalanceTransactionOfSourceWallet == null &&
+            mostSoonModifyBalanceTransactionOfDestinationWallet == null) {
           _walletState.decreaseWalletBalance(
             newTransaction.sourceWallet.id,
             newTransaction.amount,
@@ -505,18 +513,22 @@ class TransactionController {
             newTransaction.destinationWallet.id,
             newTransaction.amount,
           );
-        } else if (mostSoonModifyBalanceTransactionOfSourceWallet != null && mostSoonModifyBalanceTransactionOfDestinationWallet == null) {
+        } else if (mostSoonModifyBalanceTransactionOfSourceWallet != null &&
+            mostSoonModifyBalanceTransactionOfDestinationWallet == null) {
           _appState.increaseUserBalance(newTransaction.amount);
 
           updateMostSoonModifyBalanceTransactionAfterCreateTransaction(
             transaction: newTransaction,
-            mostSoonModifyBalanceTransaction: mostSoonModifyBalanceTransactionOfSourceWallet as ModifyBalanceTransaction,
+            mostSoonModifyBalanceTransaction:
+                mostSoonModifyBalanceTransactionOfSourceWallet
+                    as ModifyBalanceTransaction,
           );
           _walletState.increaseWalletBalance(
             newTransaction.destinationWallet.id,
             newTransaction.amount,
           );
-        } else if (mostSoonModifyBalanceTransactionOfSourceWallet == null && mostSoonModifyBalanceTransactionOfDestinationWallet != null) {
+        } else if (mostSoonModifyBalanceTransactionOfSourceWallet == null &&
+            mostSoonModifyBalanceTransactionOfDestinationWallet != null) {
           _appState.decreaseUserBalance(newTransaction.amount);
 
           _walletState.decreaseWalletBalance(
@@ -525,17 +537,23 @@ class TransactionController {
           );
           updateMostSoonModifyBalanceTransactionAfterCreateTransaction(
             transaction: newTransaction,
-            mostSoonModifyBalanceTransaction: mostSoonModifyBalanceTransactionOfDestinationWallet as ModifyBalanceTransaction,
+            mostSoonModifyBalanceTransaction:
+                mostSoonModifyBalanceTransactionOfDestinationWallet
+                    as ModifyBalanceTransaction,
           );
         } else {
           //both modify balance transactions exists
           updateMostSoonModifyBalanceTransactionAfterCreateTransaction(
             transaction: newTransaction,
-            mostSoonModifyBalanceTransaction: mostSoonModifyBalanceTransactionOfSourceWallet as ModifyBalanceTransaction,
+            mostSoonModifyBalanceTransaction:
+                mostSoonModifyBalanceTransactionOfSourceWallet
+                    as ModifyBalanceTransaction,
           );
           updateMostSoonModifyBalanceTransactionAfterCreateTransaction(
             transaction: newTransaction,
-            mostSoonModifyBalanceTransaction: mostSoonModifyBalanceTransactionOfDestinationWallet as ModifyBalanceTransaction,
+            mostSoonModifyBalanceTransaction:
+                mostSoonModifyBalanceTransactionOfDestinationWallet
+                    as ModifyBalanceTransaction,
           );
         }
 
@@ -544,7 +562,8 @@ class TransactionController {
         if (mostSoonModifyBalanceTransaction != null) {
           updateMostSoonModifyBalanceTransactionAfterCreateTransaction(
             transaction: newTransaction,
-            mostSoonModifyBalanceTransaction: mostSoonModifyBalanceTransaction as ModifyBalanceTransaction,
+            mostSoonModifyBalanceTransaction:
+                mostSoonModifyBalanceTransaction as ModifyBalanceTransaction,
           );
         } else {
           _walletState.decreaseWalletBalance(
@@ -566,7 +585,8 @@ class TransactionController {
         if (mostSoonModifyBalanceTransaction != null) {
           updateMostSoonModifyBalanceTransactionAfterCreateTransaction(
             transaction: newTransaction,
-            mostSoonModifyBalanceTransaction: mostSoonModifyBalanceTransaction as ModifyBalanceTransaction,
+            mostSoonModifyBalanceTransaction:
+                mostSoonModifyBalanceTransaction as ModifyBalanceTransaction,
           );
         } else {
           _walletState.increaseWalletBalance(
@@ -588,7 +608,8 @@ class TransactionController {
         if (mostSoonModifyBalanceTransaction != null) {
           updateMostSoonModifyBalanceTransactionAfterCreateTransaction(
             transaction: newTransaction,
-            mostSoonModifyBalanceTransaction: mostSoonModifyBalanceTransaction as ModifyBalanceTransaction,
+            mostSoonModifyBalanceTransaction:
+                mostSoonModifyBalanceTransaction as ModifyBalanceTransaction,
           );
         } else {
           if (newTransaction.amount > 0) {
@@ -609,27 +630,58 @@ class TransactionController {
   }
 
   void updateOtherStatesBeforeRemoveTransaction(Transaction transaction) {
+    final mostSoonModifyBalanceTransaction =
+        getMostSoonModifyBalanceTransactionAfterDate(
+          sourceWallet: transaction.sourceWallet,
+          date: transaction.transactionDate,
+        );
+
     if (transaction.type == TransactionType.expense) {
-      _appState.increaseUserBalance(transaction.amount);
-      _walletState.increaseWalletBalance(
-        transaction.sourceWallet.id,
-        transaction.amount,
-      );
+      if (mostSoonModifyBalanceTransaction != null) {
+        updateMostSoonModifyBalanceTransactionBeforeRemoveTransaction(
+          transaction: transaction,
+          mostSoonModifyBalanceTransaction:
+              mostSoonModifyBalanceTransaction as ModifyBalanceTransaction,
+        );
+      } else {
+        _appState.increaseUserBalance(transaction.amount);
+        _walletState.increaseWalletBalance(
+          transaction.sourceWallet.id,
+          transaction.amount,
+        );
+      }
 
       _statisticState.updateStatisticDataAfterRemoveTransaction(transaction);
     } else if (transaction.type == TransactionType.income) {
-      _appState.decreaseUserBalance(transaction.amount);
-      _walletState.decreaseWalletBalance(
-        transaction.sourceWallet.id,
-        transaction.amount,
-      );
+      if (mostSoonModifyBalanceTransaction != null) {
+        updateMostSoonModifyBalanceTransactionBeforeRemoveTransaction(
+          transaction: transaction,
+          mostSoonModifyBalanceTransaction:
+              mostSoonModifyBalanceTransaction as ModifyBalanceTransaction,
+        );
+      } else {
+        _appState.decreaseUserBalance(transaction.amount);
+        _walletState.decreaseWalletBalance(
+          transaction.sourceWallet.id,
+          transaction.amount,
+        );
+      }
 
       _statisticState.updateStatisticDataAfterRemoveTransaction(transaction);
     } else if (transaction.type == TransactionType.lend) {
-      _walletState.increaseWalletBalance(
-        transaction.sourceWallet.id,
-        transaction.amount,
-      );
+      if (mostSoonModifyBalanceTransaction != null) {
+        updateMostSoonModifyBalanceTransactionBeforeRemoveTransaction(
+          transaction: transaction,
+          mostSoonModifyBalanceTransaction:
+              mostSoonModifyBalanceTransaction as ModifyBalanceTransaction,
+        );
+      } else {
+        _walletState.increaseWalletBalance(
+          transaction.sourceWallet.id,
+          transaction.amount,
+        );
+      }
+
       //decrease user total loan
       _appState.decreaseUserTotalLoan(transaction.amount);
 
@@ -639,10 +691,18 @@ class TransactionController {
         transaction.amount,
       );
     } else if (transaction.type == TransactionType.borrow) {
-      _walletState.decreaseWalletBalance(
-        transaction.sourceWallet.id,
-        transaction.amount,
-      );
+      if (mostSoonModifyBalanceTransaction != null) {
+        updateMostSoonModifyBalanceTransactionBeforeRemoveTransaction(
+          transaction: transaction,
+          mostSoonModifyBalanceTransaction:
+              mostSoonModifyBalanceTransaction as ModifyBalanceTransaction,
+        );
+      } else {
+        _walletState.decreaseWalletBalance(
+          transaction.sourceWallet.id,
+          transaction.amount,
+        );
+      }
 
       //decrease user total debt
       _appState.decreaseUserTotalDebt(transaction.amount);
@@ -653,14 +713,91 @@ class TransactionController {
         transaction.amount,
       );
     } else if (transaction.type == TransactionType.transfer) {
-      _walletState.increaseWalletBalance(
-        transaction.sourceWallet.id,
-        transaction.amount,
-      );
-      _walletState.decreaseWalletBalance(
-        (transaction as TransferTransaction).destinationWallet.id,
-        transaction.amount,
-      );
+      //REALLY SPECIAL CASE
+      final mostSoonModifyBalanceTransactionOfSourceWallet =
+          mostSoonModifyBalanceTransaction;
+      final mostSoonModifyBalanceTransactionOfDestinationWallet =
+          getMostSoonModifyBalanceTransactionAfterDate(
+            sourceWallet:
+                (transaction as TransferTransaction).destinationWallet,
+            date: transaction.transactionDate,
+          );
+
+      if (mostSoonModifyBalanceTransactionOfSourceWallet == null &&
+          mostSoonModifyBalanceTransactionOfDestinationWallet == null) {
+        _walletState.increaseWalletBalance(
+          transaction.sourceWallet.id,
+          transaction.amount,
+        );
+        _walletState.decreaseWalletBalance(
+          transaction.destinationWallet.id,
+          transaction.amount,
+        );
+      } else if (mostSoonModifyBalanceTransactionOfSourceWallet != null &&
+          mostSoonModifyBalanceTransactionOfDestinationWallet == null) {
+        _appState.decreaseUserBalance(transaction.amount);
+
+        updateMostSoonModifyBalanceTransactionBeforeRemoveTransaction(
+          transaction: transaction,
+          mostSoonModifyBalanceTransaction:
+              mostSoonModifyBalanceTransactionOfSourceWallet
+                  as ModifyBalanceTransaction,
+        );
+        _walletState.decreaseWalletBalance(
+          transaction.destinationWallet.id,
+          transaction.amount,
+        );
+      } else if (mostSoonModifyBalanceTransactionOfSourceWallet == null &&
+          mostSoonModifyBalanceTransactionOfDestinationWallet != null) {
+        _appState.increaseUserBalance(transaction.amount);
+
+        _walletState.increaseWalletBalance(
+          transaction.sourceWallet.id,
+          transaction.amount,
+        );
+        updateMostSoonModifyBalanceTransactionBeforeRemoveTransaction(
+          transaction: transaction,
+          mostSoonModifyBalanceTransaction:
+              mostSoonModifyBalanceTransactionOfDestinationWallet
+                  as ModifyBalanceTransaction,
+        );
+      } else {
+        //both modify balance transactions exists
+        updateMostSoonModifyBalanceTransactionBeforeRemoveTransaction(
+          transaction: transaction,
+          mostSoonModifyBalanceTransaction:
+              mostSoonModifyBalanceTransactionOfSourceWallet
+                  as ModifyBalanceTransaction,
+        );
+        updateMostSoonModifyBalanceTransactionBeforeRemoveTransaction(
+          transaction: transaction,
+          mostSoonModifyBalanceTransaction:
+              mostSoonModifyBalanceTransactionOfDestinationWallet
+                  as ModifyBalanceTransaction,
+        );
+      }
+    } else if (transaction.type == TransactionType.modifyBalance) {
+      if (mostSoonModifyBalanceTransaction != null) {
+        updateMostSoonModifyBalanceTransactionBeforeRemoveTransaction(
+          transaction: transaction,
+          mostSoonModifyBalanceTransaction:
+              mostSoonModifyBalanceTransaction as ModifyBalanceTransaction,
+        );
+      } else {
+        if (transaction.amount > 0) {
+          _walletState.decreaseWalletBalance(
+            transaction.sourceWallet.id,
+            transaction.amount,
+          );
+          _appState.decreaseUserBalance(transaction.amount);
+        } else {
+          _walletState.increaseWalletBalance(
+            transaction.sourceWallet.id,
+            transaction.amount.abs(),
+          );
+          _appState.increaseUserBalance(transaction.amount.abs());
+        }
+      }
     }
   }
 
@@ -694,7 +831,8 @@ class TransactionController {
     } else if (transaction.type == TransactionType.expense) {
       newDiff = oldDiff + transaction.amount;
     } else if (transaction.type == TransactionType.transfer) {
-      if (transaction.sourceWallet.id == mostSoonModifyBalanceTransaction.sourceWallet.id) {
+      if (transaction.sourceWallet.id ==
+          mostSoonModifyBalanceTransaction.sourceWallet.id) {
         newDiff = oldDiff + transaction.amount; //transfer out
       } else {
         newDiff = oldDiff - transaction.amount; //transfer in
@@ -724,9 +862,7 @@ class TransactionController {
       );
     } else {
       //normal case, just update amount
-      updated = mostSoonModifyBalanceTransaction.copyWith(
-        amount: newDiff,
-      );
+      updated = mostSoonModifyBalanceTransaction.copyWith(amount: newDiff);
     }
 
     _transactionState.updateTransaction(updated);
@@ -775,9 +911,7 @@ class TransactionController {
       );
     } else {
       //normal case, just update amount
-      updated = mostSoonModifyBalanceTransaction.copyWith(
-        amount: newDiff,
-      );
+      updated = mostSoonModifyBalanceTransaction.copyWith(amount: newDiff);
     }
 
     _transactionState.updateTransaction(updated);
