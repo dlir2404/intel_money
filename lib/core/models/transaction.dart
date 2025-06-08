@@ -49,6 +49,8 @@ class Transaction {
         return BorrowTransaction.fromJson(json);
       case TransactionType.transfer:
         return TransferTransaction.fromJson(json);
+      case TransactionType.modifyBalance:
+        return ModifyBalanceTransaction.fromJson(json);
       default:
         break;
     }
@@ -152,6 +154,33 @@ class TransferTransaction extends Transaction {
       destinationWallet: destinationWallet,
       transactionDate: AppTime.parseFromApi(json['transactionDate']),
       sourceWallet: Wallet.fromContext(json['sourceWalletId']),
+      description: json['description'],
+      image: json['image'],
+    );
+  }
+}
+
+class ModifyBalanceTransaction extends Transaction {
+  double newRealBalance;
+  ModifyBalanceTransaction({
+    required super.id,
+    required super.amount,
+    required this.newRealBalance,
+    required super.transactionDate,
+    required super.sourceWallet,
+    super.category,
+    super.description,
+    super.image,
+  }) : super(type: TransactionType.modifyBalance);
+
+  factory ModifyBalanceTransaction.fromJson(Map<String, dynamic> json) {
+    return ModifyBalanceTransaction(
+      id: json['id'],
+      amount: double.parse(json['amount'].toString()),
+      newRealBalance: double.parse(json['extraInfo']['newRealBalance'].toString()),
+      transactionDate: AppTime.parseFromApi(json['transactionDate']),
+      sourceWallet: Wallet.fromContext(json['sourceWalletId']),
+      category: Category.fromContext(json['categoryId']),
       description: json['description'],
       image: json['image'],
     );

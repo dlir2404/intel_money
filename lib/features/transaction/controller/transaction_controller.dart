@@ -166,7 +166,8 @@ class TransactionController {
     required String? description,
     required RelatedUser? lender,
     required RelatedUser? borrower,
-
+    required double? newRealBalance,
+    required double? difference, //just use for validation
     required File? image,
   }) async {
     _validateFields(
@@ -179,6 +180,8 @@ class TransactionController {
       description: description,
       lender: lender,
       borrower: borrower,
+      newRealBalance: newRealBalance,
+      difference: difference,
       image: image,
     );
 
@@ -252,8 +255,15 @@ class TransactionController {
             );
         break;
       case TransactionType.modifyBalance:
-        // TODO: Handle this case.
-        throw UnimplementedError();
+        newTransaction = await _transactionService
+            .createModifyBalanceTransaction(
+              newRealBalance: newRealBalance!,
+              categoryId: category!.id,
+              description: description,
+              sourceWalletId: sourceWallet!.id,
+              transactionDate: transactionDate!,
+              image: imageUrl,
+            );
     }
 
     _transactionState.addTransaction(newTransaction);
@@ -271,6 +281,8 @@ class TransactionController {
     required String? description,
     required RelatedUser? lender,
     required RelatedUser? borrower,
+    required double? newRealBalance,
+    required double? difference, //just use for validation
     required dynamic image,
   }) async {
     _validateFields(
@@ -283,6 +295,8 @@ class TransactionController {
       description: description,
       lender: lender,
       borrower: borrower,
+      newRealBalance: newRealBalance,
+      difference: difference,
       image: image,
     );
 
@@ -381,17 +395,15 @@ class TransactionController {
     required String? description,
     required RelatedUser? lender,
     required RelatedUser? borrower,
-
+    required double? newRealBalance,
+    required double? difference, //just use for validation
     required File? image,
   }) {
-    if (amount <= 0) {
+    if (transactionType != TransactionType.modifyBalance && amount <= 0) {
       throw TransactionException('Amount must be greater than 0');
     }
 
-    if ((transactionType == TransactionType.expense ||
-            transactionType == TransactionType.income ||
-            transactionType == TransactionType.lend ||
-            transactionType == TransactionType.borrow) &&
+    if ((transactionType != TransactionType.transfer) &&
         category == null) {
       throw TransactionException('Please select a category');
     }
@@ -422,6 +434,10 @@ class TransactionController {
 
     if (transactionType == TransactionType.borrow && lender == null) {
       throw TransactionException("Please choose a lender");
+    }
+
+    if (transactionType == TransactionType.modifyBalance && difference == 0) {
+      throw TransactionException("Difference can not be zero");
     }
   }
 

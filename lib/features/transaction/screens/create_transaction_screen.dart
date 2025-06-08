@@ -19,7 +19,9 @@ import '../../../core/models/category.dart';
 import '../../../core/models/related_user.dart';
 import '../../../core/models/wallet.dart';
 import '../../../core/state/wallet_state.dart';
+import '../../../shared/component/input/different_input.dart';
 import '../../../shared/component/input/form_input.dart';
+import '../../../shared/const/enum/category_type.dart';
 import '../../category/widgets/select_category_input.dart';
 import '../../related_user/widgets/select_related_user_input.dart';
 import '../controller/transaction_controller.dart';
@@ -46,6 +48,8 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
   RelatedUser? _borrower;
   RelatedUser? _lender;
 
+  double _newRealBalance = 0;
+
   bool _isLoading = false;
 
   final TransactionController _transactionController = TransactionController();
@@ -65,16 +69,18 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
 
     try {
       await _transactionController.createTransaction(
-          amount: _amount,
-          transactionType: _selectedTransactionType,
-          sourceWallet: _sourceWallet,
-          destinationWallet: _destinationWallet,
-          transactionDate: _transactionDate,
-          category: _selectedCategory,
-          description: _descriptionController.text,
-          lender: _lender,
-          borrower: _borrower,
-          image: _image
+        amount: _amount,
+        transactionType: _selectedTransactionType,
+        sourceWallet: _sourceWallet,
+        destinationWallet: _destinationWallet,
+        transactionDate: _transactionDate,
+        category: _selectedCategory,
+        description: _descriptionController.text,
+        lender: _lender,
+        borrower: _borrower,
+        newRealBalance: _newRealBalance,
+        difference: _newRealBalance - (_sourceWallet?.balance ?? 0),
+        image: _image,
       );
 
       if (mounted) {
@@ -86,9 +92,9 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
 
       AdService().showAdIfEligible();
     } catch (e) {
-        if (mounted) {
-          AppToast.showError(context, e.toString());
-        }
+      if (mounted) {
+        AppToast.showError(context, e.toString());
+      }
     } finally {
       setState(() {
         _isLoading = false;
@@ -152,7 +158,10 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
     } on SocketException catch (_) {
       // No internet connection
       if (!navigatorContext.mounted) return;
-      AppToast.showError(navigatorContext, 'Please check your internet connection');
+      AppToast.showError(
+        navigatorContext,
+        'Please check your internet connection',
+      );
     }
   }
 
@@ -213,27 +222,50 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              MainInput(
-                initialValue: _amount,
-                onChanged: (double newValue) {
-                  setState(() {
-                    _amount = newValue;
-                  });
-                },
-                label: 'Amount',
-              ),
+              _selectedTransactionType != TransactionType.modifyBalance
+                  ? MainInput(
+                    initialValue: _amount,
+                    onChanged: (double newValue) {
+                      setState(() {
+                        _amount = newValue;
+                      });
+                    },
+                    label: 'Amount',
+                  )
+                  : DifferentInput(
+                    oldValue: _sourceWallet!.balance,
+                    newValue: _amount,
+                    oldLabel: 'Balance in the account',
+                    newLabel: 'Actual Balance',
+                    onValueChanged: (double newValue) {
+                      if (_selectedCategory != null) {
+                        if (_selectedCategory!.type == CategoryType.income && newValue - _sourceWallet!.balance < 0) {
+                          _selectedCategory = null;
+                        } else if (_selectedCategory!.type == CategoryType.expense && newValue - _sourceWallet!.balance > 0) {
+                          _selectedCategory = null;
+                        }
+                      }
+
+                      setState(() {
+                        _newRealBalance = newValue;
+                      });
+                    },
+                  ),
               const SizedBox(height: 16),
 
-              if (_selectedTransactionType == TransactionType.income ||
-                  _selectedTransactionType == TransactionType.expense ||
-                  _selectedTransactionType == TransactionType.lend ||
-                  _selectedTransactionType == TransactionType.borrow)
+              if (_selectedTransactionType != TransactionType.transfer)
                 Column(
                   children: [
                     SelectCategoryInput(
                       category: _selectedCategory,
                       placeholder: 'Select Category',
-                      categoryType: _selectedTransactionType.categoryType,
+                      categoryType:
+                          _selectedTransactionType !=
+                                  TransactionType.modifyBalance
+                              ? _selectedTransactionType.categoryType
+                              : (_newRealBalance - _sourceWallet!.balance) > 0
+                              ? CategoryType.income
+                              : CategoryType.expense,
                       onCategorySelected: (category) {
                         setState(() {
                           _selectedCategory = category;

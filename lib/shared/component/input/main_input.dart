@@ -11,6 +11,8 @@ class MainInput extends StatefulWidget {
   final bool autofocus;
   final double? initialValue;
 
+  final MainInputMode mode;
+
   const MainInput({
     super.key,
     this.label,
@@ -18,6 +20,7 @@ class MainInput extends StatefulWidget {
     this.focusNode,
     this.autofocus = false,
     this.initialValue,
+    this.mode = MainInputMode.vertical,
   });
 
   @override
@@ -64,7 +67,8 @@ class _MainInputState extends State<MainInput> {
     super.didUpdateWidget(oldWidget);
 
     // Check if initialValue has changed
-    if (widget.initialValue != oldWidget.initialValue && widget.initialValue != null) {
+    if (widget.initialValue != oldWidget.initialValue &&
+        widget.initialValue != null) {
       _value = widget.initialValue!;
 
       String valueText = _value.toString();
@@ -248,7 +252,7 @@ class _MainInputState extends State<MainInput> {
       _performCalculation(); // Calculate any pending operation
       _focusNode.unfocus(); // Close the keyboard
     } else if (['+', '-', '×', '÷'].contains(key)) {
-      if (_isCalculating){
+      if (_isCalculating) {
         _performCalculation();
       }
 
@@ -279,7 +283,7 @@ class _MainInputState extends State<MainInput> {
         _displayText = _getDisplayText(valueText);
       }
     } else if (key == '000') {
-      if (_displayText == '0' || !_checkLimit(_displayText)){
+      if (_displayText == '0' || !_checkLimit(_displayText)) {
         //do nothing
       } else if (_displayText.endsWith(",")) {
         _displayText = '${_displayText}00';
@@ -306,7 +310,7 @@ class _MainInputState extends State<MainInput> {
       if (_displayText == '0') {
         // Replace 0 with the new digit
         _displayText = key;
-      } else if (!_checkLimit(_displayText)){
+      } else if (!_checkLimit(_displayText)) {
         return;
       } else {
         // Check if adding would exceed decimal limit
@@ -330,7 +334,7 @@ class _MainInputState extends State<MainInput> {
 
   /// return true if limit is reached
   bool _checkLimit(String value) {
-    if (value.contains(",")){
+    if (value.contains(",")) {
       value = value.split(",")[0];
     }
 
@@ -371,18 +375,18 @@ class _MainInputState extends State<MainInput> {
         String resultText = result.toString();
         String integerPart = resultText.split(".")[0];
         String decimalPart = resultText.split(".")[1];
-        if (decimalPart.length == 1 && decimalPart == "0"){
+        if (decimalPart.length == 1 && decimalPart == "0") {
           resultText = integerPart;
-        } else if (decimalPart.length >= 2){
+        } else if (decimalPart.length >= 2) {
           decimalPart = decimalPart.substring(0, 2);
 
-          if (decimalPart == "00"){
+          if (decimalPart == "00") {
             resultText = integerPart;
           } else {
             resultText = "$integerPart,$decimalPart";
           }
         }
-        
+
         _displayText = _getDisplayText(resultText);
         _calculationBuffer = '';
         _isCalculating = false;
@@ -396,37 +400,73 @@ class _MainInputState extends State<MainInput> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (widget.label != null)
-          Padding(
-            padding: const EdgeInsets.only(bottom: 8.0),
-            child: Text(
-              widget.label!,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+    return widget.mode == MainInputMode.vertical
+        ? Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (widget.label != null)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8.0),
+                child: Text(
+                  widget.label!,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            GestureDetector(
+              onTap: () {
+                FocusScope.of(context).requestFocus(_focusNode);
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.grey.shade300),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(child: Container()),
+                    CurrencyText(
+                      text: _displayText,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ],
+                ),
+              ),
             ),
-          ),
-        GestureDetector(
+          ],
+        )
+        : InkWell(
           onTap: () {
             FocusScope.of(context).requestFocus(_focusNode);
           },
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Colors.grey.shade300),
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Expanded(child: Container(),),
-                CurrencyText(text: _displayText, fontSize: 16, fontWeight: FontWeight.w500,)
+                Text(
+                  widget.label!,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                CurrencyText(
+                  text: _displayText,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
               ],
             ),
           ),
-        ),
-      ],
-    );
+        );
   }
 }
 
@@ -529,3 +569,5 @@ class EnhancedMoneyKeyboard extends StatelessWidget {
     );
   }
 }
+
+enum MainInputMode { vertical, inline }

@@ -41,6 +41,8 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
   RelatedUser? _borrower;
   RelatedUser? _lender;
 
+  late double _newRealBalance;
+
   bool _isLoading = false;
 
   final TextEditingController _descriptionController = TextEditingController();
@@ -67,6 +69,8 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
     } else if (widget.transaction is TransferTransaction) {
       _destinationWallet =
           (widget.transaction as TransferTransaction).destinationWallet;
+    } else if (widget.transaction is ModifyBalanceTransaction) {
+      _newRealBalance = (widget.transaction as ModifyBalanceTransaction).newRealBalance;
     }
   }
 
@@ -87,6 +91,8 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
         description: _descriptionController.text,
         lender: _lender,
         borrower: _borrower,
+        newRealBalance: _newRealBalance,
+        difference: _newRealBalance - _sourceWallet.balance,
         image: _image,
       );
 

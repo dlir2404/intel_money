@@ -282,6 +282,27 @@ class TransactionService {
     return Transaction.fromJson(response);
   }
 
+  Future<Transaction> createModifyBalanceTransaction({
+    required double newRealBalance,
+    required int categoryId,
+    required String? description,
+    required DateTime transactionDate,
+    required int sourceWalletId,
+    String? image,
+  }) async {
+    final response = await _apiClient.post("/transaction/modify-balance/create", {
+      'newRealBalance': newRealBalance,
+      'categoryId': categoryId,
+      'description': description,
+      'transactionDate': AppTime.toUtcIso8601String(transactionDate),
+      'sourceWalletId': sourceWalletId,
+      'image': image,
+    });
+
+    final transaction = Transaction.fromJson(response);
+    return transaction;
+  }
+
   Future<void> deleteTransaction(int transactionId) async {
     final response = await _apiClient.delete('/transaction/$transactionId');
     if (response == null || response['result'] != true) {
