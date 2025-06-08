@@ -23,6 +23,7 @@ class TransactionState extends ChangeNotifier {
       if (transaction.transactionDate.isBefore(_transactions[i].transactionDate)) {
         _transactions.insert(i + 1, transaction);
         isInserted = true;
+        break;
       }
     }
 
@@ -37,7 +38,18 @@ class TransactionState extends ChangeNotifier {
   void updateTransaction(Transaction newTransaction) {
     for (var i = 0; i < _transactions.length; i++) {
       if (_transactions[i].id == newTransaction.id) {
-        _transactions[i] = newTransaction;
+        // Check if the transaction date has changed
+        bool dateChanged = !_transactions[i].transactionDate.isAtSameMomentAs(newTransaction.transactionDate);
+
+        if (dateChanged) {
+          // Remove and re-insert to maintain sort order
+          _transactions.removeAt(i);
+          addTransaction(newTransaction);
+        } else {
+          // Date hasn't changed, simple replacement is fine
+          _transactions[i] = newTransaction;
+        }
+
         notifyListeners();
         return;
       }

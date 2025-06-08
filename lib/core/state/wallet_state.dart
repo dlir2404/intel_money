@@ -35,7 +35,7 @@ class WalletState extends ChangeNotifier {
     notifyListeners();
   }
 
-  void decreateWalletBalance(int walletId, double amount) {
+  void decreaseWalletBalance(int walletId, double amount) {
     final index = _wallets.indexWhere((element) => element.id == walletId);
     _wallets[index].balance -= amount;
     notifyListeners();

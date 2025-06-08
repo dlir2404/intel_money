@@ -15,6 +15,8 @@ class CategoryState extends ChangeNotifier {
   List<Category> _incomeCategories = [];
   Category? _lendCategory;
   Category? _borrowCategory;
+  Category? _otherIncomeCategory;
+  Category? _otherExpenseCategory;
 
   List<Category> get categories => _categories;
 
@@ -25,6 +27,10 @@ class CategoryState extends ChangeNotifier {
   Category? get lendCategory => _lendCategory;
 
   Category? get borrowCategory => _borrowCategory;
+
+  Category? get otherIncomeCategory => _otherIncomeCategory;
+
+  Category? get otherExpenseCategory => _otherExpenseCategory;
 
   void setCategories(List<Category> categories) {
     _categories = categories;
@@ -46,6 +52,14 @@ class CategoryState extends ChangeNotifier {
 
     _borrowCategory = categories.firstWhere(
       (element) => element.type == CategoryType.borrow,
+    );
+
+    _otherIncomeCategory = categories.firstWhere(
+      (element) => element.name == "Other" && element.type == CategoryType.income,
+    );
+
+    _otherExpenseCategory = categories.firstWhere(
+      (element) => element.name == "Other" && element.type == CategoryType.expense,
     );
 
     notifyListeners();

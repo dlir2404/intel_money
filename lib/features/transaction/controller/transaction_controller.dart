@@ -15,6 +15,7 @@ import '../../../core/models/wallet.dart';
 import '../../../core/services/cloudinary_service.dart';
 import '../../../core/services/transaction_service.dart';
 import '../../../core/state/app_state.dart';
+import '../../../core/state/category_state.dart';
 import '../../../core/state/related_user_state.dart';
 import '../../../core/state/statistic_state.dart';
 import '../../../core/state/transaction_state.dart';
@@ -32,7 +33,9 @@ class TransactionController {
   final StatisticState _statisticState = StatisticState();
   final RelatedUserState _relatedUserState = RelatedUserState();
 
-  Future<List<Transaction>> getTransactions(Map<String, DateTime> timeRange) async {
+  Future<List<Transaction>> getTransactions(
+    Map<String, DateTime> timeRange,
+  ) async {
     final transactions = await _transactionService.getTransactionsInTimeRange(
       from: timeRange["from"]!,
       to: timeRange["to"]!,
@@ -204,55 +207,50 @@ class TransactionController {
 
     switch (transactionType) {
       case TransactionType.expense:
-        newTransaction = await _transactionService
-            .createExpenseTransaction(
-              amount: amount,
-              categoryId: category!.id,
-              description: description,
-              transactionDate: transactionDate!,
-              sourceWalletId: sourceWallet!.id,
-              image: imageUrl,
-              notAddToReport: false,
-            );
+        newTransaction = await _transactionService.createExpenseTransaction(
+          amount: amount,
+          categoryId: category!.id,
+          description: description,
+          transactionDate: transactionDate!,
+          sourceWalletId: sourceWallet!.id,
+          image: imageUrl,
+          notAddToReport: false,
+        );
         break;
       case TransactionType.income:
-        newTransaction = await _transactionService
-            .createIncomeTransaction(
-              amount: amount,
-              categoryId: category!.id,
-              description: description,
-              transactionDate: transactionDate!,
-              sourceWalletId: sourceWallet!.id,
-            );
+        newTransaction = await _transactionService.createIncomeTransaction(
+          amount: amount,
+          categoryId: category!.id,
+          description: description,
+          transactionDate: transactionDate!,
+          sourceWalletId: sourceWallet!.id,
+        );
         break;
       case TransactionType.transfer:
-        newTransaction = await _transactionService
-            .createTransferTransaction(
-              amount: amount,
-              transactionDate: transactionDate!,
-              sourceWalletId: sourceWallet!.id,
-              destinationWalletId: destinationWallet!.id,
-            );
+        newTransaction = await _transactionService.createTransferTransaction(
+          amount: amount,
+          transactionDate: transactionDate!,
+          sourceWalletId: sourceWallet!.id,
+          destinationWalletId: destinationWallet!.id,
+        );
         break;
       case TransactionType.lend:
-        newTransaction = await _transactionService
-            .createLendTransaction(
-              amount: amount,
-              transactionDate: transactionDate!,
-              sourceWalletId: sourceWallet!.id,
-              categoryId: category!.id,
-              borrowerId: borrower!.id!,
-            );
+        newTransaction = await _transactionService.createLendTransaction(
+          amount: amount,
+          transactionDate: transactionDate!,
+          sourceWalletId: sourceWallet!.id,
+          categoryId: category!.id,
+          borrowerId: borrower!.id!,
+        );
         break;
       case TransactionType.borrow:
-        newTransaction = await _transactionService
-            .createBorrowTransaction(
-              amount: amount,
-              transactionDate: transactionDate!,
-              sourceWalletId: sourceWallet!.id,
-              categoryId: category!.id,
-              lenderId: lender!.id!,
-            );
+        newTransaction = await _transactionService.createBorrowTransaction(
+          amount: amount,
+          transactionDate: transactionDate!,
+          sourceWalletId: sourceWallet!.id,
+          categoryId: category!.id,
+          lenderId: lender!.id!,
+        );
         break;
       case TransactionType.modifyBalance:
         newTransaction = await _transactionService
@@ -403,8 +401,7 @@ class TransactionController {
       throw TransactionException('Amount must be greater than 0');
     }
 
-    if ((transactionType != TransactionType.transfer) &&
-        category == null) {
+    if ((transactionType != TransactionType.transfer) && category == null) {
       throw TransactionException('Please select a category');
     }
 
@@ -449,74 +446,341 @@ class TransactionController {
   }
 
   void updateOtherStatesAfterCreateTransaction(Transaction newTransaction) {
+    final mostSoonModifyBalanceTransaction =
+        getMostSoonModifyBalanceTransactionAfterDate(
+      sourceWallet: newTransaction.sourceWallet,
+      date: newTransaction.transactionDate,
+    );
+
     switch (newTransaction.type) {
       case TransactionType.expense:
-        _appState.decreaseUserBalance(newTransaction.amount);
-        _walletState.decreateWalletBalance(newTransaction.sourceWallet.id, newTransaction.amount);
-        _statisticState.updateStatisticDataAfterCreateTransaction(newTransaction);
+        if (mostSoonModifyBalanceTransaction != null) {
+          updateMostSoonModifyBalanceTransactionAfterCreateTransaction(
+            transaction: newTransaction,
+            mostSoonModifyBalanceTransaction: mostSoonModifyBalanceTransaction as ModifyBalanceTransaction,
+          );
+        } else {
+          _appState.decreaseUserBalance(newTransaction.amount);
+          _walletState.decreaseWalletBalance(
+            newTransaction.sourceWallet.id,
+            newTransaction.amount,
+          );
+        }
+
+        _statisticState.updateStatisticDataAfterCreateTransaction(
+          newTransaction,
+        );
         break;
       case TransactionType.income:
-        _appState.increaseUserBalance(newTransaction.amount);
-        _walletState.increaseWalletBalance(newTransaction.sourceWallet.id, newTransaction.amount);
-        _statisticState.updateStatisticDataAfterCreateTransaction(newTransaction);
+        if (mostSoonModifyBalanceTransaction != null) {
+          updateMostSoonModifyBalanceTransactionAfterCreateTransaction(transaction: newTransaction, mostSoonModifyBalanceTransaction: mostSoonModifyBalanceTransaction as ModifyBalanceTransaction);
+        } else {
+          _appState.increaseUserBalance(newTransaction.amount);
+
+          _walletState.increaseWalletBalance(
+            newTransaction.sourceWallet.id,
+            newTransaction.amount,
+          );
+        }
+
+        _statisticState.updateStatisticDataAfterCreateTransaction(
+          newTransaction,
+        );
         break;
       case TransactionType.transfer:
-        _walletState.decreateWalletBalance(newTransaction.sourceWallet.id, newTransaction.amount);
-        _walletState.increaseWalletBalance((newTransaction as TransferTransaction).destinationWallet.id, newTransaction.amount);
+        //REALLY SPECIAL CASE
+        final mostSoonModifyBalanceTransactionOfSourceWallet = mostSoonModifyBalanceTransaction;
+        final mostSoonModifyBalanceTransactionOfDestinationWallet =
+            getMostSoonModifyBalanceTransactionAfterDate(
+          sourceWallet: (newTransaction as TransferTransaction).destinationWallet,
+          date: newTransaction.transactionDate,
+        );
+
+        if (mostSoonModifyBalanceTransactionOfSourceWallet == null && mostSoonModifyBalanceTransactionOfDestinationWallet == null) {
+          _walletState.decreaseWalletBalance(
+            newTransaction.sourceWallet.id,
+            newTransaction.amount,
+          );
+          _walletState.increaseWalletBalance(
+            newTransaction.destinationWallet.id,
+            newTransaction.amount,
+          );
+        } else if (mostSoonModifyBalanceTransactionOfSourceWallet != null && mostSoonModifyBalanceTransactionOfDestinationWallet == null) {
+          _appState.increaseUserBalance(newTransaction.amount);
+
+          updateMostSoonModifyBalanceTransactionAfterCreateTransaction(
+            transaction: newTransaction,
+            mostSoonModifyBalanceTransaction: mostSoonModifyBalanceTransactionOfSourceWallet as ModifyBalanceTransaction,
+          );
+          _walletState.increaseWalletBalance(
+            newTransaction.destinationWallet.id,
+            newTransaction.amount,
+          );
+        } else if (mostSoonModifyBalanceTransactionOfSourceWallet == null && mostSoonModifyBalanceTransactionOfDestinationWallet != null) {
+          _appState.decreaseUserBalance(newTransaction.amount);
+
+          _walletState.decreaseWalletBalance(
+            newTransaction.sourceWallet.id,
+            newTransaction.amount,
+          );
+          updateMostSoonModifyBalanceTransactionAfterCreateTransaction(
+            transaction: newTransaction,
+            mostSoonModifyBalanceTransaction: mostSoonModifyBalanceTransactionOfDestinationWallet as ModifyBalanceTransaction,
+          );
+        } else {
+          //both modify balance transactions exists
+          updateMostSoonModifyBalanceTransactionAfterCreateTransaction(
+            transaction: newTransaction,
+            mostSoonModifyBalanceTransaction: mostSoonModifyBalanceTransactionOfSourceWallet as ModifyBalanceTransaction,
+          );
+          updateMostSoonModifyBalanceTransactionAfterCreateTransaction(
+            transaction: newTransaction,
+            mostSoonModifyBalanceTransaction: mostSoonModifyBalanceTransactionOfDestinationWallet as ModifyBalanceTransaction,
+          );
+        }
+
         break;
       case TransactionType.lend:
-        _walletState.decreateWalletBalance(newTransaction.sourceWallet.id, newTransaction.amount);
+        if (mostSoonModifyBalanceTransaction != null) {
+          updateMostSoonModifyBalanceTransactionAfterCreateTransaction(
+            transaction: newTransaction,
+            mostSoonModifyBalanceTransaction: mostSoonModifyBalanceTransaction as ModifyBalanceTransaction,
+          );
+        } else {
+          _walletState.decreaseWalletBalance(
+            newTransaction.sourceWallet.id,
+            newTransaction.amount,
+          );
+        }
+
         //increase user total loan
         _appState.increaseUserTotalLoan(newTransaction.amount);
 
         //increase borrower total debt
-        _relatedUserState.increaseRelatedUserTotalDebt((newTransaction as LendTransaction).borrower.id!, newTransaction.amount);
+        _relatedUserState.increaseRelatedUserTotalDebt(
+          (newTransaction as LendTransaction).borrower.id!,
+          newTransaction.amount,
+        );
         break;
       case TransactionType.borrow:
-        _walletState.increaseWalletBalance(newTransaction.sourceWallet.id, newTransaction.amount);
+        if (mostSoonModifyBalanceTransaction != null) {
+          updateMostSoonModifyBalanceTransactionAfterCreateTransaction(
+            transaction: newTransaction,
+            mostSoonModifyBalanceTransaction: mostSoonModifyBalanceTransaction as ModifyBalanceTransaction,
+          );
+        } else {
+          _walletState.increaseWalletBalance(
+            newTransaction.sourceWallet.id,
+            newTransaction.amount,
+          );
+        }
 
         //increase user total debt
         _appState.increaseUserTotalDebt(newTransaction.amount);
 
         //increase lender total loan
-        _relatedUserState.increaseRelatedUserTotalLoan((newTransaction as BorrowTransaction).lender.id!, newTransaction.amount);
+        _relatedUserState.increaseRelatedUserTotalLoan(
+          (newTransaction as BorrowTransaction).lender.id!,
+          newTransaction.amount,
+        );
         break;
       case TransactionType.modifyBalance:
-      // TODO: Handle this case.
-        throw UnimplementedError();
+        if (mostSoonModifyBalanceTransaction != null) {
+          updateMostSoonModifyBalanceTransactionAfterCreateTransaction(
+            transaction: newTransaction,
+            mostSoonModifyBalanceTransaction: mostSoonModifyBalanceTransaction as ModifyBalanceTransaction,
+          );
+        } else {
+          if (newTransaction.amount > 0) {
+            _walletState.increaseWalletBalance(
+              newTransaction.sourceWallet.id,
+              newTransaction.amount,
+            );
+            _appState.increaseUserBalance(newTransaction.amount);
+          } else {
+            _walletState.decreaseWalletBalance(
+              newTransaction.sourceWallet.id,
+              newTransaction.amount.abs(),
+            );
+            _appState.decreaseUserBalance(newTransaction.amount.abs());
+          }
+        }
     }
   }
 
   void updateOtherStatesBeforeRemoveTransaction(Transaction transaction) {
     if (transaction.type == TransactionType.expense) {
       _appState.increaseUserBalance(transaction.amount);
-      _walletState.increaseWalletBalance(transaction.sourceWallet.id, transaction.amount);
+      _walletState.increaseWalletBalance(
+        transaction.sourceWallet.id,
+        transaction.amount,
+      );
 
       _statisticState.updateStatisticDataAfterRemoveTransaction(transaction);
     } else if (transaction.type == TransactionType.income) {
       _appState.decreaseUserBalance(transaction.amount);
-      _walletState.decreateWalletBalance(transaction.sourceWallet.id, transaction.amount);
+      _walletState.decreaseWalletBalance(
+        transaction.sourceWallet.id,
+        transaction.amount,
+      );
 
       _statisticState.updateStatisticDataAfterRemoveTransaction(transaction);
     } else if (transaction.type == TransactionType.lend) {
-      _walletState.increaseWalletBalance(transaction.sourceWallet.id, transaction.amount);
+      _walletState.increaseWalletBalance(
+        transaction.sourceWallet.id,
+        transaction.amount,
+      );
       //decrease user total loan
       _appState.decreaseUserTotalLoan(transaction.amount);
 
       //decrease borrower total debt
-      _relatedUserState.decreaseRelatedUserTotalDebt((transaction as LendTransaction).borrower.id!, transaction.amount);
+      _relatedUserState.decreaseRelatedUserTotalDebt(
+        (transaction as LendTransaction).borrower.id!,
+        transaction.amount,
+      );
     } else if (transaction.type == TransactionType.borrow) {
-      _walletState.decreateWalletBalance(transaction.sourceWallet.id, transaction.amount);
+      _walletState.decreaseWalletBalance(
+        transaction.sourceWallet.id,
+        transaction.amount,
+      );
 
       //decrease user total debt
       _appState.decreaseUserTotalDebt(transaction.amount);
 
       //decrease lender total loan
-      _relatedUserState.decreaseRelatedUserTotalLoan((transaction as BorrowTransaction).lender.id!, transaction.amount);
+      _relatedUserState.decreaseRelatedUserTotalLoan(
+        (transaction as BorrowTransaction).lender.id!,
+        transaction.amount,
+      );
     } else if (transaction.type == TransactionType.transfer) {
-      _walletState.increaseWalletBalance(transaction.sourceWallet.id, transaction.amount);
-      _walletState.decreateWalletBalance((transaction as TransferTransaction).destinationWallet.id, transaction.amount);
+      _walletState.increaseWalletBalance(
+        transaction.sourceWallet.id,
+        transaction.amount,
+      );
+      _walletState.decreaseWalletBalance(
+        (transaction as TransferTransaction).destinationWallet.id,
+        transaction.amount,
+      );
     }
+  }
+
+  Transaction? getMostSoonModifyBalanceTransactionAfterDate({
+    required Wallet sourceWallet,
+    required DateTime date,
+  }) {
+    final transactions = _transactionState.transactions;
+
+    try {
+      return transactions.firstWhere(
+        (t) =>
+            t.type == TransactionType.modifyBalance &&
+            t.sourceWallet.id == sourceWallet.id &&
+            t.transactionDate.isAfter(date),
+      );
+    } catch (e) {
+      return null;
+    }
+  }
+
+  void updateMostSoonModifyBalanceTransactionAfterCreateTransaction({
+    required Transaction transaction,
+    required ModifyBalanceTransaction mostSoonModifyBalanceTransaction,
+  }) {
+    final oldDiff = mostSoonModifyBalanceTransaction.amount;
+
+    double newDiff;
+    if (transaction.type == TransactionType.income) {
+      newDiff = oldDiff - transaction.amount;
+    } else if (transaction.type == TransactionType.expense) {
+      newDiff = oldDiff + transaction.amount;
+    } else if (transaction.type == TransactionType.transfer) {
+      if (transaction.sourceWallet.id == mostSoonModifyBalanceTransaction.sourceWallet.id) {
+        newDiff = oldDiff + transaction.amount; //transfer out
+      } else {
+        newDiff = oldDiff - transaction.amount; //transfer in
+      }
+    } else if (transaction.type == TransactionType.lend) {
+      newDiff = oldDiff + transaction.amount; //lend out
+    } else if (transaction.type == TransactionType.borrow) {
+      newDiff = oldDiff - transaction.amount; //borrow in
+    } else if (transaction.type == TransactionType.modifyBalance) {
+      newDiff = oldDiff - transaction.amount;
+    } else {
+      newDiff = oldDiff; //default case, should not happen
+    }
+
+    ModifyBalanceTransaction updated;
+    if (oldDiff <= 0 && newDiff > 0) {
+      //it means that change from expense to income
+      updated = mostSoonModifyBalanceTransaction.copyWith(
+        category: CategoryState().otherIncomeCategory,
+        amount: newDiff,
+      );
+    } else if (oldDiff > 0 && newDiff <= 0) {
+      //it means that change from income to expense
+      updated = mostSoonModifyBalanceTransaction.copyWith(
+        category: CategoryState().otherExpenseCategory,
+        amount: newDiff,
+      );
+    } else {
+      //normal case, just update amount
+      updated = mostSoonModifyBalanceTransaction.copyWith(
+        amount: newDiff,
+      );
+    }
+
+    _transactionState.updateTransaction(updated);
+  }
+
+  void updateMostSoonModifyBalanceTransactionBeforeRemoveTransaction({
+    required Transaction transaction,
+    required ModifyBalanceTransaction mostSoonModifyBalanceTransaction,
+  }) {
+    final oldDiff = mostSoonModifyBalanceTransaction.amount;
+
+    double newDiff;
+    if (transaction.type == TransactionType.income) {
+      newDiff = oldDiff + transaction.amount;
+    } else if (transaction.type == TransactionType.expense) {
+      newDiff = oldDiff - transaction.amount;
+    } else if (transaction.type == TransactionType.transfer) {
+      if (transaction.sourceWallet.id ==
+          mostSoonModifyBalanceTransaction.sourceWallet.id) {
+        newDiff = oldDiff - transaction.amount; //transfer out
+      } else {
+        newDiff = oldDiff + transaction.amount; //transfer in
+      }
+    } else if (transaction.type == TransactionType.lend) {
+      newDiff = oldDiff - transaction.amount; //lend out
+    } else if (transaction.type == TransactionType.borrow) {
+      newDiff = oldDiff + transaction.amount; //borrow in
+    } else if (transaction.type == TransactionType.modifyBalance) {
+      newDiff = oldDiff + transaction.amount;
+    } else {
+      newDiff = oldDiff; //default case, should not happen
+    }
+
+    ModifyBalanceTransaction updated;
+    if (oldDiff <= 0 && newDiff > 0) {
+      //it means that change from expense to income
+      updated = mostSoonModifyBalanceTransaction.copyWith(
+        category: CategoryState().otherIncomeCategory,
+        amount: newDiff,
+      );
+    } else if (oldDiff > 0 && newDiff <= 0) {
+      //it means that change from income to expense
+      updated = mostSoonModifyBalanceTransaction.copyWith(
+        category: CategoryState().otherExpenseCategory,
+        amount: newDiff,
+      );
+    } else {
+      //normal case, just update amount
+      updated = mostSoonModifyBalanceTransaction.copyWith(
+        amount: newDiff,
+      );
+    }
+
+    _transactionState.updateTransaction(updated);
   }
 
   Future<Transaction> getTransactionById(int transactionId) async {

@@ -41,7 +41,9 @@ class Transaction {
   }
 
   factory Transaction.fromJson(Map<String, dynamic> json) {
-    final transactionType = TransactionType.values.firstWhere((e) => e.value == json['type']);
+    final transactionType = TransactionType.values.firstWhere(
+      (e) => e.value == json['type'],
+    );
     switch (transactionType) {
       case TransactionType.lend:
         return LendTransaction.fromJson(json);
@@ -73,6 +75,30 @@ class Transaction {
       image: json['image'],
     );
   }
+
+  Transaction copyWith({
+    int? id,
+    TransactionType? type,
+    double? amount,
+    Category? category,
+    Wallet? sourceWallet,
+    DateTime? transactionDate,
+    String? description,
+    bool? notAddToReport,
+    String? image,
+  }) {
+    return Transaction(
+      id: id ?? this.id,
+      type: type ?? this.type,
+      amount: amount ?? this.amount,
+      category: category ?? this.category,
+      sourceWallet: sourceWallet ?? this.sourceWallet,
+      transactionDate: transactionDate ?? this.transactionDate,
+      description: description ?? this.description,
+      notAddToReport: notAddToReport ?? this.notAddToReport,
+      image: image ?? this.image,
+    );
+  }
 }
 
 class LendTransaction extends Transaction {
@@ -87,6 +113,7 @@ class LendTransaction extends Transaction {
     super.category,
     super.description,
     super.image,
+    required bool notAddToReport,
   }) : super(type: TransactionType.lend);
 
   factory LendTransaction.fromJson(Map<String, dynamic> json) {
@@ -100,6 +127,33 @@ class LendTransaction extends Transaction {
       category: Category.fromContext(json['categoryId']),
       description: json['description'],
       image: json['image'],
+      notAddToReport: json['notAddToReport'] == true ? true : false,
+    );
+  }
+
+  @override
+  LendTransaction copyWith({
+    int? id,
+    TransactionType? type,
+    double? amount,
+    Category? category,
+    Wallet? sourceWallet,
+    DateTime? transactionDate,
+    String? description,
+    bool? notAddToReport,
+    String? image,
+    RelatedUser? borrower,
+  }) {
+    return LendTransaction(
+      id: id ?? this.id,
+      amount: amount ?? this.amount,
+      borrower: borrower ?? this.borrower,
+      transactionDate: transactionDate ?? this.transactionDate,
+      sourceWallet: sourceWallet ?? this.sourceWallet,
+      category: category ?? this.category,
+      description: description ?? this.description,
+      notAddToReport: notAddToReport ?? this.notAddToReport,
+      image: image ?? this.image,
     );
   }
 }
@@ -116,6 +170,7 @@ class BorrowTransaction extends Transaction {
     super.category,
     super.description,
     super.image,
+    required bool notAddToReport,
   }) : super(type: TransactionType.borrow);
 
   factory BorrowTransaction.fromJson(Map<String, dynamic> json) {
@@ -129,6 +184,33 @@ class BorrowTransaction extends Transaction {
       category: Category.fromContext(json['categoryId']),
       description: json['description'],
       image: json['image'],
+      notAddToReport: json['notAddToReport'] == true ? true : false,
+    );
+  }
+
+  @override
+  BorrowTransaction copyWith({
+    int? id,
+    TransactionType? type,
+    double? amount,
+    Category? category,
+    Wallet? sourceWallet,
+    DateTime? transactionDate,
+    String? description,
+    bool? notAddToReport,
+    String? image,
+    RelatedUser? lender,
+  }) {
+    return BorrowTransaction(
+      id: id ?? this.id,
+      amount: amount ?? this.amount,
+      lender: lender ?? this.lender,
+      transactionDate: transactionDate ?? this.transactionDate,
+      sourceWallet: sourceWallet ?? this.sourceWallet,
+      category: category ?? this.category,
+      description: description ?? this.description,
+      notAddToReport: notAddToReport ?? this.notAddToReport,
+      image: image ?? this.image,
     );
   }
 }
@@ -147,7 +229,9 @@ class TransferTransaction extends Transaction {
   }) : super(type: TransactionType.transfer);
 
   factory TransferTransaction.fromJson(Map<String, dynamic> json) {
-    final destinationWallet = Wallet.fromContext(json['extraInfo']['destinationWalletId']);
+    final destinationWallet = Wallet.fromContext(
+      json['extraInfo']['destinationWalletId'],
+    );
     return TransferTransaction(
       id: json['id'],
       amount: double.parse(json['amount'].toString()),
@@ -158,10 +242,35 @@ class TransferTransaction extends Transaction {
       image: json['image'],
     );
   }
+
+  @override
+  TransferTransaction copyWith({
+    int? id,
+    TransactionType? type,
+    double? amount,
+    Category? category,
+    Wallet? sourceWallet,
+    DateTime? transactionDate,
+    String? description,
+    bool? notAddToReport,
+    String? image,
+    Wallet? destinationWallet,
+  }) {
+    return TransferTransaction(
+      id: id ?? this.id,
+      amount: amount ?? this.amount,
+      destinationWallet: destinationWallet ?? this.destinationWallet,
+      transactionDate: transactionDate ?? this.transactionDate,
+      sourceWallet: sourceWallet ?? this.sourceWallet,
+      description: description ?? this.description,
+      image: image ?? this.image,
+    );
+  }
 }
 
 class ModifyBalanceTransaction extends Transaction {
   double newRealBalance;
+
   ModifyBalanceTransaction({
     required super.id,
     required super.amount,
@@ -177,12 +286,39 @@ class ModifyBalanceTransaction extends Transaction {
     return ModifyBalanceTransaction(
       id: json['id'],
       amount: double.parse(json['amount'].toString()),
-      newRealBalance: double.parse(json['extraInfo']['newRealBalance'].toString()),
+      newRealBalance: double.parse(
+        json['extraInfo']['newRealBalance'].toString(),
+      ),
       transactionDate: AppTime.parseFromApi(json['transactionDate']),
       sourceWallet: Wallet.fromContext(json['sourceWalletId']),
       category: Category.fromContext(json['categoryId']),
       description: json['description'],
       image: json['image'],
+    );
+  }
+
+  @override
+  ModifyBalanceTransaction copyWith({
+    int? id,
+    TransactionType? type,
+    double? amount,
+    Category? category,
+    Wallet? sourceWallet,
+    DateTime? transactionDate,
+    String? description,
+    bool? notAddToReport,
+    String? image,
+    double? newRealBalance,
+  }) {
+    return ModifyBalanceTransaction(
+      id: id ?? this.id,
+      amount: amount ?? this.amount,
+      newRealBalance: newRealBalance ?? this.newRealBalance,
+      transactionDate: transactionDate ?? this.transactionDate,
+      sourceWallet: sourceWallet ?? this.sourceWallet,
+      category: category ?? this.category,
+      description: description ?? this.description,
+      image: image ?? this.image,
     );
   }
 }
