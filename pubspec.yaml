@@ -58,6 +58,7 @@ dependencies:
   syncfusion_flutter_datepicker: ^29.1.41
   flutter_timezone: ^4.1.0
   url_launcher: ^6.3.1
+  flutter_time_picker_spinner: ^2.0.0
 
 dev_dependencies:
   flutter_test:
