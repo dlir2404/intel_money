@@ -85,20 +85,46 @@ class _MainInputState extends State<MainInput> {
   }
 
   void _handleFocusChange() {
-    if (_focusNode.hasFocus) {
-      _showOverlay();
-    } else {
-      _removeOverlay();
+    if (!mounted) return;
+
+    try {
+      if (_focusNode.hasFocus) {
+        _showOverlay();
+      } else {
+        _removeOverlay();
+      }
+    } catch (e) {
+      debugPrint("Error in focus change handler: $e");
     }
   }
 
   @override
+  @override
   void dispose() {
-    _focusNode.removeListener(_handleFocusChange);
-    if (widget.focusNode == null) {
-      _focusNode.dispose();
+    // First cancel any pending operations
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // This ensures we're not in the middle of a build when removing the overlay
+      _removeOverlay();
+    });
+
+    // Safely remove the listener - using try/catch to handle potential issues
+    try {
+      if (_focusNode.hasListeners) {
+        _focusNode.removeListener(_handleFocusChange);
+      }
+    } catch (e) {
+      debugPrint("Error removing focus listener: $e");
     }
-    _removeOverlay();
+
+    // Only dispose the FocusNode if we created it
+    if (widget.focusNode == null) {
+      try {
+        // _focusNode.dispose();
+      } catch (e) {
+        debugPrint("Error disposing focus node: $e");
+      }
+    }
+
     super.dispose();
   }
 
