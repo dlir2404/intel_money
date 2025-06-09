@@ -11,6 +11,7 @@ import 'package:intel_money/core/services/related_user_service.dart';
 import '../../../core/models/category.dart';
 import '../../../core/models/related_user.dart';
 import '../../../core/models/scan_receipt_response.dart';
+import '../../../core/models/statistic_data.dart';
 import '../../../core/models/wallet.dart';
 import '../../../core/services/cloudinary_service.dart';
 import '../../../core/services/transaction_service.dart';
@@ -474,10 +475,6 @@ class TransactionController {
             newTransaction.amount,
           );
         }
-
-        _statisticState.updateStatisticDataAfterCreateTransaction(
-          newTransaction,
-        );
         break;
       case TransactionType.income:
         if (mostSoonModifyBalanceTransaction != null) {
@@ -494,10 +491,6 @@ class TransactionController {
             newTransaction.amount,
           );
         }
-
-        _statisticState.updateStatisticDataAfterCreateTransaction(
-          newTransaction,
-        );
         break;
       case TransactionType.transfer:
         //REALLY SPECIAL CASE
@@ -634,6 +627,8 @@ class TransactionController {
           }
         }
     }
+
+    _statisticState.updateStatisticDataAfterCreateTransaction(newTransaction);
   }
 
   void updateOtherStatesBeforeRemoveTransaction(Transaction transaction) {

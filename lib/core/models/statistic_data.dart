@@ -59,6 +59,24 @@ class StatisticData {
       byQuarterStatistic: [],
     );
   }
+
+  StatisticData copyWith({
+    double? totalIncome,
+    double? totalExpense,
+    List<ByCategoryData>? byCategoryIncome,
+    List<ByCategoryData>? byCategoryExpense,
+    List<StatisticData>? byMonthStatistic,
+    List<StatisticData>? byQuarterStatistic,
+  }) {
+    return StatisticData(
+      totalIncome: totalIncome ?? this.totalIncome,
+      totalExpense: totalExpense ?? this.totalExpense,
+      byCategoryIncome: byCategoryIncome ?? this.byCategoryIncome,
+      byCategoryExpense: byCategoryExpense ?? this.byCategoryExpense,
+      byMonthStatistic: byMonthStatistic ?? this.byMonthStatistic,
+      byQuarterStatistic: byQuarterStatistic ?? this.byQuarterStatistic,
+    );
+  }
 }
 
 
@@ -80,6 +98,18 @@ class ByCategoryData {
       transactions: ((json['transactionIds'] ?? []) as List)
           .map((e) => Transaction.fromContext(e))
           .toList(),
+    );
+  }
+
+  ByCategoryData copyWith({
+    Category? category,
+    double? amount,
+    List<Transaction>? transactions,
+  }) {
+    return ByCategoryData(
+      category: category ?? this.category,
+      amount: amount ?? this.amount,
+      transactions: transactions ?? this.transactions,
     );
   }
 }

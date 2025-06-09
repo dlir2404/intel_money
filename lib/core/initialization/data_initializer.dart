@@ -1,6 +1,7 @@
 // lib/core/initialization/data_initializer.dart
 
 import 'package:flutter/material.dart';
+import 'package:intel_money/features/reports/controller/statistic_controller.dart';
 import 'package:intel_money/features/transaction/controller/transaction_controller.dart';
 import 'package:provider/provider.dart';
 import 'package:intel_money/core/state/app_state.dart';
@@ -109,7 +110,7 @@ class DataInitializer {
 
   Future<void> _loadTodayStatistics() async {
     try {
-      await StatisticService().getTodayStatisticDataV2();
+      await StatisticController().getTodayStatisticDataV2();
       debugPrint('Today statistics loaded successfully');
     } catch (e) {
       debugPrint('Error loading today statistics: $e');

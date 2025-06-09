@@ -10,7 +10,6 @@ import '../models/statistic_data.dart';
 import '../network/api_client.dart';
 
 class StatisticService {
-  final StatisticState _state = StatisticState();
   final ApiClient _apiClient = ApiClient.instance;
 
   static final StatisticService _instance = StatisticService._internal();
@@ -19,15 +18,7 @@ class StatisticService {
 
   StatisticService._internal();
 
-  Future<void> getTodayStatisticData() async {
-    final response = await _apiClient.get('/statistic/today');
-
-    final statisticData = StatisticData.fromJson(response);
-
-    _state.setTodayStatisticData(statisticData);
-  }
-
-  Future<void> getTodayStatisticDataV2() async {
+  Future<StatisticData> getTodayStatisticDataV2() async {
     final todayTransactions = TransactionState().transactions.where((transaction) {
       return AppTime.isToday(transaction.transactionDate);
     }).toList();
@@ -36,18 +27,10 @@ class StatisticService {
       transactions: todayTransactions,
     );
 
-    _state.setTodayStatisticData(statisticData);
+    return statisticData;
   }
 
-  Future<void> getThisWeekStatisticData() async {
-    final response = await _apiClient.get('/statistic/this-week');
-
-    final statisticData = StatisticData.fromJson(response);
-
-    _state.setThisWeekStatisticData(statisticData);
-  }
-
-  Future<void> getThisWeekStatisticDataV2() async {
+  Future<StatisticData> getThisWeekStatisticDataV2() async {
     final thisWeekTransactions = TransactionState().transactions.where((transaction) {
       return AppTime.isThisWeek(transaction.transactionDate);
     }).toList();
@@ -56,18 +39,10 @@ class StatisticService {
       transactions: thisWeekTransactions,
     );
 
-    _state.setThisWeekStatisticData(statisticData);
+    return statisticData;
   }
 
-  Future<void> getThisMonthStatisticData() async {
-    final response = await _apiClient.get('/statistic/this-month');
-
-    final statisticData = StatisticData.fromJson(response);
-
-    _state.setThisMonthStatisticData(statisticData);
-  }
-
-  Future<void> getThisMonthStatisticDataV2() async {
+  Future<StatisticData> getThisMonthStatisticDataV2() async {
     final thisMonthTransactions = TransactionState().transactions.where((transaction) {
       return AppTime.isThisMonth(transaction.transactionDate);
     }).toList();
@@ -76,18 +51,10 @@ class StatisticService {
       transactions: thisMonthTransactions,
     );
 
-    _state.setThisMonthStatisticData(statisticData);
+    return statisticData;
   }
 
-  Future<void> getThisQuarterStatisticData() async {
-    final response = await _apiClient.get('/statistic/this-quarter');
-
-    final statisticData = StatisticData.fromJson(response);
-
-    _state.setThisQuarterStatisticData(statisticData);
-  }
-
-  Future<void> getThisQuarterStatisticDataV2() async {
+  Future<StatisticData> getThisQuarterStatisticDataV2() async {
     final thisQuarterTransactions = TransactionState().transactions.where((transaction) {
       return AppTime.isThisQuarter(transaction.transactionDate);
     }).toList();
@@ -96,15 +63,7 @@ class StatisticService {
       transactions: thisQuarterTransactions,
     );
 
-    _state.setThisQuarterStatisticData(statisticData);
-  }
-
-  Future<void> getThisYearStatisticData() async {
-    final response = await _apiClient.get('/statistic/this-year');
-
-    final statisticData = StatisticData.fromJson(response);
-
-    _state.setThisYearStatisticData(statisticData);
+    return statisticData;
   }
 
   Future<StatisticData> getCustomRangeStatisticData(
@@ -160,7 +119,7 @@ class StatisticService {
             .map((analysisData) => AnalysisData.fromJson(analysisData))
             .toList();
 
-    _state.setByMonthAnalysisData(analysisData);
+    // _state.setByMonthAnalysisData(analysisData);
 
     return analysisData;
   }
@@ -179,7 +138,7 @@ class StatisticService {
             .map((analysisData) => AnalysisData.fromJson(analysisData))
             .toList();
 
-    _state.setByYearAnalysisData(analysisData);
+    // _state.setByYearAnalysisData(analysisData);
   }
 
 
@@ -260,6 +219,69 @@ class StatisticService {
           );
           data.amount += transaction.amount;
           data.transactions.add(transaction);
+        }
+      } else if (transaction.type == TransactionType.modifyBalance) {
+        if (transaction.amount > 0) {
+          //handle as income
+          totalIncome += transaction.amount;
+
+          //use parent category id if available, otherwise use the category id
+          int categoryId = transaction.category!.id;
+          Category category = transaction.category!;
+
+          if (category.parentId != null) {
+            categoryId = category.parentId!;
+            category = Category.fromContext(categoryId);
+          }
+
+          final existIndex = addIncomeCategoryIds.indexOf(categoryId);
+          if (existIndex == -1) {
+            addIncomeCategoryIds.add(categoryId);
+
+            byCategoryIncome.add(
+              ByCategoryData(
+                category: category,
+                amount: transaction.amount,
+                transactions: [transaction],
+              ),
+            );
+          } else {
+            ByCategoryData data = byCategoryIncome.firstWhere(
+                  (element) => element.category.id == categoryId,
+            );
+            data.amount += transaction.amount;
+            data.transactions.add(transaction);
+          }
+        } else {
+          totalExpense += transaction.amount.abs();
+
+          //use parent category id if available, otherwise use the category id
+          int categoryId = transaction.category!.id;
+          Category category = transaction.category!;
+
+          if (category.parentId != null) {
+            categoryId = category.parentId!;
+            category = Category.fromContext(categoryId);
+          }
+
+          final existIndex = addExpenseCategoryIds.indexOf(categoryId);
+          if (existIndex == -1) {
+            addExpenseCategoryIds.add(categoryId);
+
+            byCategoryExpense.add(
+              ByCategoryData(
+                category: category,
+                amount: transaction.amount.abs(),
+                transactions: [transaction],
+              ),
+            );
+          } else {
+            ByCategoryData data = byCategoryExpense.firstWhere(
+                  (element) => element.category.id == categoryId,
+            );
+            data.amount += transaction.amount.abs();
+            data.transactions.add(transaction);
+          }
         }
       }
     }
