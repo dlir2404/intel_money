@@ -858,6 +858,7 @@ class TransactionController {
       } else if (transactions[i].type == TransactionType.modifyBalance) {
         baseBalance =
             (transactions[i] as ModifyBalanceTransaction).newRealBalance;
+        break;
       }
     }
     return baseBalance + diff;

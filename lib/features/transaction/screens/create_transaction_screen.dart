@@ -176,6 +176,17 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
       date: _transactionDate!,
     );
 
+    if (_selectedCategory != null) {
+      if (_selectedCategory!.type == CategoryType.income &&
+          _newRealBalance - currentBalance < 0) {
+        _selectedCategory = null;
+      } else if (_selectedCategory!.type ==
+          CategoryType.expense &&
+          _newRealBalance - currentBalance > 0) {
+        _selectedCategory = null;
+      }
+    }
+
     setState(() {
       _currentBalance = currentBalance;
     });
