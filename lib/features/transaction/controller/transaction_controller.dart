@@ -372,8 +372,15 @@ class TransactionController {
         );
         break;
       case TransactionType.modifyBalance:
-        // TODO: Handle this case.
-        throw UnimplementedError();
+        newTransaction = await _transactionService.updateModifyBalanceTransaction(
+          transactionId: oldTransaction.id,
+          newRealBalance: newRealBalance!,
+          categoryId: category!.id,
+          description: description,
+          sourceWalletId: sourceWallet!.id,
+          transactionDate: transactionDate!,
+          image: imageUrl,
+        );
     }
 
     updateOtherStatesBeforeRemoveTransaction(oldTransaction);
@@ -822,13 +829,20 @@ class TransactionController {
   double calculateBalanceAtDate({
     required Wallet sourceWallet,
     required DateTime date,
+    Transaction? excludeTransaction,
   }) {
     double baseBalance = 0;
     double diff = 0;
 
     final transactions = _transactionState.transactions;
     for (var i = 0; i < transactions.length; i++) {
-      if (transactions[i].transactionDate.isAfter(date)) {
+      // skip others, only keep (date, latestModifyDate]
+      if (transactions[i].transactionDate.isAfter(date) || transactions[i].transactionDate.isAtSameMomentAs(date)) {
+        continue;
+      }
+
+      // skip excluded transaction
+      if (excludeTransaction != null && transactions[i].id == excludeTransaction.id) {
         continue;
       }
 

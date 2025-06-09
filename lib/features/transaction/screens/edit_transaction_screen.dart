@@ -8,8 +8,10 @@ import '../../../core/models/transaction.dart';
 import '../../../core/models/wallet.dart';
 import '../../../core/services/ad_service.dart';
 import '../../../shared/component/input/date_input.dart';
+import '../../../shared/component/input/different_input.dart';
 import '../../../shared/component/input/form_input.dart';
 import '../../../shared/component/input/main_input.dart';
+import '../../../shared/const/enum/category_type.dart';
 import '../../../shared/const/enum/transaction_type.dart';
 import '../../../shared/helper/toast.dart';
 import '../../category/widgets/select_category_input.dart';
@@ -41,6 +43,7 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
   RelatedUser? _borrower;
   RelatedUser? _lender;
 
+  late double _currentBalance;
   late double _newRealBalance;
 
   bool _isLoading = false;
@@ -70,7 +73,13 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
       _destinationWallet =
           (widget.transaction as TransferTransaction).destinationWallet;
     } else if (widget.transaction is ModifyBalanceTransaction) {
-      _newRealBalance = (widget.transaction as ModifyBalanceTransaction).newRealBalance;
+      _currentBalance =
+          (widget.transaction as ModifyBalanceTransaction).newRealBalance -
+          widget.transaction.amount;
+      _newRealBalance =
+          (widget.transaction as ModifyBalanceTransaction).newRealBalance;
+
+      // getCurrentBalance();
     }
   }
 
@@ -92,7 +101,7 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
         lender: _lender,
         borrower: _borrower,
         newRealBalance: _newRealBalance,
-        difference: _newRealBalance - _sourceWallet.balance,
+        difference: _newRealBalance - _currentBalance,
         image: _image,
       );
 
@@ -160,6 +169,33 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
     }
   }
 
+  void getCurrentBalance() {
+    if (_transactionType != TransactionType.modifyBalance) {
+      return;
+    }
+
+    final currentBalance = _transactionController.calculateBalanceAtDate(
+      sourceWallet: _sourceWallet,
+      date: _transactionDate,
+      excludeTransaction: widget.transaction
+    );
+
+    if (_category != null) {
+      if (_category!.type == CategoryType.income &&
+          _newRealBalance - currentBalance < 0) {
+        _category = null;
+      } else if (_category!.type ==
+          CategoryType.expense &&
+          _newRealBalance - currentBalance > 0) {
+        _category = null;
+      }
+    }
+
+    setState(() {
+      _currentBalance = currentBalance;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -175,27 +211,51 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              MainInput(
-                initialValue: _amount,
-                onChanged: (double newValue) {
-                  setState(() {
-                    _amount = newValue;
-                  });
-                },
-                label: 'Amount',
-              ),
+              _transactionType != TransactionType.modifyBalance
+                  ? MainInput(
+                    initialValue: _amount,
+                    onChanged: (double newValue) {
+                      setState(() {
+                        _amount = newValue;
+                      });
+                    },
+                    label: 'Amount',
+                  )
+                  : DifferentInput(
+                    oldValue: _currentBalance,
+                    newValue: _newRealBalance,
+                    oldLabel: 'Balance in the account',
+                    newLabel: 'Actual Balance',
+                    onValueChanged: (double newValue) {
+                      if (_category != null) {
+                        if (_category!.type == CategoryType.income &&
+                            newValue - _currentBalance < 0) {
+                          _category = null;
+                        } else if (_category!.type == CategoryType.expense &&
+                            newValue - _currentBalance > 0) {
+                          _category = null;
+                        }
+                      }
+
+                      setState(() {
+                        _newRealBalance = newValue;
+                      });
+                    },
+                  ),
               const SizedBox(height: 16),
 
-              if (_transactionType == TransactionType.income ||
-                  _transactionType == TransactionType.expense ||
-                  _transactionType == TransactionType.lend ||
-                  _transactionType == TransactionType.borrow)
+              if (_transactionType != TransactionType.transfer)
                 Column(
                   children: [
                     SelectCategoryInput(
                       category: _category,
                       placeholder: 'Select Category',
-                      categoryType: _transactionType.categoryType,
+                      categoryType:
+                          _transactionType != TransactionType.modifyBalance
+                              ? _transactionType.categoryType
+                              : (_newRealBalance - _currentBalance) > 0
+                              ? CategoryType.income
+                              : CategoryType.expense,
                       onCategorySelected: (category) {
                         setState(() {
                           _category = category;
@@ -246,6 +306,8 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
                   setState(() {
                     _sourceWallet = wallet;
                   });
+
+                  getCurrentBalance();
                 },
               ),
               const SizedBox(height: 16),
@@ -273,6 +335,8 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
                   setState(() {
                     _transactionDate = date;
                   });
+
+                  getCurrentBalance();
                 },
               ),
               const SizedBox(height: 16),

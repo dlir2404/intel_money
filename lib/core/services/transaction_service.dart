@@ -303,6 +303,27 @@ class TransactionService {
     return transaction;
   }
 
+  Future<Transaction> updateModifyBalanceTransaction({
+    required int transactionId,
+    required double newRealBalance,
+    required int categoryId,
+    required String? description,
+    required DateTime transactionDate,
+    required int sourceWalletId,
+    String? image,
+  }) async {
+    final response = await _apiClient.put("/transaction/modify-balance/update/$transactionId", {
+      'newRealBalance': newRealBalance,
+      'categoryId': categoryId,
+      'description': description,
+      'transactionDate': AppTime.toUtcIso8601String(transactionDate),
+      'sourceWalletId': sourceWalletId,
+      'image': image,
+    });
+
+    return Transaction.fromJson(response);
+  }
+
   Future<void> deleteTransaction(int transactionId) async {
     final response = await _apiClient.delete('/transaction/$transactionId');
     if (response == null || response['result'] != true) {
