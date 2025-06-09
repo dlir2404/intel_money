@@ -252,17 +252,17 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
                   )
                   : DifferentInput(
                     oldValue: _currentBalance,
-                    newValue: _amount,
+                    newValue: _newRealBalance,
                     oldLabel: 'Balance in the account',
                     newLabel: 'Actual Balance',
                     onValueChanged: (double newValue) {
                       if (_selectedCategory != null) {
                         if (_selectedCategory!.type == CategoryType.income &&
-                            newValue - _sourceWallet!.balance < 0) {
+                            newValue - _currentBalance < 0) {
                           _selectedCategory = null;
                         } else if (_selectedCategory!.type ==
                                 CategoryType.expense &&
-                            newValue - _sourceWallet!.balance > 0) {
+                            newValue - _currentBalance > 0) {
                           _selectedCategory = null;
                         }
                       }
@@ -284,7 +284,7 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
                           _selectedTransactionType !=
                                   TransactionType.modifyBalance
                               ? _selectedTransactionType.categoryType
-                              : (_newRealBalance - _sourceWallet!.balance) > 0
+                              : (_newRealBalance - _currentBalance) > 0
                               ? CategoryType.income
                               : CategoryType.expense,
                       onCategorySelected: (category) {
