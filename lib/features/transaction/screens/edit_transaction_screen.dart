@@ -65,6 +65,9 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
                 widget.transaction.image!.isNotEmpty)
             ? widget.transaction.image
             : null;
+
+    _currentBalance = 0;
+    _newRealBalance = 0;
     if (widget.transaction is LendTransaction) {
       _borrower = (widget.transaction as LendTransaction).borrower;
     } else if (widget.transaction is BorrowTransaction) {
