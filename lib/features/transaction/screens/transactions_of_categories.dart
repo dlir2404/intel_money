@@ -18,7 +18,7 @@ class TransactionsOfCategories extends StatelessWidget {
   ) {
     final totalValue = transactions.fold(
       0.0,
-      (previousValue, element) => previousValue + element.amount,
+      (previousValue, element) => previousValue + element.amount.abs(),
     );
 
     return Container(

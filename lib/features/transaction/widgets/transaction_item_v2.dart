@@ -4,6 +4,7 @@ import 'package:intel_money/shared/const/enum/transaction_type.dart';
 import 'package:intel_money/shared/helper/app_time.dart';
 
 import '../../../core/models/transaction.dart';
+import '../screens/edit_transaction_screen.dart';
 
 class TransactionItemV2 extends StatelessWidget {
   final Transaction transaction;
@@ -23,15 +24,34 @@ class TransactionItemV2 extends StatelessWidget {
       color = Colors.red;
     } else if (transaction.type == TransactionType.income) {
       color = Colors.green;
+    } else if (transaction.type == TransactionType.modifyBalance) {
+      if (transaction.amount < 0) {
+        color = Colors.red;
+      } else {
+        color = Colors.green;
+      }
     }
 
-    return CurrencyDoubleText(value: transaction.amount, color: color, fontSize: 16);
+    return CurrencyDoubleText(
+      value: transaction.amount.abs(),
+      color: color,
+      fontSize: 16,
+    );
   }
 
   Widget _buildWallet() {
     return Row(
       children: [
-        Expanded(child: const SizedBox()),
+        const SizedBox(width: 16),
+        Expanded(
+          child:
+              transaction.type == TransactionType.modifyBalance
+                  ? Text(
+                    "Adjust account balance",
+                    style: const TextStyle(fontSize: 12, color: Colors.grey),
+                  )
+                  : const SizedBox(width: 12),
+        ),
 
         Container(
           padding: const EdgeInsets.all(4),
@@ -58,25 +78,34 @@ class TransactionItemV2 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.white,
-      padding: const EdgeInsets.all(8),
-      child: Column(
-        children: [
-          Row(
-            children: [
-              const SizedBox(width: 16),
-
-              _buildDay(),
-              Expanded(child: const SizedBox()),
-
-              _buildValue(),
-              const SizedBox(width: 12),
-            ],
+    return InkWell(
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => EditTransactionScreen(transaction: transaction),
           ),
+        );
+      },
+      child: Container(
+        color: Colors.white,
+        padding: const EdgeInsets.all(8),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                const SizedBox(width: 16),
 
-          _buildWallet(),
-        ],
+                _buildDay(),
+                Expanded(child: const SizedBox()),
+
+                _buildValue(),
+                const SizedBox(width: 12),
+              ],
+            ),
+
+            _buildWallet(),
+          ],
+        ),
       ),
     );
   }
