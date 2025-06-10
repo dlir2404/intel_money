@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:intel_money/shared/const/enum/transaction_type.dart';
 import 'package:pie_chart/pie_chart.dart';
 
 import '../../const/colors/app_pie_chart_colors.dart';
@@ -11,6 +12,7 @@ class AppDonutChart extends StatelessWidget {
   final bool showLegends;
   final bool showLegendsInRow;
   final bool centerChart;
+  final TransactionType type;
 
   const AppDonutChart({
     super.key,
@@ -21,6 +23,7 @@ class AppDonutChart extends StatelessWidget {
     this.showLegends = true,
     this.showLegendsInRow = true,
     this.centerChart = false,
+    this.type = TransactionType.expense,
   });
 
   Widget _buildLegend(Color color, String text) {
@@ -60,7 +63,10 @@ class AppDonutChart extends StatelessWidget {
 
           return Padding(
             padding: const EdgeInsets.only(bottom: 8),
-            child: _buildLegend(AppPieChartColor.getColor(index), entry.key),
+            child: _buildLegend(
+                type == TransactionType.income ? AppPieChartColor.getIncomeColor(index) : AppPieChartColor.getExpenseColor(index),
+                entry.key
+            ),
           );
         }).toList(),
       ),
@@ -84,6 +90,9 @@ class AppDonutChart extends StatelessWidget {
             ringStrokeWidth: ringStrokeWidth,
             legendOptions: const LegendOptions(showLegends: false),
             chartValuesOptions: const ChartValuesOptions(showChartValues: false),
+            colorList: type == TransactionType.income
+                ? AppPieChartColor.defaultIncomeColorList
+                : AppPieChartColor.defaultExpenseColorList,
           ),
         ),
 

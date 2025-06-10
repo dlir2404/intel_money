@@ -4,6 +4,7 @@ import 'package:intel_money/features/transaction/screens/transactions_of_categor
 import '../../../core/models/statistic_data.dart';
 import '../../../shared/component/charts/donut_chart.dart';
 import '../../../shared/component/typos/currency_double_text.dart';
+import '../../../shared/const/enum/transaction_type.dart';
 import '../../../shared/helper/app_time.dart';
 import '../../../shared/helper/formatter.dart';
 
@@ -51,7 +52,7 @@ class _DetailRatioScreenState extends State<DetailRatioScreen>
     return result;
   }
 
-  Widget _buildDescription(double total, List<ByCategoryData> data) {
+  Widget _buildDescription(double total, List<ByCategoryData> data, TransactionType type) {
     return Container(
       color: Colors.white,
       child: Column(
@@ -60,13 +61,18 @@ class _DetailRatioScreenState extends State<DetailRatioScreen>
             (item) => InkWell(
               onTap: () {
                 Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => TransactionsOfCategories(
-                    byCategoryData: item,
-                  )),
+                  MaterialPageRoute(
+                    builder:
+                        (context) =>
+                            TransactionsOfCategories(byCategoryData: item),
+                  ),
                 );
               },
               child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 16,
+                  horizontal: 12,
+                ),
                 decoration: BoxDecoration(
                   border: Border(
                     bottom: BorderSide(color: Colors.grey[200]!, width: 1),
@@ -121,11 +127,17 @@ class _DetailRatioScreenState extends State<DetailRatioScreen>
                         children: [
                           Expanded(
                             flex: item.amount.toInt(),
-                            child: Container(height: 4, color: Colors.redAccent),
+                            child: Container(
+                              height: 4,
+                              color: type == TransactionType.income ? Colors.green : Colors.redAccent,
+                            ),
                           ),
                           Expanded(
                             flex: (total - item.amount).toInt(),
-                            child: Container(height: 4, color: Colors.grey[200]),
+                            child: Container(
+                              height: 4,
+                              color: Colors.grey[200],
+                            ),
                           ),
                         ],
                       ),
@@ -140,7 +152,13 @@ class _DetailRatioScreenState extends State<DetailRatioScreen>
     );
   }
 
-  Widget _buildTab(String totalTitle, String emptyTitle, double total, List<ByCategoryData> data) {
+  Widget _buildTab({
+    required TransactionType type,
+    required String totalTitle,
+    required String emptyTitle,
+    required double total,
+    required List<ByCategoryData> data,
+  }) {
     if (total == 0 || data.isEmpty) {
       return Center(
         child: Text(
@@ -179,14 +197,15 @@ class _DetailRatioScreenState extends State<DetailRatioScreen>
                 showLegends: false,
                 showLegendsInRow: true,
                 centerChart: true,
+                type: type,
               ),
             ),
             const SizedBox(height: 12),
 
-            _buildDescription(total, data),
+            _buildDescription(total, data, type),
           ],
         ),
-      )
+      ),
     );
   }
 
@@ -213,16 +232,18 @@ class _DetailRatioScreenState extends State<DetailRatioScreen>
               controller: _tabController,
               children: [
                 _buildTab(
-                  "Total Expense",
-                  "No expense record found",
-                  _statisticData.totalExpense,
-                  _statisticData.byCategoryExpense,
+                  type: TransactionType.expense,
+                  totalTitle: "Total Expense",
+                  emptyTitle: "No expense record found",
+                  total: _statisticData.totalExpense,
+                  data: _statisticData.byCategoryExpense,
                 ),
                 _buildTab(
-                  "Total Income",
-                  "No income record found",
-                  _statisticData.totalIncome,
-                  _statisticData.byCategoryIncome,
+                  type: TransactionType.income,
+                  totalTitle: "Total Income",
+                  emptyTitle: "No income record found",
+                  total: _statisticData.totalIncome,
+                  data: _statisticData.byCategoryIncome,
                 ),
               ],
             ),
