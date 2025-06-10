@@ -40,10 +40,29 @@ class TransactionItem extends StatelessWidget {
       name = transaction.type.name;
     }
 
+    if (transaction.type != TransactionType.modifyBalance) {
+      return Expanded(
+        child: Text(
+          name,
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+        ),
+      );
+    }
+
     return Expanded(
-      child: Text(
-        name,
-        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            name,
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+          ),
+          Text(
+            "Adjust account balance",
+            style: const TextStyle(fontSize: 12, color: Colors.grey),
+          ),
+        ],
       ),
     );
   }
@@ -54,9 +73,11 @@ class TransactionItem extends StatelessWidget {
       color = Colors.red;
     } else if (transaction.type == TransactionType.income) {
       color = Colors.green;
+    } else if (transaction.type == TransactionType.modifyBalance) {
+      color = transaction.amount < 0 ? Colors.red : Colors.green;
     }
 
-    return CurrencyDoubleText(value: transaction.amount, color: color);
+    return CurrencyDoubleText(value: transaction.amount.abs(), color: color);
   }
 
   @override

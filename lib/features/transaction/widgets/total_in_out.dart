@@ -19,6 +19,12 @@ class TotalInOut extends StatelessWidget {
         totalIncome += transaction.amount;
       } else if (transaction.type == TransactionType.expense) {
         totalExpense += transaction.amount;
+      } else if (transaction.type == TransactionType.modifyBalance) {
+        if (transaction.amount > 0) {
+          totalIncome += transaction.amount;
+        } else {
+          totalExpense += transaction.amount.abs();
+        }
       }
     }
 
