@@ -20,7 +20,7 @@ class TransactionState extends ChangeNotifier {
   void addTransaction(Transaction transaction) {
     bool isInserted = false;
     for (var i = 0; i < _transactions.length; i++) {
-      if (transaction.transactionDate.isAfter(_transactions[i].transactionDate)) {
+      if (transaction.transactionDate.isAfter(_transactions[i].transactionDate) || transaction.transactionDate.isAtSameMomentAs(_transactions[i].transactionDate)) {
         _transactions.insert(i, transaction);
         isInserted = true;
         break;

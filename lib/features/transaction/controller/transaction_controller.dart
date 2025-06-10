@@ -638,6 +638,8 @@ class TransactionController {
           date: transaction.transactionDate,
         );
 
+    _statisticState.updateStatisticDataAfterRemoveTransaction(transaction);
+
     if (transaction.type == TransactionType.expense) {
       if (mostSoonModifyBalanceTransaction != null) {
         updateMostSoonModifyBalanceTransactionBeforeRemoveTransaction(
@@ -653,7 +655,6 @@ class TransactionController {
         );
       }
 
-      _statisticState.updateStatisticDataAfterRemoveTransaction(transaction);
     } else if (transaction.type == TransactionType.income) {
       if (mostSoonModifyBalanceTransaction != null) {
         updateMostSoonModifyBalanceTransactionBeforeRemoveTransaction(
@@ -669,7 +670,6 @@ class TransactionController {
         );
       }
 
-      _statisticState.updateStatisticDataAfterRemoveTransaction(transaction);
     } else if (transaction.type == TransactionType.lend) {
       if (mostSoonModifyBalanceTransaction != null) {
         updateMostSoonModifyBalanceTransactionBeforeRemoveTransaction(
