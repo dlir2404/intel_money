@@ -7,6 +7,7 @@ import '../../shared/const/enum/transaction_type.dart';
 import '../models/analysis_data.dart';
 import '../models/category.dart';
 import '../models/statistic_data.dart';
+import '../models/wallet.dart';
 import '../network/api_client.dart';
 
 class StatisticService {
@@ -19,21 +20,21 @@ class StatisticService {
   StatisticService._internal();
 
   Future<StatisticData> getTodayStatisticDataV2() async {
-    final todayTransactions = TransactionState().transactions.where((transaction) {
-      return AppTime.isToday(transaction.transactionDate);
-    }).toList();
+    final todayTransactions =
+        TransactionState().transactions.where((transaction) {
+          return AppTime.isToday(transaction.transactionDate);
+        }).toList();
 
-    final statisticData = calculateStatistic(
-      transactions: todayTransactions,
-    );
+    final statisticData = calculateStatistic(transactions: todayTransactions);
 
     return statisticData;
   }
 
   Future<StatisticData> getThisWeekStatisticDataV2() async {
-    final thisWeekTransactions = TransactionState().transactions.where((transaction) {
-      return AppTime.isThisWeek(transaction.transactionDate);
-    }).toList();
+    final thisWeekTransactions =
+        TransactionState().transactions.where((transaction) {
+          return AppTime.isThisWeek(transaction.transactionDate);
+        }).toList();
 
     final statisticData = calculateStatistic(
       transactions: thisWeekTransactions,
@@ -43,9 +44,10 @@ class StatisticService {
   }
 
   Future<StatisticData> getThisMonthStatisticDataV2() async {
-    final thisMonthTransactions = TransactionState().transactions.where((transaction) {
-      return AppTime.isThisMonth(transaction.transactionDate);
-    }).toList();
+    final thisMonthTransactions =
+        TransactionState().transactions.where((transaction) {
+          return AppTime.isThisMonth(transaction.transactionDate);
+        }).toList();
 
     final statisticData = calculateStatistic(
       transactions: thisMonthTransactions,
@@ -55,13 +57,49 @@ class StatisticService {
   }
 
   Future<StatisticData> getThisQuarterStatisticDataV2() async {
-    final thisQuarterTransactions = TransactionState().transactions.where((transaction) {
-      return AppTime.isThisQuarter(transaction.transactionDate);
-    }).toList();
+    final thisQuarterTransactions =
+        TransactionState().transactions.where((transaction) {
+          return AppTime.isThisQuarter(transaction.transactionDate);
+        }).toList();
 
     final statisticData = calculateStatistic(
       transactions: thisQuarterTransactions,
     );
+
+    return statisticData;
+  }
+
+  Future<StatisticData> getThisYearStatisticDataV2() async {
+    final thisYearTransactions =
+        TransactionState().transactions.where((transaction) {
+          return AppTime.isThisYear(transaction.transactionDate);
+        }).toList();
+
+    final statisticData = calculateStatistic(
+      transactions: thisYearTransactions,
+    );
+
+    List<StatisticData> byMonthStatistic = [];
+    for (int month = 1; month <= 12; month++) {
+      final monthlyStatistic = getMonthlyStatisticData(
+        transactions: thisYearTransactions,
+        month: month,
+        year: DateTime.now().year,
+      );
+      byMonthStatistic.add(monthlyStatistic);
+    }
+    statisticData.byMonthStatistic = byMonthStatistic;
+
+    List<StatisticData> byQuarterStatistic = [];
+    for (int quarter = 1; quarter <= 4; quarter++) {
+      final quarterlyStatistic = getQuarterlyStatisticData(
+        transactions: thisYearTransactions,
+        quarter: quarter,
+        year: DateTime.now().year,
+      );
+      byQuarterStatistic.add(quarterlyStatistic);
+    }
+    statisticData.byQuarterStatistic = byQuarterStatistic;
 
     return statisticData;
   }
@@ -79,6 +117,19 @@ class StatisticService {
     );
 
     final statisticData = StatisticData.fromJson(response);
+    return statisticData;
+  }
+
+  Future<StatisticData> getCustomRangeStatisticDataV2(
+    DateTime from,
+    DateTime to,
+  ) async {
+    final transactions = TransactionState().transactions.where((transaction) {
+      return (transaction.transactionDate.isAfter(from) || transaction.transactionDate.isAtSameMomentAs(from)) &&
+             transaction.transactionDate.isBefore(to);
+    }).toList();
+
+    final statisticData = calculateStatistic(transactions: transactions);
     return statisticData;
   }
 
@@ -141,9 +192,56 @@ class StatisticService {
     // _state.setByYearAnalysisData(analysisData);
   }
 
+  /// month from 1 to 12
+  /// year is the full year (e.g. 2023)
+  StatisticData getMonthlyStatisticData({
+    required List<Transaction> transactions,
+    required int month,
+    required int year,
+    List<Category>? categories,
+    List<Wallet>? wallets,
+  }) {
+    final filteredTransactions = transactions.where((transaction) {
+      return transaction.transactionDate.month == month &&
+          transaction.transactionDate.year == year;
+    }).toList();
 
+    final statisticData = calculateStatistic(transactions: filteredTransactions);
 
+    return statisticData;
+  }
 
+  StatisticData getQuarterlyStatisticData({
+    required List<Transaction> transactions,
+    required int quarter,
+    required int year,
+    List<Category>? categories,
+    List<Wallet>? wallets,
+  }) {
+    final filteredTransactions = transactions.where((transaction) {
+      final month = transaction.transactionDate.month;
+      final transactionYear = transaction.transactionDate.year;
+
+      if (transactionYear != year) return false;
+
+      switch (quarter) {
+        case 1:
+          return month >= 1 && month <= 3;
+        case 2:
+          return month >= 4 && month <= 6;
+        case 3:
+          return month >= 7 && month <= 9;
+        case 4:
+          return month >= 10 && month <= 12;
+        default:
+          return false;
+      }
+    }).toList();
+
+    final statisticData = calculateStatistic(transactions: filteredTransactions);
+
+    return statisticData;
+  }
 
   /// NEW
   StatisticData calculateStatistic({
@@ -247,7 +345,7 @@ class StatisticService {
             );
           } else {
             ByCategoryData data = byCategoryIncome.firstWhere(
-                  (element) => element.category.id == categoryId,
+              (element) => element.category.id == categoryId,
             );
             data.amount += transaction.amount;
             data.transactions.add(transaction);
@@ -277,7 +375,7 @@ class StatisticService {
             );
           } else {
             ByCategoryData data = byCategoryExpense.firstWhere(
-                  (element) => element.category.id == categoryId,
+              (element) => element.category.id == categoryId,
             );
             data.amount += transaction.amount.abs();
             data.transactions.add(transaction);

@@ -8,6 +8,10 @@ import '../../../core/state/statistic_state.dart';
 import '../../../shared/const/enum/transaction_type.dart';
 
 class StatisticController {
+  static final StatisticController _instance = StatisticController._internal();
+  factory StatisticController() => _instance;
+  StatisticController._internal();
+
   final StatisticState _state = StatisticState();
   final StatisticService _statisticService = StatisticService();
 
@@ -40,7 +44,15 @@ class StatisticController {
   }
 
   Future<void> getThisYearStatisticDataV2() async {
-    //TODO: Implement this method
+    final statisticData = await _statisticService.getThisYearStatisticDataV2();
+    _state.setThisYearStatisticData(statisticData);
+  }
+
+  Future<StatisticData> getCustomRangeStatisticDataV2({
+    required DateTime from,
+    required DateTime to,
+  }) async {
+    return await _statisticService.getCustomRangeStatisticDataV2(from, to);
   }
 
   static StatisticData calculateNewStatisticDataAfterCreateTransaction({

@@ -26,6 +26,11 @@ import '../../../shared/const/enum/transaction_data_source_type.dart';
 import '../../../shared/const/enum/transaction_type.dart';
 
 class TransactionController {
+  static final TransactionController _instance = TransactionController._internal();
+  factory TransactionController() => _instance;
+  TransactionController._internal();
+
+
   final TransactionService _transactionService = TransactionService();
   final RelatedUserService _relatedUserService = RelatedUserService();
   final CloudinaryService _cloudinaryService = CloudinaryService();

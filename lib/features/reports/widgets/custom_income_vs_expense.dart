@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intel_money/features/reports/controller/statistic_controller.dart';
 import 'package:intel_money/shared/component/filters/day_range_picker.dart';
 import 'package:intel_money/shared/helper/app_time.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
@@ -21,10 +22,12 @@ class _CustomIncomeVsExpenseState extends State<CustomIncomeVsExpense> {
   DateTime _endDate = AppTime.endOfToday();
   bool _isLoading = true;
 
+  StatisticController get _statisticController => StatisticController();
+
   Future<void> _getData() async {
-    final data = await StatisticService().getCustomRangeStatisticData(
-      _startDate,
-      _endDate,
+    final data = await _statisticController.getCustomRangeStatisticDataV2(
+      from: _startDate,
+      to: _endDate,
     );
 
     setState(() {
