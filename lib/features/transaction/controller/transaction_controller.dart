@@ -7,6 +7,7 @@ import 'package:intel_money/core/models/extract_transaction_info_response.dart';
 import 'package:intel_money/core/models/transaction.dart';
 import 'package:intel_money/core/services/ai_service.dart';
 import 'package:intel_money/core/services/related_user_service.dart';
+import 'package:intel_money/shared/helper/app_time.dart';
 
 import '../../../core/models/category.dart';
 import '../../../core/models/related_user.dart';
@@ -265,8 +266,7 @@ class TransactionController {
             );
     }
 
-    _transactionState.addTransaction(newTransaction);
-    updateOtherStatesAfterCreateTransaction(newTransaction);
+    updateStatesAfterCreateTransaction(newTransaction);
   }
 
   Future<void> saveTransaction({
@@ -373,22 +373,21 @@ class TransactionController {
         );
         break;
       case TransactionType.modifyBalance:
-        newTransaction = await _transactionService.updateModifyBalanceTransaction(
-          transactionId: oldTransaction.id,
-          newRealBalance: newRealBalance!,
-          categoryId: category!.id,
-          description: description,
-          sourceWalletId: sourceWallet!.id,
-          transactionDate: transactionDate!,
-          image: imageUrl,
-        );
+        newTransaction = await _transactionService
+            .updateModifyBalanceTransaction(
+              transactionId: oldTransaction.id,
+              newRealBalance: newRealBalance!,
+              categoryId: category!.id,
+              description: description,
+              sourceWalletId: sourceWallet!.id,
+              transactionDate: transactionDate!,
+              image: imageUrl,
+            );
     }
 
-    updateOtherStatesBeforeRemoveTransaction(oldTransaction);
-    _transactionState.removeTransaction(oldTransaction.id);
+    updateStatesAfterRemoveTransaction(oldTransaction);
 
-    _transactionState.addTransaction(newTransaction);
-    updateOtherStatesAfterCreateTransaction(newTransaction);
+    updateStatesAfterCreateTransaction(newTransaction);
   }
 
   void _validateFields({
@@ -449,15 +448,16 @@ class TransactionController {
   Future<void> deleteTransaction(Transaction transaction) async {
     await _transactionService.deleteTransaction(transaction.id);
 
-    updateOtherStatesBeforeRemoveTransaction(transaction);
-    _transactionState.removeTransaction(transaction.id);
+    updateStatesAfterRemoveTransaction(transaction);
   }
 
-  void updateOtherStatesAfterCreateTransaction(Transaction newTransaction) {
+  void updateStatesAfterCreateTransaction(Transaction newTransaction) {
+    _transactionState.addTransaction(newTransaction);
+
     final mostSoonModifyBalanceTransaction =
-        getMostSoonModifyBalanceTransactionAfterDate(
+        getMostSoonModifyBalanceTransactionAfterTransaction(
+          transaction: newTransaction,
           sourceWallet: newTransaction.sourceWallet,
-          date: newTransaction.transactionDate,
         );
 
     switch (newTransaction.type) {
@@ -497,10 +497,10 @@ class TransactionController {
         final mostSoonModifyBalanceTransactionOfSourceWallet =
             mostSoonModifyBalanceTransaction;
         final mostSoonModifyBalanceTransactionOfDestinationWallet =
-            getMostSoonModifyBalanceTransactionAfterDate(
+            getMostSoonModifyBalanceTransactionAfterTransaction(
+              transaction: newTransaction,
               sourceWallet:
                   (newTransaction as TransferTransaction).destinationWallet,
-              date: newTransaction.transactionDate,
             );
 
         if (mostSoonModifyBalanceTransactionOfSourceWallet == null &&
@@ -628,17 +628,20 @@ class TransactionController {
         }
     }
 
-    _statisticState.updateStatisticDataAfterCreateTransaction(newTransaction);
+    if (mostSoonModifyBalanceTransaction != null) {
+      //due to this case so complex, we need to recalculate statistic data from scratch
+      _statisticState.recalculateStatisticData();
+    } else {
+      _statisticState.updateStatisticDataAfterCreateTransaction(newTransaction);
+    }
   }
 
-  void updateOtherStatesBeforeRemoveTransaction(Transaction transaction) {
+  void updateStatesAfterRemoveTransaction(Transaction transaction) {
     final mostSoonModifyBalanceTransaction =
-        getMostSoonModifyBalanceTransactionAfterDate(
+        getMostSoonModifyBalanceTransactionAfterTransaction(
+          transaction: transaction,
           sourceWallet: transaction.sourceWallet,
-          date: transaction.transactionDate,
         );
-
-    _statisticState.updateStatisticDataAfterRemoveTransaction(transaction);
 
     if (transaction.type == TransactionType.expense) {
       if (mostSoonModifyBalanceTransaction != null) {
@@ -654,7 +657,6 @@ class TransactionController {
           transaction.amount,
         );
       }
-
     } else if (transaction.type == TransactionType.income) {
       if (mostSoonModifyBalanceTransaction != null) {
         updateMostSoonModifyBalanceTransactionBeforeRemoveTransaction(
@@ -669,7 +671,6 @@ class TransactionController {
           transaction.amount,
         );
       }
-
     } else if (transaction.type == TransactionType.lend) {
       if (mostSoonModifyBalanceTransaction != null) {
         updateMostSoonModifyBalanceTransactionBeforeRemoveTransaction(
@@ -719,10 +720,10 @@ class TransactionController {
       final mostSoonModifyBalanceTransactionOfSourceWallet =
           mostSoonModifyBalanceTransaction;
       final mostSoonModifyBalanceTransactionOfDestinationWallet =
-          getMostSoonModifyBalanceTransactionAfterDate(
+          getMostSoonModifyBalanceTransactionAfterTransaction(
+            transaction: transaction,
             sourceWallet:
                 (transaction as TransferTransaction).destinationWallet,
-            date: transaction.transactionDate,
           );
 
       if (mostSoonModifyBalanceTransactionOfSourceWallet == null &&
@@ -801,24 +802,55 @@ class TransactionController {
         }
       }
     }
+
+    if (mostSoonModifyBalanceTransaction != null) {
+      //due to this case so complex, we need to recalculate statistic data from scratch
+      _transactionState.removeTransaction(transaction.id);
+      _statisticState.recalculateStatisticData();
+    } else {
+      _statisticState.updateStatisticDataAfterRemoveTransaction(transaction);
+      _transactionState.removeTransaction(transaction.id);
+    }
   }
 
-  Transaction? getMostSoonModifyBalanceTransactionAfterDate({
+  Transaction? getMostSoonModifyBalanceTransactionAfterTransaction({
+    required Transaction transaction,
     required Wallet sourceWallet,
-    required DateTime date,
   }) {
     final transactions = _transactionState.transactions;
 
-    try {
-      return transactions.firstWhere(
-        (t) =>
-            t.type == TransactionType.modifyBalance &&
-            t.sourceWallet.id == sourceWallet.id &&
-            t.transactionDate.isAfter(date),
-      );
-    } catch (e) {
-      return null;
+    final transactionIndex = transactions.indexWhere(
+      (trans) => trans.id == transaction.id,
+    );
+
+    for (var i = transactionIndex; i >= 0; i--) {
+      if (transactions[i].type != TransactionType.modifyBalance) {
+        continue;
+      }
+
+      if (transactions[i].sourceWallet.id != sourceWallet.id) {
+        continue;
+      }
+
+      if (AppTime.isSame(
+        transactions[i].transactionDate,
+        transaction.transactionDate,
+      )) {
+        if (transactions[i].id > transaction.id) {
+          return transactions[i] as ModifyBalanceTransaction;
+        }
+      } else {
+        if (transactions[i].transactionDate.isBefore(
+          transaction.transactionDate,
+        )) {
+          continue;
+        } else {
+          return transactions[i] as ModifyBalanceTransaction;
+        }
+      }
     }
+
+    return null;
   }
 
   double calculateBalanceAtDate({
@@ -832,12 +864,13 @@ class TransactionController {
     final transactions = _transactionState.transactions;
     for (var i = 0; i < transactions.length; i++) {
       // skip others, only keep (date, latestModifyDate]
-      if (transactions[i].transactionDate.isAfter(date) || transactions[i].transactionDate.isAtSameMomentAs(date)) {
+      if (transactions[i].transactionDate.isAfter(date)) {
         continue;
       }
 
       // skip excluded transaction
-      if (excludeTransaction != null && transactions[i].id == excludeTransaction.id) {
+      if (excludeTransaction != null &&
+          transactions[i].id == excludeTransaction.id) {
         continue;
       }
 

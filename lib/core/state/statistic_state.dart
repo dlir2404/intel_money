@@ -122,6 +122,26 @@ class StatisticState extends ChangeNotifier {
     notifyListeners();
   }
 
+  void recalculateStatisticData() {
+    StatisticController().getTodayStatisticDataV2();
+
+    if (_thisWeekStatisticData != null) {
+      StatisticController().getThisWeekStatisticDataV2();
+    }
+
+    if (_thisMonthStatisticData != null) {
+      StatisticController().getThisMonthStatisticDataV2();
+    }
+
+    if (_thisQuarterStatisticData != null) {
+      StatisticController().getThisQuarterStatisticDataV2();
+    }
+
+    if (_thisYearStatisticData != null) {
+      StatisticController().getThisYearStatisticDataV2();
+    }
+  }
+
   void updateStatisticDataAfterCreateTransaction(Transaction newTransaction) {
     if (AppTime.isToday(newTransaction.transactionDate)) {
       _todayStatisticData = StatisticController.calculateNewStatisticDataAfterCreateTransaction(
@@ -192,6 +212,8 @@ class StatisticState extends ChangeNotifier {
     if (AppTime.isThisYear(removedTransaction.transactionDate)) {
       updateThisYearStatisticDataAfterRemoveTransaction(removedTransaction);
     }
+
+    notifyListeners();
   }
 
   ///This data is the most complex one cause it has by month and by quarter statistic

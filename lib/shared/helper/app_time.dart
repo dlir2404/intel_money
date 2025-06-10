@@ -2,6 +2,15 @@ import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:intel_money/core/state/app_state.dart';
 
 class AppTime {
+  static bool isSame(DateTime date1, DateTime date2) {
+    return date1.year == date2.year &&
+        date1.month == date2.month &&
+        date1.day == date2.day &&
+        date1.hour == date2.hour &&
+        date1.minute == date2.minute &&
+        date1.second == date2.second;
+  }
+
   static bool isToday(DateTime date) {
     final now = DateTime.now();
     return date.year == now.year &&
