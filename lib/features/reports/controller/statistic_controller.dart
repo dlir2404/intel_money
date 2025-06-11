@@ -22,11 +22,13 @@ class StatisticController {
     required DateTime from,
     required DateTime to,
     List<Wallet>? wallets,
+    List<Category>? categories,
   }) async {
     return await _statisticService.getByDayAnalysisDataV2(
       from: from,
       to: to,
       wallets: wallets,
+      categories: categories,
     );
   }
 
@@ -34,11 +36,13 @@ class StatisticController {
     required DateTime from,
     required DateTime to,
     List<Wallet>? wallets,
+    List<Category>? categories,
   }) async {
     return await _statisticService.getByMonthAnalysisDataV2(
       from: from,
       to: to,
       wallets: wallets,
+      categories: categories,
     );
   }
 
@@ -46,11 +50,13 @@ class StatisticController {
     required DateTime from,
     required DateTime to,
     List<Wallet>? wallets,
+    List<Category>? categories,
   }) async {
     return await _statisticService.getByYearAnalysisDataV2(
       from: from,
       to: to,
       wallets: wallets,
+      categories: categories,
     );
   }
 

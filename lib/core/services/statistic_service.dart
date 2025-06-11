@@ -166,6 +166,12 @@ class StatisticService {
         }
       }
 
+      if (categories != null && categories.isNotEmpty) {
+        if (!categories.any((category) => category.id == transaction.category?.id)) {
+          return false;
+        }
+      }
+
       return (transaction.transactionDate.isAfter(from) || transaction.transactionDate.isAtSameMomentAs(from)) &&
              transaction.transactionDate.isBefore(to);
     }).toList();
@@ -230,6 +236,12 @@ class StatisticService {
         }
       }
 
+      if (categories != null && categories.isNotEmpty) {
+        if (!categories.any((category) => category.id == transaction.category?.id)) {
+          return false;
+        }
+      }
+
       return (transaction.transactionDate.isAfter(from) ||
           transaction.transactionDate.isAtSameMomentAs(from)) &&
           transaction.transactionDate.isBefore(to);
@@ -286,6 +298,12 @@ class StatisticService {
     final transactions = TransactionState().transactions.where((transaction) {
       if (wallets != null) {
         if (!wallets.any((wallet) => wallet.id == transaction.sourceWallet.id)) {
+          return false;
+        }
+      }
+
+      if (categories != null && categories.isNotEmpty) {
+        if (!categories.any((category) => category.id == transaction.category?.id)) {
           return false;
         }
       }

@@ -1,21 +1,53 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/models/category.dart';
+import '../../../features/category/screens/filter_category_screen.dart';
+import '../../const/enum/category_type.dart';
 
 class CategoriesFilter extends StatefulWidget {
-  final Function(List<Category>)? onChanged;
-  const CategoriesFilter({super.key, this.onChanged});
+  final List<Category>? selectedCategories;
+  final CategoryType categoryType;
+  final Function(List<Category>?) onSelectionChanged;
+
+  const CategoriesFilter({
+    super.key,
+    required this.onSelectionChanged,
+    this.selectedCategories,
+    required this.categoryType,
+  });
 
   @override
   State<CategoriesFilter> createState() => _CategoriesFilterState();
 }
 
 class _CategoriesFilterState extends State<CategoriesFilter> {
+  List<Category>? _selectedCategories;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedCategories = widget.selectedCategories;
+  }
+
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {
+      onTap: () async {
+        final categories = await Navigator.of(context).push(
+          MaterialPageRoute(
+            builder:
+                (context) => FilterCategoryScreen(
+                  categoryType: widget.categoryType, // Pass null to use
+                  selectedCategories:
+                      _selectedCategories, // Pass null to use the default wallet state
+                ),
+          ),
+        );
 
+        widget.onSelectionChanged(categories);
+        setState(() {
+          _selectedCategories = categories;
+        });
       },
       child: Container(
         color: Colors.white,
@@ -26,10 +58,16 @@ class _CategoriesFilterState extends State<CategoriesFilter> {
             Icon(Icons.category, color: Colors.grey[400]),
             const SizedBox(width: 8),
 
-            Text(
-              'All categories',
-              style: const TextStyle(fontSize: 16),
-            ),
+            _selectedCategories == null
+                ? Text('All categories', style: const TextStyle(fontSize: 16))
+                : Text(
+                  _selectedCategories!.isEmpty
+                      ? 'No categories selected'
+                      : _selectedCategories!.length > 1
+                      ? '${_selectedCategories![0].name}, +${_selectedCategories!.length - 1} more'
+                      : _selectedCategories![0].name,
+                  style: const TextStyle(fontSize: 16),
+                ),
             const SizedBox(width: 8),
             Expanded(child: const SizedBox()),
 

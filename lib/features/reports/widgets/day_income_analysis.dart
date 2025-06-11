@@ -4,9 +4,11 @@ import 'package:intel_money/shared/helper/app_time.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 import '../../../core/models/analysis_data.dart';
+import '../../../core/models/category.dart';
 import '../../../core/models/wallet.dart';
 import '../../../shared/component/filters/account_filter.dart';
 import '../../../shared/component/filters/day_range_picker.dart';
+import '../../../shared/const/enum/category_type.dart';
 import '../controller/statistic_controller.dart';
 import 'day_income_analysis_chart.dart';
 
@@ -25,6 +27,7 @@ class _DayIncomeAnalysisState extends State<DayIncomeAnalysis> {
   bool _isDataLoaded = false;
 
   List<Wallet>? _selectedWallets;
+  List<Category>? _selectedCategories;
 
   final StatisticController _statisticController = StatisticController();
 
@@ -37,6 +40,7 @@ class _DayIncomeAnalysisState extends State<DayIncomeAnalysis> {
         from: from,
         to: to,
         wallets: _selectedWallets,
+        categories: _selectedCategories,
       );
 
       setState(() {
@@ -65,7 +69,16 @@ class _DayIncomeAnalysisState extends State<DayIncomeAnalysis> {
         ),
         const SizedBox(height: 2),
 
-        CategoriesFilter(),
+        CategoriesFilter(
+          categoryType: CategoryType.income,
+          selectedCategories: _selectedCategories,
+          onSelectionChanged: (List<Category>? selectedItems) {
+            setState(() {
+              _selectedCategories = selectedItems;
+              _isDataLoaded = false; // Reset data when categories change
+            });
+          },
+        ),
         const SizedBox(height: 2),
 
         AccountFilter(

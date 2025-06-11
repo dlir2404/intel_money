@@ -6,7 +6,9 @@ import 'package:intel_money/shared/component/filters/month_range_picker.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 import '../../../core/models/analysis_data.dart';
+import '../../../core/models/category.dart';
 import '../../../core/models/wallet.dart';
+import '../../../shared/const/enum/category_type.dart';
 import '../../../shared/helper/app_time.dart';
 import 'month_expense_analysis_chart.dart';
 
@@ -25,6 +27,7 @@ class _MonthExpenseAnalysisState extends State<MonthExpenseAnalysis> {
   bool _isDataLoaded = false;
 
   List<Wallet>? _selectedWallets;
+  List<Category>? _selectedCategories;
 
   final StatisticController _statisticController = StatisticController();
 
@@ -37,6 +40,7 @@ class _MonthExpenseAnalysisState extends State<MonthExpenseAnalysis> {
         from: from,
         to: to,
         wallets: _selectedWallets,
+        categories: _selectedCategories,
       );
 
       setState(() {
@@ -65,7 +69,16 @@ class _MonthExpenseAnalysisState extends State<MonthExpenseAnalysis> {
         ),
         const SizedBox(height: 2),
 
-        CategoriesFilter(),
+        CategoriesFilter(
+          categoryType: CategoryType.expense,
+          selectedCategories: _selectedCategories,
+          onSelectionChanged: (List<Category>? categories) {
+            setState(() {
+              _selectedCategories = categories;
+              _isDataLoaded = false;
+            });
+          },
+        ),
         const SizedBox(height: 2),
 
         AccountFilter(

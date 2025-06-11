@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intel_money/core/models/category.dart';
 import 'package:intel_money/features/reports/controller/statistic_controller.dart';
 import 'package:intel_money/shared/component/filters/categories_filter.dart';
 import 'package:intel_money/shared/helper/app_time.dart';
@@ -8,6 +9,7 @@ import '../../../core/models/analysis_data.dart';
 import '../../../core/models/wallet.dart';
 import '../../../shared/component/filters/account_filter.dart';
 import '../../../shared/component/filters/day_range_picker.dart';
+import '../../../shared/const/enum/category_type.dart';
 import 'day_detail_analysis.dart';
 import 'day_expense_analysis_chart.dart';
 
@@ -26,6 +28,7 @@ class _DayExpenseAnalysisState extends State<DayExpenseAnalysis> {
   bool _isDataLoaded = false;
 
   List<Wallet>? _selectedWallets;
+  List<Category>? _selectedCategories;
 
   final StatisticController _statisticController = StatisticController();
 
@@ -38,6 +41,7 @@ class _DayExpenseAnalysisState extends State<DayExpenseAnalysis> {
         from: from,
         to: to,
         wallets: _selectedWallets,
+        categories: _selectedCategories,
       );
 
       setState(() {
@@ -67,7 +71,16 @@ class _DayExpenseAnalysisState extends State<DayExpenseAnalysis> {
           ),
           const SizedBox(height: 2),
 
-          CategoriesFilter(),
+          CategoriesFilter(
+            selectedCategories: _selectedCategories,
+            categoryType: CategoryType.expense,
+            onSelectionChanged: (List<Category>? selectedItems) {
+              setState(() {
+                _isDataLoaded = false;
+                _selectedCategories = selectedItems;
+              });
+            },
+          ),
           const SizedBox(height: 2),
 
           AccountFilter(
