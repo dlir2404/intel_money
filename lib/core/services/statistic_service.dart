@@ -153,6 +153,42 @@ class StatisticService {
     return analysisData;
   }
 
+  Future<List<AnalysisData>> getByDayAnalysisDataV2({
+    required DateTime from,
+    required DateTime to,
+    List<Category>? categories,
+    List<Wallet>? wallets
+  }) async {
+    final transactions = TransactionState().transactions.where((transaction) {
+      return (transaction.transactionDate.isAfter(from) || transaction.transactionDate.isAtSameMomentAs(from)) &&
+             transaction.transactionDate.isBefore(to);
+    }).toList();
+
+    Map<DateTime, List<Transaction>> transactionMap = {};
+    List<DateTime> daysRange = AppTime.daysBetween(from, to);
+    for (final day in daysRange) {
+      transactionMap[day] = [];
+    }
+
+    for (final transaction in transactions) {
+      final date = AppTime.startOfDay(transaction.transactionDate);
+      transactionMap[date]!.add(transaction);
+    }
+
+    final analysisData = transactionMap.entries.map((entry) {
+      final date = entry.key;
+      final dailyTransactions = entry.value;
+
+      final statisticData = calculateCompactStatistic(transactions: dailyTransactions);
+      return AnalysisData(
+        date: date,
+        compactStatisticData: statisticData,
+      );
+    }).toList();
+
+    return analysisData;
+  }
+
   Future<List<AnalysisData>> getByMonthAnalysisData(
     DateTime from,
     DateTime to,
@@ -175,6 +211,43 @@ class StatisticService {
     return analysisData;
   }
 
+  Future<List<AnalysisData>> getByMonthAnalysisDataV2({
+    required DateTime from,
+    required DateTime to,
+    List<Category>? categories,
+    List<Wallet>? wallets
+  }) async {
+    final transactions = TransactionState().transactions.where((transaction) {
+      return (transaction.transactionDate.isAfter(from) ||
+          transaction.transactionDate.isAtSameMomentAs(from)) &&
+          transaction.transactionDate.isBefore(to);
+    }).toList();
+
+    Map<DateTime, List<Transaction>> transactionMap = {};
+    List<DateTime> monthsRange = AppTime.monthsBetween(from, to);
+    for (final month in monthsRange) {
+      transactionMap[month] = [];
+    }
+
+    for (final transaction in transactions) {
+      final date = DateTime(transaction.transactionDate.year, transaction.transactionDate.month);
+      transactionMap[date]!.add(transaction);
+    }
+
+    final analysisData = transactionMap.entries.map((entry) {
+      final date = entry.key;
+      final monthlyTransactions = entry.value;
+
+      final statisticData = calculateCompactStatistic(transactions: monthlyTransactions);
+      return AnalysisData(
+        date: date,
+        compactStatisticData: statisticData,
+      );
+    }).toList();
+
+    return analysisData;
+  }
+
   Future<void> getByYearAnalysisData(DateTime from, DateTime to) async {
     final response = await _apiClient.get(
       '/statistic/by-year',
@@ -190,6 +263,43 @@ class StatisticService {
             .toList();
 
     // _state.setByYearAnalysisData(analysisData);
+  }
+
+  Future<List<AnalysisData>> getByYearAnalysisDataV2({
+    required DateTime from,
+    required DateTime to,
+    List<Category>? categories,
+    List<Wallet>? wallets
+  }) async {
+    final transactions = TransactionState().transactions.where((transaction) {
+      return (transaction.transactionDate.isAfter(from) ||
+          transaction.transactionDate.isAtSameMomentAs(from)) &&
+          transaction.transactionDate.isBefore(to);
+    }).toList();
+
+    Map<DateTime, List<Transaction>> transactionMap = {};
+    List<DateTime> yearsRange = AppTime.yearsBetween(from, to);
+    for (final year in yearsRange) {
+      transactionMap[year] = [];
+    }
+
+    for (final transaction in transactions) {
+      final date = DateTime(transaction.transactionDate.year);
+      transactionMap[date]!.add(transaction);
+    }
+
+    final analysisData = transactionMap.entries.map((entry) {
+      final date = entry.key;
+      final yearlyTransactions = entry.value;
+
+      final statisticData = calculateCompactStatistic(transactions: yearlyTransactions);
+      return AnalysisData(
+        date: date,
+        compactStatisticData: statisticData,
+      );
+    }).toList();
+
+    return analysisData;
   }
 
   /// month from 1 to 12
@@ -389,6 +499,32 @@ class StatisticService {
       totalExpense: totalExpense,
       byCategoryIncome: byCategoryIncome,
       byCategoryExpense: byCategoryExpense,
+    );
+  }
+
+  CompactStatisticData calculateCompactStatistic({
+    required List<Transaction> transactions,
+  }) {
+    double totalIncome = 0;
+    double totalExpense = 0;
+
+    for (final transaction in transactions) {
+      if (transaction.type == TransactionType.income) {
+        totalIncome += transaction.amount;
+      } else if (transaction.type == TransactionType.expense) {
+        totalExpense += transaction.amount;
+      } else if (transaction.type == TransactionType.modifyBalance) {
+        if (transaction.amount > 0) {
+          totalIncome += transaction.amount;
+        } else {
+          totalExpense += transaction.amount.abs();
+        }
+      }
+    }
+
+    return CompactStatisticData(
+      totalIncome: totalIncome,
+      totalExpense: totalExpense,
     );
   }
 }

@@ -9,7 +9,9 @@ import '../../../shared/const/enum/transaction_type.dart';
 
 class StatisticController {
   static final StatisticController _instance = StatisticController._internal();
+
   factory StatisticController() => _instance;
+
   StatisticController._internal();
 
   final StatisticState _state = StatisticState();
@@ -19,9 +21,22 @@ class StatisticController {
     required DateTime from,
     required DateTime to,
   }) async {
-    return await _statisticService.getByDayAnalysisData(from, to);
+    return await _statisticService.getByDayAnalysisDataV2(from: from, to: to);
   }
 
+  Future<List<AnalysisData>> getByMonthAnalysisData({
+    required DateTime from,
+    required DateTime to,
+  }) async {
+    return await _statisticService.getByMonthAnalysisDataV2(from: from, to: to);
+  }
+
+  Future<List<AnalysisData>> getByYearAnalysisData({
+    required DateTime from,
+    required DateTime to,
+  }) async {
+    return await _statisticService.getByYearAnalysisDataV2(from: from, to: to);
+  }
 
   Future<void> getTodayStatisticDataV2() async {
     final statisticData = await _statisticService.getTodayStatisticDataV2();
@@ -39,7 +54,8 @@ class StatisticController {
   }
 
   Future<void> getThisQuarterStatisticDataV2() async {
-    final statisticData = await _statisticService.getThisQuarterStatisticDataV2();
+    final statisticData =
+        await _statisticService.getThisQuarterStatisticDataV2();
     _state.setThisQuarterStatisticData(statisticData);
   }
 
@@ -65,66 +81,94 @@ class StatisticController {
       case TransactionType.expense:
         data.totalExpense += newTransaction.amount;
 
-        int categoryId = newTransaction.category!.parentId ?? newTransaction.category!.id;
-        int categoryIndex = data.byCategoryExpense.indexWhere((element) => element.category.id == categoryId);
+        int categoryId =
+            newTransaction.category!.parentId ?? newTransaction.category!.id;
+        int categoryIndex = data.byCategoryExpense.indexWhere(
+          (element) => element.category.id == categoryId,
+        );
         if (categoryIndex != -1) {
           data.byCategoryExpense[categoryIndex].amount += newTransaction.amount;
-          data.byCategoryExpense[categoryIndex].transactions.add(newTransaction);
+          data.byCategoryExpense[categoryIndex].transactions.add(
+            newTransaction,
+          );
         } else {
-          data.byCategoryExpense.add(ByCategoryData(
-            category: Category.fromContext(categoryId),
-            amount: newTransaction.amount,
-            transactions: [newTransaction],
-          ));
+          data.byCategoryExpense.add(
+            ByCategoryData(
+              category: Category.fromContext(categoryId),
+              amount: newTransaction.amount,
+              transactions: [newTransaction],
+            ),
+          );
         }
 
       case TransactionType.income:
         data.totalIncome += newTransaction.amount;
 
-        int categoryId = newTransaction.category!.parentId ?? newTransaction.category!.id;
-        int categoryIndex = data.byCategoryIncome.indexWhere((element) => element.category.id == categoryId);
+        int categoryId =
+            newTransaction.category!.parentId ?? newTransaction.category!.id;
+        int categoryIndex = data.byCategoryIncome.indexWhere(
+          (element) => element.category.id == categoryId,
+        );
         if (categoryIndex != -1) {
           data.byCategoryIncome[categoryIndex].amount += newTransaction.amount;
           data.byCategoryIncome[categoryIndex].transactions.add(newTransaction);
         } else {
-          data.byCategoryIncome.add(ByCategoryData(
-            category: Category.fromContext(categoryId),
-            amount: newTransaction.amount,
-            transactions: [newTransaction],
-          ));
+          data.byCategoryIncome.add(
+            ByCategoryData(
+              category: Category.fromContext(categoryId),
+              amount: newTransaction.amount,
+              transactions: [newTransaction],
+            ),
+          );
         }
       case TransactionType.modifyBalance:
         if (newTransaction.amount > 0) {
           //handle as income
           data.totalIncome += newTransaction.amount;
 
-          int categoryId = newTransaction.category!.parentId ?? newTransaction.category!.id;
-          int categoryIndex = data.byCategoryIncome.indexWhere((element) => element.category.id == categoryId);
+          int categoryId =
+              newTransaction.category!.parentId ?? newTransaction.category!.id;
+          int categoryIndex = data.byCategoryIncome.indexWhere(
+            (element) => element.category.id == categoryId,
+          );
           if (categoryIndex != -1) {
-            data.byCategoryIncome[categoryIndex].amount += newTransaction.amount;
-            data.byCategoryIncome[categoryIndex].transactions.add(newTransaction);
+            data.byCategoryIncome[categoryIndex].amount +=
+                newTransaction.amount;
+            data.byCategoryIncome[categoryIndex].transactions.add(
+              newTransaction,
+            );
           } else {
-            data.byCategoryIncome.add(ByCategoryData(
-              category: Category.fromContext(categoryId),
-              amount: newTransaction.amount,
-              transactions: [newTransaction],
-            ));
+            data.byCategoryIncome.add(
+              ByCategoryData(
+                category: Category.fromContext(categoryId),
+                amount: newTransaction.amount,
+                transactions: [newTransaction],
+              ),
+            );
           }
         } else {
           //handle as expense
           data.totalExpense += newTransaction.amount.abs();
 
-          int categoryId = newTransaction.category!.parentId ?? newTransaction.category!.id;
-          int categoryIndex = data.byCategoryExpense.indexWhere((element) => element.category.id == categoryId);
+          int categoryId =
+              newTransaction.category!.parentId ?? newTransaction.category!.id;
+          int categoryIndex = data.byCategoryExpense.indexWhere(
+            (element) => element.category.id == categoryId,
+          );
           if (categoryIndex != -1) {
-            data.byCategoryExpense[categoryIndex].amount += newTransaction.amount.abs();
-            data.byCategoryExpense[categoryIndex].transactions.add(newTransaction);
+            data.byCategoryExpense[categoryIndex].amount +=
+                newTransaction.amount.abs();
+            data.byCategoryExpense[categoryIndex].transactions.add(
+              newTransaction,
+            );
           } else {
-            data.byCategoryExpense.add(ByCategoryData(
-              category: Category.fromContext(categoryId),
-              amount: newTransaction.amount.abs(),
-              transactions: [newTransaction],
-            ));
+            data.byCategoryExpense.add(
+              ByCategoryData(
+                category: Category.fromContext(categoryId),
+                amount: newTransaction.amount.abs(),
+                transactions: [newTransaction],
+              ),
+            );
           }
         }
       default:
@@ -143,12 +187,19 @@ class StatisticController {
       case TransactionType.expense:
         data.totalExpense -= removedTransaction.amount;
 
-        int categoryId = removedTransaction.category!.parentId ?? removedTransaction.category!.id;
-        int categoryIndex = data.byCategoryExpense.indexWhere((element) => element.category.id == categoryId);
+        int categoryId =
+            removedTransaction.category!.parentId ??
+            removedTransaction.category!.id;
+        int categoryIndex = data.byCategoryExpense.indexWhere(
+          (element) => element.category.id == categoryId,
+        );
         if (categoryIndex != -1) {
           if (data.byCategoryExpense[categoryIndex].transactions.length > 1) {
-            data.byCategoryExpense[categoryIndex].amount -= removedTransaction.amount;
-            data.byCategoryExpense[categoryIndex].transactions.removeWhere((element) => element.id == removedTransaction.id);
+            data.byCategoryExpense[categoryIndex].amount -=
+                removedTransaction.amount;
+            data.byCategoryExpense[categoryIndex].transactions.removeWhere(
+              (element) => element.id == removedTransaction.id,
+            );
           } else {
             data.byCategoryExpense.removeAt(categoryIndex);
           }
@@ -156,12 +207,19 @@ class StatisticController {
       case TransactionType.income:
         data.totalIncome -= removedTransaction.amount;
 
-        int categoryId = removedTransaction.category!.parentId ?? removedTransaction.category!.id;
-        int categoryIndex = data.byCategoryIncome.indexWhere((element) => element.category.id == categoryId);
+        int categoryId =
+            removedTransaction.category!.parentId ??
+            removedTransaction.category!.id;
+        int categoryIndex = data.byCategoryIncome.indexWhere(
+          (element) => element.category.id == categoryId,
+        );
         if (categoryIndex != -1) {
           if (data.byCategoryIncome[categoryIndex].transactions.length > 1) {
-            data.byCategoryIncome[categoryIndex].amount -= removedTransaction.amount;
-            data.byCategoryIncome[categoryIndex].transactions.removeWhere((element) => element.id == removedTransaction.id);
+            data.byCategoryIncome[categoryIndex].amount -=
+                removedTransaction.amount;
+            data.byCategoryIncome[categoryIndex].transactions.removeWhere(
+              (element) => element.id == removedTransaction.id,
+            );
           } else {
             data.byCategoryIncome.removeAt(categoryIndex);
           }
@@ -171,12 +229,19 @@ class StatisticController {
           //handle as income
           data.totalIncome -= removedTransaction.amount;
 
-          int categoryId = removedTransaction.category!.parentId ?? removedTransaction.category!.id;
-          int categoryIndex = data.byCategoryIncome.indexWhere((element) => element.category.id == categoryId);
+          int categoryId =
+              removedTransaction.category!.parentId ??
+              removedTransaction.category!.id;
+          int categoryIndex = data.byCategoryIncome.indexWhere(
+            (element) => element.category.id == categoryId,
+          );
           if (categoryIndex != -1) {
             if (data.byCategoryIncome[categoryIndex].transactions.length > 1) {
-              data.byCategoryIncome[categoryIndex].amount -= removedTransaction.amount;
-              data.byCategoryIncome[categoryIndex].transactions.removeWhere((element) => element.id == removedTransaction.id);
+              data.byCategoryIncome[categoryIndex].amount -=
+                  removedTransaction.amount;
+              data.byCategoryIncome[categoryIndex].transactions.removeWhere(
+                (element) => element.id == removedTransaction.id,
+              );
             } else {
               data.byCategoryIncome.removeAt(categoryIndex);
             }
@@ -185,12 +250,19 @@ class StatisticController {
           //handle as expense
           data.totalExpense -= removedTransaction.amount.abs();
 
-          int categoryId = removedTransaction.category!.parentId ?? removedTransaction.category!.id;
-          int categoryIndex = data.byCategoryExpense.indexWhere((element) => element.category.id == categoryId);
+          int categoryId =
+              removedTransaction.category!.parentId ??
+              removedTransaction.category!.id;
+          int categoryIndex = data.byCategoryExpense.indexWhere(
+            (element) => element.category.id == categoryId,
+          );
           if (categoryIndex != -1) {
             if (data.byCategoryExpense[categoryIndex].transactions.length > 1) {
-              data.byCategoryExpense[categoryIndex].amount -= removedTransaction.amount.abs();
-              data.byCategoryExpense[categoryIndex].transactions.removeWhere((element) => element.id == removedTransaction.id);
+              data.byCategoryExpense[categoryIndex].amount -=
+                  removedTransaction.amount.abs();
+              data.byCategoryExpense[categoryIndex].transactions.removeWhere(
+                (element) => element.id == removedTransaction.id,
+              );
             } else {
               data.byCategoryExpense.removeAt(categoryIndex);
             }

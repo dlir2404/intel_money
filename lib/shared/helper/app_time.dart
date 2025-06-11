@@ -209,6 +209,42 @@ class AppTime {
     return await FlutterTimezone.getAvailableTimezones();
   }
 
+  static List<DateTime> daysBetween(DateTime start, DateTime end) {
+    List<DateTime> days = [];
+    DateTime current = start;
+
+    while (current.isBefore(end) || current.isAtSameMomentAs(end)) {
+      days.add(current);
+      current = current.add(Duration(days: 1));
+    }
+
+    return days;
+  }
+
+  static List<DateTime> monthsBetween(DateTime start, DateTime end) {
+    List<DateTime> months = [];
+    DateTime current = DateTime(start.year, start.month);
+
+    while (current.isBefore(end) || current.isAtSameMomentAs(end)) {
+      months.add(current);
+      current = DateTime(current.year, current.month + 1);
+    }
+
+    return months;
+  }
+
+  static List<DateTime> yearsBetween(DateTime start, DateTime end) {
+    List<DateTime> years = [];
+    DateTime current = DateTime(start.year);
+
+    while (current.isBefore(end) || current.isAtSameMomentAs(end)) {
+      years.add(current);
+      current = DateTime(current.year + 1);
+    }
+
+    return years;
+  }
+
   static void initialize() async {
     List<String> timezones = await getAvailableTimezones();
     AppState().setTimezones(timezones);

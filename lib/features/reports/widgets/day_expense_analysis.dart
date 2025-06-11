@@ -18,13 +18,13 @@ class DayExpenseAnalysis extends StatefulWidget {
 }
 
 class _DayExpenseAnalysisState extends State<DayExpenseAnalysis> {
-  DateTime? _startDate;
-  DateTime? _endDate;
+  DateTime? _startDate = AppTime.startOfMonth();
+  DateTime? _endDate = AppTime.endOfToday();
 
   List<AnalysisData> _data = [];
   bool _isDataLoaded = false;
 
-  StatisticController _statisticController = StatisticController();
+  final StatisticController _statisticController = StatisticController();
 
   Future<void> _loadData() async {
     if (!_isDataLoaded) {
