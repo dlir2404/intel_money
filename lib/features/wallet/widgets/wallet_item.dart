@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:intel_money/shared/component/typos/currency_double_text.dart';
 
 import '../../../core/models/wallet.dart';
-import '../../../shared/const/icons/wallet_icon.dart';
-import '../../../shared/helper/formatter.dart';
 
 class WalletItem extends StatelessWidget {
   final Wallet wallet;

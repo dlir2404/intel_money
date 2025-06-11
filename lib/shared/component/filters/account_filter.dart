@@ -1,18 +1,49 @@
 import 'package:flutter/material.dart';
+import 'package:intel_money/core/models/wallet.dart';
+
+import '../../../features/wallet/screens/filter_wallet_screen.dart';
 
 class AccountFilter extends StatefulWidget {
-  const AccountFilter({super.key});
+  final List<Wallet>? selectedWallets;
+  final Function(List<Wallet>?) onSelectionChanged;
+
+  const AccountFilter({
+    super.key,
+    this.selectedWallets,
+    required this.onSelectionChanged,
+  });
 
   @override
   State<AccountFilter> createState() => _AccountFilterState();
 }
 
 class _AccountFilterState extends State<AccountFilter> {
+  List<Wallet>? _selectedWallets;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedWallets = widget.selectedWallets;
+  }
+
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {
+      onTap: () async {
+        final wallets = await Navigator.of(context).push(
+          MaterialPageRoute(
+            builder:
+                (context) => FilterWalletScreen(
+                  selectedWallets:
+                      _selectedWallets, // Pass null to use the default wallet state
+                ),
+          ),
+        );
 
+        widget.onSelectionChanged(wallets);
+        setState(() {
+          _selectedWallets = wallets;
+        });
       },
       child: Container(
         color: Colors.white,
@@ -23,9 +54,19 @@ class _AccountFilterState extends State<AccountFilter> {
             Icon(Icons.account_balance_wallet, color: Colors.grey[400]),
             const SizedBox(width: 8),
 
-            Text('All accounts',
-              style: const TextStyle(fontSize: 16),
-            ),
+            _selectedWallets == null
+                ? Text('All accounts', style: const TextStyle(fontSize: 16))
+                : Text(
+                  _selectedWallets!.isEmpty
+                      ? 'No accounts selected'
+                      : _selectedWallets!.length > 2
+                      ? '${_selectedWallets![0].name}, ${_selectedWallets![1].name}, +${_selectedWallets!.length - 2} more'
+                      : _selectedWallets!
+                          .map((wallet) => wallet.name)
+                          .join(', '),
+                  style: const TextStyle(fontSize: 16),
+                  overflow: TextOverflow.ellipsis,
+                ),
             const SizedBox(width: 8),
             Expanded(child: const SizedBox()),
 

@@ -4,6 +4,7 @@ import 'package:intel_money/shared/component/filters/year_range_picker.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 import '../../../core/models/analysis_data.dart';
+import '../../../core/models/wallet.dart';
 import '../../../shared/component/filters/account_filter.dart';
 import '../../../shared/component/filters/categories_filter.dart';
 import '../../../shared/helper/app_time.dart';
@@ -25,6 +26,8 @@ class _YearExpenseAnalysisState extends State<YearExpenseAnalysis> {
   List<AnalysisData> _data = [];
   bool _isDataLoaded = false;
 
+  List<Wallet>? _selectedWallets;
+
   final StatisticController _statisticController = StatisticController();
 
   Future<void> _loadData() async {
@@ -37,6 +40,7 @@ class _YearExpenseAnalysisState extends State<YearExpenseAnalysis> {
       final data = await _statisticController.getByYearAnalysisData(
         from: from,
         to: to,
+        wallets: _selectedWallets,
       );
 
       setState(() {
@@ -68,7 +72,15 @@ class _YearExpenseAnalysisState extends State<YearExpenseAnalysis> {
         CategoriesFilter(),
         const SizedBox(height: 2),
 
-        AccountFilter(),
+        AccountFilter(
+          selectedWallets: _selectedWallets,
+          onSelectionChanged: (List<Wallet>? wallets) {
+            setState(() {
+              _selectedWallets = wallets;
+              _isDataLoaded = false;
+            });
+          },
+        ),
         const SizedBox(height: 6),
 
         FutureBuilder(

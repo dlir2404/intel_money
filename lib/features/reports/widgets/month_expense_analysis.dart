@@ -6,6 +6,7 @@ import 'package:intel_money/shared/component/filters/month_range_picker.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 import '../../../core/models/analysis_data.dart';
+import '../../../core/models/wallet.dart';
 import '../../../shared/helper/app_time.dart';
 import 'month_expense_analysis_chart.dart';
 
@@ -23,6 +24,8 @@ class _MonthExpenseAnalysisState extends State<MonthExpenseAnalysis> {
   List<AnalysisData> _data = [];
   bool _isDataLoaded = false;
 
+  List<Wallet>? _selectedWallets;
+
   final StatisticController _statisticController = StatisticController();
 
   Future<void> _loadData() async {
@@ -30,7 +33,11 @@ class _MonthExpenseAnalysisState extends State<MonthExpenseAnalysis> {
       final from = _startDate ?? AppTime.startOfYear();
       final to = _endDate ?? AppTime.endOfToday();
 
-      final data = await _statisticController.getByMonthAnalysisData(from: from, to: to);
+      final data = await _statisticController.getByMonthAnalysisData(
+        from: from,
+        to: to,
+        wallets: _selectedWallets,
+      );
 
       setState(() {
         _data = data;
@@ -38,7 +45,6 @@ class _MonthExpenseAnalysisState extends State<MonthExpenseAnalysis> {
       });
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +68,15 @@ class _MonthExpenseAnalysisState extends State<MonthExpenseAnalysis> {
         CategoriesFilter(),
         const SizedBox(height: 2),
 
-        AccountFilter(),
+        AccountFilter(
+          selectedWallets: _selectedWallets,
+          onSelectionChanged: (List<Wallet>? wallets) {
+            setState(() {
+              _selectedWallets = wallets;
+              _isDataLoaded = false;
+            });
+          },
+        ),
         const SizedBox(height: 6),
 
         FutureBuilder(
@@ -75,11 +89,9 @@ class _MonthExpenseAnalysisState extends State<MonthExpenseAnalysis> {
             return Container(
               color: Colors.white,
               padding: const EdgeInsets.only(top: 12, bottom: 12, left: 16),
-              child: MonthExpenseAnalysisChart(
-                data: _data,
-              ),
+              child: MonthExpenseAnalysisChart(data: _data),
             );
-          }
+          },
         ),
       ],
     );

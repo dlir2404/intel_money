@@ -160,6 +160,12 @@ class StatisticService {
     List<Wallet>? wallets
   }) async {
     final transactions = TransactionState().transactions.where((transaction) {
+      if (wallets != null) {
+        if (!wallets.any((wallet) => wallet.id == transaction.sourceWallet.id)) {
+          return false;
+        }
+      }
+
       return (transaction.transactionDate.isAfter(from) || transaction.transactionDate.isAtSameMomentAs(from)) &&
              transaction.transactionDate.isBefore(to);
     }).toList();
@@ -218,6 +224,12 @@ class StatisticService {
     List<Wallet>? wallets
   }) async {
     final transactions = TransactionState().transactions.where((transaction) {
+      if (wallets != null) {
+        if (!wallets.any((wallet) => wallet.id == transaction.sourceWallet.id)) {
+          return false;
+        }
+      }
+
       return (transaction.transactionDate.isAfter(from) ||
           transaction.transactionDate.isAtSameMomentAs(from)) &&
           transaction.transactionDate.isBefore(to);
@@ -272,6 +284,12 @@ class StatisticService {
     List<Wallet>? wallets
   }) async {
     final transactions = TransactionState().transactions.where((transaction) {
+      if (wallets != null) {
+        if (!wallets.any((wallet) => wallet.id == transaction.sourceWallet.id)) {
+          return false;
+        }
+      }
+
       return (transaction.transactionDate.isAfter(from) ||
           transaction.transactionDate.isAtSameMomentAs(from)) &&
           transaction.transactionDate.isBefore(to);

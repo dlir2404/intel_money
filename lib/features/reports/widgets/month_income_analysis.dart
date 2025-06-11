@@ -5,6 +5,7 @@ import 'package:intel_money/shared/component/filters/month_range_picker.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 import '../../../core/models/analysis_data.dart';
+import '../../../core/models/wallet.dart';
 import '../../../shared/helper/app_time.dart';
 import '../controller/statistic_controller.dart';
 import 'month_income_analysis_chart.dart';
@@ -23,6 +24,8 @@ class _MonthIncomeAnalysisState extends State<MonthIncomeAnalysis> {
   List<AnalysisData> _data = [];
   bool _isDataLoaded = false;
 
+  List<Wallet>? _selectedWallets;
+
   final StatisticController _statisticController = StatisticController();
 
   Future<void> _loadData() async {
@@ -33,6 +36,7 @@ class _MonthIncomeAnalysisState extends State<MonthIncomeAnalysis> {
       final data = await _statisticController.getByMonthAnalysisData(
         from: from,
         to: to,
+        wallets: _selectedWallets,
       );
 
       setState(() {
@@ -64,7 +68,15 @@ class _MonthIncomeAnalysisState extends State<MonthIncomeAnalysis> {
         CategoriesFilter(),
         const SizedBox(height: 2),
 
-        AccountFilter(),
+        AccountFilter(
+          selectedWallets: _selectedWallets,
+          onSelectionChanged: (List<Wallet>? wallets) {
+            setState(() {
+              _selectedWallets = wallets;
+              _isDataLoaded = false;
+            });
+          },
+        ),
         const SizedBox(height: 6),
 
         FutureBuilder(

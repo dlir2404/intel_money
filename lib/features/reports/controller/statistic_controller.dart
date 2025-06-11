@@ -4,6 +4,7 @@ import '../../../core/models/analysis_data.dart';
 import '../../../core/models/category.dart';
 import '../../../core/models/statistic_data.dart';
 import '../../../core/models/transaction.dart';
+import '../../../core/models/wallet.dart';
 import '../../../core/state/statistic_state.dart';
 import '../../../shared/const/enum/transaction_type.dart';
 
@@ -20,22 +21,37 @@ class StatisticController {
   Future<List<AnalysisData>> getByDayAnalysisData({
     required DateTime from,
     required DateTime to,
+    List<Wallet>? wallets,
   }) async {
-    return await _statisticService.getByDayAnalysisDataV2(from: from, to: to);
+    return await _statisticService.getByDayAnalysisDataV2(
+      from: from,
+      to: to,
+      wallets: wallets,
+    );
   }
 
   Future<List<AnalysisData>> getByMonthAnalysisData({
     required DateTime from,
     required DateTime to,
+    List<Wallet>? wallets,
   }) async {
-    return await _statisticService.getByMonthAnalysisDataV2(from: from, to: to);
+    return await _statisticService.getByMonthAnalysisDataV2(
+      from: from,
+      to: to,
+      wallets: wallets,
+    );
   }
 
   Future<List<AnalysisData>> getByYearAnalysisData({
     required DateTime from,
     required DateTime to,
+    List<Wallet>? wallets,
   }) async {
-    return await _statisticService.getByYearAnalysisDataV2(from: from, to: to);
+    return await _statisticService.getByYearAnalysisDataV2(
+      from: from,
+      to: to,
+      wallets: wallets,
+    );
   }
 
   Future<void> getTodayStatisticDataV2() async {

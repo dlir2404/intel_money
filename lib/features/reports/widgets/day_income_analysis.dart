@@ -4,6 +4,7 @@ import 'package:intel_money/shared/helper/app_time.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 import '../../../core/models/analysis_data.dart';
+import '../../../core/models/wallet.dart';
 import '../../../shared/component/filters/account_filter.dart';
 import '../../../shared/component/filters/day_range_picker.dart';
 import '../controller/statistic_controller.dart';
@@ -23,6 +24,8 @@ class _DayIncomeAnalysisState extends State<DayIncomeAnalysis> {
   List<AnalysisData> _data = [];
   bool _isDataLoaded = false;
 
+  List<Wallet>? _selectedWallets;
+
   final StatisticController _statisticController = StatisticController();
 
   Future<void> _loadData() async {
@@ -33,6 +36,7 @@ class _DayIncomeAnalysisState extends State<DayIncomeAnalysis> {
       final data = await _statisticController.getByDayAnalysisData(
         from: from,
         to: to,
+        wallets: _selectedWallets,
       );
 
       setState(() {
@@ -64,7 +68,15 @@ class _DayIncomeAnalysisState extends State<DayIncomeAnalysis> {
         CategoriesFilter(),
         const SizedBox(height: 2),
 
-        AccountFilter(),
+        AccountFilter(
+          selectedWallets: _selectedWallets,
+          onSelectionChanged: (List<Wallet>? selectedItems) {
+            setState(() {
+              _selectedWallets = selectedItems;
+              _isDataLoaded = false; // Reset data when wallets change
+            });
+          },
+        ),
         const SizedBox(height: 6),
 
         FutureBuilder(

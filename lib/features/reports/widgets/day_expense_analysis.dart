@@ -5,6 +5,7 @@ import 'package:intel_money/shared/helper/app_time.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 import '../../../core/models/analysis_data.dart';
+import '../../../core/models/wallet.dart';
 import '../../../shared/component/filters/account_filter.dart';
 import '../../../shared/component/filters/day_range_picker.dart';
 import 'day_detail_analysis.dart';
@@ -24,6 +25,8 @@ class _DayExpenseAnalysisState extends State<DayExpenseAnalysis> {
   List<AnalysisData> _data = [];
   bool _isDataLoaded = false;
 
+  List<Wallet>? _selectedWallets;
+
   final StatisticController _statisticController = StatisticController();
 
   Future<void> _loadData() async {
@@ -31,7 +34,11 @@ class _DayExpenseAnalysisState extends State<DayExpenseAnalysis> {
       final from = _startDate ?? AppTime.startOfMonth();
       final to = _endDate ?? AppTime.endOfToday();
 
-      final data = await _statisticController.getByDayAnalysisData(from: from, to: to);
+      final data = await _statisticController.getByDayAnalysisData(
+        from: from,
+        to: to,
+        wallets: _selectedWallets,
+      );
 
       setState(() {
         _data = data;
@@ -63,7 +70,15 @@ class _DayExpenseAnalysisState extends State<DayExpenseAnalysis> {
           CategoriesFilter(),
           const SizedBox(height: 2),
 
-          AccountFilter(),
+          AccountFilter(
+            selectedWallets: _selectedWallets,
+            onSelectionChanged: (List<Wallet>? selectedItems) {
+              setState(() {
+                _isDataLoaded = false;
+                _selectedWallets = selectedItems;
+              });
+            },
+          ),
           const SizedBox(height: 6),
 
           FutureBuilder(
@@ -77,10 +92,12 @@ class _DayExpenseAnalysisState extends State<DayExpenseAnalysis> {
                 children: [
                   Container(
                     color: Colors.white,
-                    padding: const EdgeInsets.only(top: 12, bottom: 12, left: 16),
-                    child: DayExpenseAnalysisChart(
-                      data: _data,
+                    padding: const EdgeInsets.only(
+                      top: 12,
+                      bottom: 12,
+                      left: 16,
                     ),
+                    child: DayExpenseAnalysisChart(data: _data),
                   ),
                   const SizedBox(height: 12),
 
@@ -90,10 +107,10 @@ class _DayExpenseAnalysisState extends State<DayExpenseAnalysis> {
                       data: _data,
                       type: AnalysisType.expense,
                     ),
-                  )
+                  ),
                 ],
               );
-            }
+            },
           ),
         ],
       ),
