@@ -6,14 +6,20 @@ import '../../../core/state/statistic_state.dart';
 import '../../../shared/component/charts/time_series.dart';
 
 class MonthIncomeAnalysisChart extends StatelessWidget {
-  const MonthIncomeAnalysisChart({super.key});
+  final List<AnalysisData> data;
+
+  const MonthIncomeAnalysisChart({super.key, required this.data});
 
   List<TimeSeriesData> _prepareChartData(List<AnalysisData> data) {
     if (data.isEmpty) return [];
 
     // Find min and max dates in the data
-    final DateTime minDate = data.map((e) => e.date).reduce((a, b) => a.isBefore(b) ? a : b);
-    final DateTime maxDate = data.map((e) => e.date).reduce((a, b) => a.isAfter(b) ? a : b);
+    final DateTime minDate = data
+        .map((e) => e.date)
+        .reduce((a, b) => a.isBefore(b) ? a : b);
+    final DateTime maxDate = data
+        .map((e) => e.date)
+        .reduce((a, b) => a.isAfter(b) ? a : b);
 
     // Create a map with existing data points
     final Map<DateTime, double> dataMap = {};
@@ -27,10 +33,12 @@ class MonthIncomeAnalysisChart extends StatelessWidget {
     DateTime currentDate = DateTime(minDate.year, minDate.month);
 
     while (!currentDate.isAfter(maxDate)) {
-      result.add(TimeSeriesData(
-        currentDate,
-        dataMap[currentDate] ?? 0, // Use 0 for missing dates
-      ));
+      result.add(
+        TimeSeriesData(
+          currentDate,
+          dataMap[currentDate] ?? 0, // Use 0 for missing dates
+        ),
+      );
       currentDate = DateTime(currentDate.year, currentDate.month + 1);
     }
 
@@ -39,18 +47,12 @@ class MonthIncomeAnalysisChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<StatisticState>(
-      builder: (context, state, _) {
-        final monthData = state.byMonthAnalysisData ?? [];
-        final data = _prepareChartData(monthData);
-
-        return TimeSeries(
-          data,
-          height: 300,
-          totalTitle: "Total Income",
-          averageTitle: "Average spending/month",
-        );
-      },
+    final preparedData = _prepareChartData(data);
+    return TimeSeries(
+      preparedData,
+      height: 300,
+      totalTitle: "Total Income",
+      averageTitle: "Average spending/month",
     );
   }
 }
