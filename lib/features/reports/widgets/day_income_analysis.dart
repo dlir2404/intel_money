@@ -10,6 +10,7 @@ import '../../../shared/component/filters/account_filter.dart';
 import '../../../shared/component/filters/day_range_picker.dart';
 import '../../../shared/const/enum/category_type.dart';
 import '../controller/statistic_controller.dart';
+import 'day_detail_analysis.dart';
 import 'day_income_analysis_chart.dart';
 
 class DayIncomeAnalysis extends StatefulWidget {
@@ -52,61 +53,77 @@ class _DayIncomeAnalysisState extends State<DayIncomeAnalysis> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        DayRangePicker(
-          startDate: _startDate,
-          endDate: _endDate,
-          onChanged: (PickerDateRange? range) {
-            if (range != null) {
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          DayRangePicker(
+            startDate: _startDate,
+            endDate: _endDate,
+            onChanged: (PickerDateRange? range) {
+              if (range != null) {
+                setState(() {
+                  _isDataLoaded = false;
+                  _startDate = range.startDate;
+                  _endDate = range.endDate;
+                });
+              }
+            },
+          ),
+          const SizedBox(height: 2),
+
+          CategoriesFilter(
+            categoryType: CategoryType.income,
+            selectedCategories: _selectedCategories,
+            onSelectionChanged: (List<Category>? selectedItems) {
               setState(() {
-                _isDataLoaded = false;
-                _startDate = range.startDate;
-                _endDate = range.endDate;
+                _selectedCategories = selectedItems;
+                _isDataLoaded = false; // Reset data when categories change
               });
-            }
-          },
-        ),
-        const SizedBox(height: 2),
+            },
+          ),
+          const SizedBox(height: 2),
 
-        CategoriesFilter(
-          categoryType: CategoryType.income,
-          selectedCategories: _selectedCategories,
-          onSelectionChanged: (List<Category>? selectedItems) {
-            setState(() {
-              _selectedCategories = selectedItems;
-              _isDataLoaded = false; // Reset data when categories change
-            });
-          },
-        ),
-        const SizedBox(height: 2),
+          AccountFilter(
+            selectedWallets: _selectedWallets,
+            onSelectionChanged: (List<Wallet>? selectedItems) {
+              setState(() {
+                _selectedWallets = selectedItems;
+                _isDataLoaded = false; // Reset data when wallets change
+              });
+            },
+          ),
+          const SizedBox(height: 6),
 
-        AccountFilter(
-          selectedWallets: _selectedWallets,
-          onSelectionChanged: (List<Wallet>? selectedItems) {
-            setState(() {
-              _selectedWallets = selectedItems;
-              _isDataLoaded = false; // Reset data when wallets change
-            });
-          },
-        ),
-        const SizedBox(height: 6),
+          FutureBuilder(
+            future: _loadData(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
 
-        FutureBuilder(
-          future: _loadData(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            }
+              return Column(
+                children: [
+                  Container(
+                    color: Colors.white,
+                    padding: const EdgeInsets.only(top: 12, bottom: 12, left: 16),
+                    child: DayIncomeAnalysisChart(data: _data),
+                  ),
+                  const SizedBox(height: 12),
 
-            return Container(
-              color: Colors.white,
-              padding: const EdgeInsets.only(top: 12, bottom: 12, left: 16),
-              child: DayIncomeAnalysisChart(data: _data),
-            );
-          },
-        ),
-      ],
+                  Container(
+                    color: Colors.white,
+                    child: DayDetailAnalysis(
+                      data: _data,
+                      type: AnalysisType.income,
+                    ),
+                  ),
+                  const SizedBox(height: 40),
+                ],
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 }
