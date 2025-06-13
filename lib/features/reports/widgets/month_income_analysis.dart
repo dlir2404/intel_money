@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intel_money/features/reports/widgets/month_detail_analysis.dart';
 import 'package:intel_money/shared/component/filters/account_filter.dart';
 import 'package:intel_money/shared/component/filters/categories_filter.dart';
 import 'package:intel_money/shared/component/filters/month_range_picker.dart';
@@ -52,61 +53,77 @@ class _MonthIncomeAnalysisState extends State<MonthIncomeAnalysis> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        MonthRangePicker(
-          startDate: _startDate,
-          endDate: _endDate,
-          onChanged: (PickerDateRange? range) {
-            if (range != null) {
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          MonthRangePicker(
+            startDate: _startDate,
+            endDate: _endDate,
+            onChanged: (PickerDateRange? range) {
+              if (range != null) {
+                setState(() {
+                  _startDate = range.startDate;
+                  _endDate = range.endDate;
+                  _isDataLoaded = false;
+                });
+              }
+            },
+          ),
+          const SizedBox(height: 2),
+      
+          CategoriesFilter(
+            categoryType: CategoryType.income,
+            selectedCategories: _selectedCategories,
+            onSelectionChanged: (List<Category>? categories) {
               setState(() {
-                _startDate = range.startDate;
-                _endDate = range.endDate;
+                _selectedCategories = categories;
                 _isDataLoaded = false;
               });
-            }
-          },
-        ),
-        const SizedBox(height: 2),
-
-        CategoriesFilter(
-          categoryType: CategoryType.income,
-          selectedCategories: _selectedCategories,
-          onSelectionChanged: (List<Category>? categories) {
-            setState(() {
-              _selectedCategories = categories;
-              _isDataLoaded = false;
-            });
-          },
-        ),
-        const SizedBox(height: 2),
-
-        AccountFilter(
-          selectedWallets: _selectedWallets,
-          onSelectionChanged: (List<Wallet>? wallets) {
-            setState(() {
-              _selectedWallets = wallets;
-              _isDataLoaded = false;
-            });
-          },
-        ),
-        const SizedBox(height: 6),
-
-        FutureBuilder(
-          future: _loadData(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            }
-
-            return Container(
-              color: Colors.white,
-              padding: const EdgeInsets.only(top: 12, bottom: 12, left: 16),
-              child: MonthIncomeAnalysisChart(data: _data),
-            );
-          },
-        ),
-      ],
+            },
+          ),
+          const SizedBox(height: 2),
+      
+          AccountFilter(
+            selectedWallets: _selectedWallets,
+            onSelectionChanged: (List<Wallet>? wallets) {
+              setState(() {
+                _selectedWallets = wallets;
+                _isDataLoaded = false;
+              });
+            },
+          ),
+          const SizedBox(height: 6),
+      
+          FutureBuilder(
+            future: _loadData(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
+      
+              return Column(
+                children: [
+                  Container(
+                    color: Colors.white,
+                    padding: const EdgeInsets.only(top: 12, bottom: 12, left: 16),
+                    child: MonthIncomeAnalysisChart(data: _data),
+                  ),
+                  const SizedBox(height: 12),
+      
+                  Container(
+                    color: Colors.white,
+                    child: MonthDetailAnalysis(
+                      data: _data,
+                      type: AnalysisType.income,
+                    ),
+                  ),
+                  const SizedBox(height: 40,)
+                ],
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 }
