@@ -117,10 +117,14 @@ class ByCategoryData {
 class CompactStatisticData {
   double totalIncome;
   double totalExpense;
+  List<Transaction> incomeTransactions;
+  List<Transaction> expenseTransactions;
 
   CompactStatisticData({
     required this.totalIncome,
     required this.totalExpense,
+    this.incomeTransactions = const [],
+    this.expenseTransactions = const [],
   });
 
   factory CompactStatisticData.fromJson(Map<String, dynamic> json) {

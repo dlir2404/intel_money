@@ -544,16 +544,23 @@ class StatisticService {
     double totalIncome = 0;
     double totalExpense = 0;
 
+    List<Transaction> incomeTransactions = [];
+    List<Transaction> expenseTransactions = [];
+
     for (final transaction in transactions) {
       if (transaction.type == TransactionType.income) {
         totalIncome += transaction.amount;
+        incomeTransactions.add(transaction);
       } else if (transaction.type == TransactionType.expense) {
         totalExpense += transaction.amount;
+        expenseTransactions.add(transaction);
       } else if (transaction.type == TransactionType.modifyBalance) {
         if (transaction.amount > 0) {
           totalIncome += transaction.amount;
+          incomeTransactions.add(transaction);
         } else {
           totalExpense += transaction.amount.abs();
+          expenseTransactions.add(transaction);
         }
       }
     }
@@ -561,6 +568,8 @@ class StatisticService {
     return CompactStatisticData(
       totalIncome: totalIncome,
       totalExpense: totalExpense,
+      incomeTransactions: incomeTransactions,
+      expenseTransactions: expenseTransactions,
     );
   }
 }

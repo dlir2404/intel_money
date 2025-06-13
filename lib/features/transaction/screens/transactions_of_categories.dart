@@ -8,9 +8,9 @@ import '../../../core/models/transaction.dart';
 import '../../../shared/component/typos/currency_double_text.dart';
 
 class TransactionsOfCategories extends StatelessWidget {
-  final ByCategoryData byCategoryData;
-
-  const TransactionsOfCategories({super.key, required this.byCategoryData});
+  final List<Transaction> transactions;
+  final String title;
+  const TransactionsOfCategories({super.key, required this.transactions, required this.title});
 
   Widget _buildGroupTransactions(
     Category category,
@@ -87,37 +87,18 @@ class TransactionsOfCategories extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final category = byCategoryData.category;
-
-    final transactions =
-        byCategoryData.transactions.where((item) {
-          return item.category!.id == category.id;
-        }).toList();
-
-    final groupedData = [];
-    if (transactions.isNotEmpty) {
-      groupedData.add({'category': category, 'transactions': transactions});
-    }
-
-    if (category.children.isNotEmpty) {
-      for (var child in category.children) {
-        final childTransactions =
-            byCategoryData.transactions.where((item) {
-              return item.category!.id == child.id;
-            }).toList();
-
-        if (childTransactions.isNotEmpty) {
-          groupedData.add({
-            'category': child,
-            'transactions': childTransactions,
-          });
-        }
+    final Map<Category, List<Transaction>> groupedData = {};
+    for (var transaction in transactions) {
+      final cat = transaction.category!;
+      if (!groupedData.containsKey(cat)) {
+        groupedData[cat] = [];
       }
+      groupedData[cat]!.add(transaction);
     }
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(category.name),
+        title: Text(title),
         backgroundColor: Theme.of(context).primaryColor,
         foregroundColor: Colors.white,
         centerTitle: true,
@@ -127,10 +108,10 @@ class TransactionsOfCategories extends StatelessWidget {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              ...groupedData.map((item) {
+              ...groupedData.entries.map((item) {
                 return _buildGroupTransactions(
-                  item['category'],
-                  item['transactions'],
+                  item.key,
+                  item.value,
                 );
               }),
             ],

@@ -64,7 +64,7 @@ class _DetailRatioScreenState extends State<DetailRatioScreen>
                   MaterialPageRoute(
                     builder:
                         (context) =>
-                            TransactionsOfCategories(byCategoryData: item),
+                            TransactionsOfCategories(title: item.category.name, transactions: item.transactions,),
                   ),
                 );
               },

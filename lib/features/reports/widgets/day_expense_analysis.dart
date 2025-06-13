@@ -121,6 +121,7 @@ class _DayExpenseAnalysisState extends State<DayExpenseAnalysis> {
                       type: AnalysisType.expense,
                     ),
                   ),
+                  const SizedBox(height: 40,)
                 ],
               );
             },
