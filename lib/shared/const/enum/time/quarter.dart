@@ -22,13 +22,13 @@ extension QuarterExtension on Quarter {
   String get name {
     switch (this) {
       case Quarter.first:
-        return 'Quarter I';
+        return 'Quý I';
       case Quarter.second:
-        return 'Quarter II';
+        return 'Quý II';
       case Quarter.third:
-        return 'Quarter III';
+        return 'Quý III';
       case Quarter.fourth:
-        return 'Quarter IV';
+        return 'Quý IV';
     }
   }
 

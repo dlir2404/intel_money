@@ -46,7 +46,7 @@ class _ChatWithAiScreenState extends State<ChatWithAiScreen> {
           ),
           const SizedBox(height: 16),
           Text(
-            "Start record your income and expenses",
+            "Bắt đầu tạo ghi chép nào",
             style: TextStyle(
               fontSize: 16,
               color: Colors.grey[800],
@@ -54,7 +54,7 @@ class _ChatWithAiScreenState extends State<ChatWithAiScreen> {
           ),
           const SizedBox(height: 8),
           const Text(
-            "Ex: Buy clothes 200k, breakfast 30k,...",
+            "VD: Mua quần áo 200k, cà phê 30k,...",
             style: TextStyle(
               fontSize: 12,
               color: Colors.grey,
@@ -271,7 +271,7 @@ class _ChatWithAiScreenState extends State<ChatWithAiScreen> {
       _messages.add(
         Message(
           role: MessageRole.agent,
-          body: MessageBody(content: "Loading..."),
+          body: MessageBody(content: "Đợi chút..."),
         ),
       );
     });
@@ -338,7 +338,7 @@ class _ChatWithAiScreenState extends State<ChatWithAiScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Recording Assistant"),
+        title: const Text("Trợ lý ghi chép"),
         centerTitle: true,
         backgroundColor: Theme.of(context).primaryColor,
         foregroundColor: Colors.white,
@@ -365,7 +365,8 @@ class _ChatWithAiScreenState extends State<ChatWithAiScreen> {
                 child: TextField(
                   controller: _textController,
                   decoration: InputDecoration(
-                    hintText: 'Breakfast 20k at 7am',
+                    hintText: 'Ăn sáng 30k, mua sắm 200k, ...',
+                    hintStyle: TextStyle(color: Colors.grey),
                     contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
                     border: InputBorder.none,
                     suffixIcon: IconButton(

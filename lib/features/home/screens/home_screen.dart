@@ -23,7 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Hello ${user?.name}!"),
+        title: Text("Xin chào ${user?.name}!"),
         foregroundColor: Colors.white,
         backgroundColor: Theme.of(context).primaryColor,
       ),
@@ -41,13 +41,13 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: 16),
 
             HomeSection(
-              title: "This year expense analysis",
+              title: "Phân tích chi tiêu năm nay",
               child: MonthIncomeVsExpenseChart(),
             ),
             const SizedBox(height: 16),
 
             HomeSection(
-              title: "Money lent/borrowed",
+              title: "Theo dõi vay nợ",
               child: RecentLendBorrow(),
             ),
             const SizedBox(height: 80),

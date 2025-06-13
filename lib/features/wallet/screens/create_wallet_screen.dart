@@ -46,13 +46,14 @@ class _CreateWalletScreenState extends State<CreateWalletScreen> {
             onPressed: () => Navigator.of(context).pop(),
           ),
           title: Text(
-            'Create Wallet',
+            'Tạo ví mới',
             style: const TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.w500,
               fontSize: 18,
             ),
           ),
+          centerTitle: true,
         ),
         body: SingleChildScrollView(
           padding: const EdgeInsets.all(20.0),
@@ -63,7 +64,7 @@ class _CreateWalletScreenState extends State<CreateWalletScreen> {
               children: [
                 // Header
                 const Text(
-                  'Create New Wallet',
+                  'Tạo ví mới',
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -71,7 +72,7 @@ class _CreateWalletScreenState extends State<CreateWalletScreen> {
                 ),
                 const SizedBox(height: 10),
                 Text(
-                  'Set up your wallet details below',
+                  'Chọn biểu tượng, đặt tên và số dư ban đầu cho ví của bạn.',
                   style: TextStyle(
                     color: Colors.grey[600],
                     fontSize: 16,
@@ -84,16 +85,16 @@ class _CreateWalletScreenState extends State<CreateWalletScreen> {
                 const SizedBox(height: 25),
 
                 const Text(
-                  'Wallet Name',
+                  'Tên ví',
                   style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
                 ),
                 const SizedBox(height: 10),
                 FormInput(
                   controller: _nameController,
-                  placeholder: 'Enter wallet name',
+                  placeholder: 'Nhập tên ví của bạn',
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter a wallet name';
+                      return 'Tên không được để trống';
                     }
                     return null;
                   },
@@ -102,7 +103,7 @@ class _CreateWalletScreenState extends State<CreateWalletScreen> {
 
                 // Initial amount
                 MainInput(
-                  label: 'Initial Amount',
+                  label: 'Số dư ban đầu',
                   onChanged: (value) {
                     setState(() {
                       initialAmount = value;
@@ -112,9 +113,8 @@ class _CreateWalletScreenState extends State<CreateWalletScreen> {
                 const SizedBox(height: 20),
 
                 FormInput(
-                  label: 'Description (Optional)',
+                  label: 'Mô tả (tuỳ chọn)',
                   controller: _descriptionController,
-                  placeholder: 'Add some notes about this wallet',
                   maxLines: 3,
                   prefixIcon: const Icon(Icons.description),
                 ),
@@ -136,7 +136,7 @@ class _CreateWalletScreenState extends State<CreateWalletScreen> {
                       ),
                     ),
                     child: const Text(
-                      'Create Wallet',
+                      'Tạo ví',
                       style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                   ),

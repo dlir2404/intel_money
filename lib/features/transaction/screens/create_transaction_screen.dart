@@ -85,7 +85,7 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
       );
 
       if (mounted) {
-        AppToast.showSuccess(context, 'Saved');
+        AppToast.showSuccess(context, 'Đã lưu');
       }
 
       // Clear fields after saving
@@ -154,14 +154,14 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
         );
       } else {
         if (!navigatorContext.mounted) return;
-        AppToast.showError(navigatorContext, 'No internet connection');
+        AppToast.showError(navigatorContext, 'Không có kết nối internet');
       }
     } on SocketException catch (_) {
       // No internet connection
       if (!navigatorContext.mounted) return;
       AppToast.showError(
         navigatorContext,
-        'Please check your internet connection',
+        'Vui lòng kiểm tra kết nối mạng',
       );
     }
   }
@@ -259,13 +259,13 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
                         _amount = newValue;
                       });
                     },
-                    label: 'Amount',
+                    label: 'Số tiền',
                   )
                   : DifferentInput(
                     oldValue: _currentBalance,
                     newValue: _newRealBalance,
-                    oldLabel: 'Balance in the account',
-                    newLabel: 'Actual Balance',
+                    oldLabel: 'Số dư trên tài khoản',
+                    newLabel: 'Số dư thực tế',
                     onValueChanged: (double newValue) {
                       if (_selectedCategory != null) {
                         if (_selectedCategory!.type == CategoryType.income &&
@@ -290,7 +290,7 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
                   children: [
                     SelectCategoryInput(
                       category: _selectedCategory,
-                      placeholder: 'Select Category',
+                      placeholder: 'Chọn danh mục',
                       categoryType:
                           _selectedTransactionType !=
                                   TransactionType.modifyBalance
@@ -313,7 +313,7 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
                 Column(
                   children: [
                     SelectRelatedUserInput(
-                      placeholder: 'Borrower',
+                      placeholder: 'Người vay',
                       onRelatedUserSelected: (user) {
                         setState(() {
                           _borrower = user;
@@ -328,7 +328,7 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
                 Column(
                   children: [
                     SelectRelatedUserInput(
-                      placeholder: 'Lender',
+                      placeholder: 'Người cho vay',
                       onRelatedUserSelected: (user) {
                         setState(() {
                           _lender = user;
@@ -341,7 +341,7 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
 
               SelectWalletInput(
                 wallet: _sourceWallet,
-                placeholder: "Select Source Wallet",
+                placeholder: "Chọn ví nguồn",
                 onWalletSelected: (wallet) {
                   setState(() {
                     _sourceWallet = wallet;
@@ -357,7 +357,7 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
                   children: [
                     SelectWalletInput(
                       wallet: _destinationWallet,
-                      placeholder: "Select Destination Wallet",
+                      placeholder: "Chọn ví đích",
                       onWalletSelected: (wallet) {
                         setState(() {
                           _destinationWallet = wallet;
@@ -370,7 +370,7 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
 
               DateInput(
                 selectedDate: _transactionDate,
-                placeholder: 'Transaction Date',
+                placeholder: 'Thời gian',
                 onDateSelected: (DateTime date) {
                   setState(() {
                     _transactionDate = date;
@@ -382,9 +382,8 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
               const SizedBox(height: 16),
 
               FormInput(
-                label: 'Description (Optional)',
+                label: 'Mô tả (Không bắt buộc)',
                 controller: _descriptionController,
-                placeholder: 'Add some notes about this transaction',
                 maxLines: 3,
                 prefixIcon: const Icon(Icons.description),
               ),
@@ -431,7 +430,7 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
                             ),
                           )
                           : const Text(
-                            'Save transaction',
+                            'Lưu',
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,

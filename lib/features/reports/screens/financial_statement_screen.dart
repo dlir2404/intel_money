@@ -43,7 +43,7 @@ class _FinancialStatementScreenState extends State<FinancialStatementScreen> {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        const Text("Assets", style: TextStyle(fontSize: 16)),
+                        const Text("Tổng có", style: TextStyle(fontSize: 16)),
                         const SizedBox(width: 4),
                         Column(
                           children: [
@@ -179,7 +179,7 @@ class _FinancialStatementScreenState extends State<FinancialStatementScreen> {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    const Text("Liabilities", style: TextStyle(fontSize: 16)),
+                    const Text("Tổng nợ", style: TextStyle(fontSize: 16)),
                     const SizedBox(width: 4),
                     Column(
                       children: [
@@ -242,7 +242,7 @@ class _FinancialStatementScreenState extends State<FinancialStatementScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Financial Statement'),
+        title: const Text('Tài chính hiện tại'),
         backgroundColor: Theme.of(context).primaryColor,
         foregroundColor: Colors.white,
         centerTitle: true,
@@ -262,7 +262,7 @@ class _FinancialStatementScreenState extends State<FinancialStatementScreen> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       const Text(
-                        "Financial statement",
+                        "Tài chính hiện tại",
                         style: TextStyle(fontSize: 16),
                       ),
                       const SizedBox(width: 4),

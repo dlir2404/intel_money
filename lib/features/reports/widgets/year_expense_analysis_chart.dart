@@ -50,8 +50,8 @@ class YearExpenseAnalysisChart extends StatelessWidget {
     return TimeSeries(
       preparedData,
       height: 300,
-      totalTitle: "Total Expense",
-      averageTitle: "Average spending/year",
+      totalTitle: "Tổng chi",
+      averageTitle: "Tổng chi/năm",
     );
   }
 }

@@ -63,26 +63,8 @@ class _WalletScreenState extends State<WalletScreen> with SingleTickerProviderSt
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
       body: Column(
         children: [
-          TabBar(
-            controller: _tabController,
-            labelColor: Theme.of(context).colorScheme.primary,
-            unselectedLabelColor: Colors.grey,
-            indicatorColor: Theme.of(context).colorScheme.primary,
-            tabs: const [
-              Tab(text: 'Wallet'),
-              Tab(text: 'Savings'),
-              Tab(text: 'Accumulate'),
-            ],
-          ),
           Expanded(
-            child: TabBarView(
-              controller: _tabController,
-              children: const [
-                WalletListTab(),
-                Center(child: Text('Savings')),
-                Center(child: Text('Accumulate')),
-              ],
-            ),
+            child: WalletListTab(),
           ),
 
           const SizedBox(height: 80),

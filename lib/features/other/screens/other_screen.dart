@@ -49,7 +49,7 @@ class OtherScreen extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: Text(
-                  "Quick Actions",
+                  "Truy cập nhanh",
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -72,7 +72,7 @@ class OtherScreen extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: Text(
-                  "Settings & Support",
+                  "Cài đặt & Hỗ trợ",
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -165,7 +165,7 @@ class OtherScreen extends StatelessWidget {
     final primaryColor = theme.primaryColor;
 
     final functionItems = [
-      {'icon': Icons.category, 'title': 'Categories', 'color': Colors.orange},
+      {'icon': Icons.category, 'title': 'Danh mục thu/chi', 'color': Colors.orange},
       {
         'icon': Icons.payment,
         'title': 'Payment Methods',
@@ -208,7 +208,7 @@ class OtherScreen extends StatelessWidget {
       onTap: () {
         // Handle navigation based on the function title
         AdService().showAdIfEligible();
-        if (title == 'Categories') {
+        if (title == 'Danh mục thu/chi') {
           Navigator.of(context).push(
             MaterialPageRoute(builder: (context) => const CategoryScreen()),
           );
@@ -259,7 +259,7 @@ class OtherScreen extends StatelessWidget {
     final settingsItems = [
       {
         'icon': Icons.settings,
-        'title': 'General Settings',
+        'title': 'Cài đặt chung',
         'color': Colors.blue,
         'onTap': () {
           AdService().showAdIfEligible();
@@ -272,7 +272,7 @@ class OtherScreen extends StatelessWidget {
       },
       {
         'icon': Icons.storage,
-        'title': 'Data Settings',
+        'title': 'Cài đặt dữ liệu',
         'color': Colors.green,
         'onTap': () {
           // Handle navigation to Data Settings
@@ -280,7 +280,7 @@ class OtherScreen extends StatelessWidget {
       },
       {
         'icon': Icons.feedback,
-        'title': 'Feedback',
+        'title': 'Phản hồi',
         'color': Colors.orange,
         'onTap': () {
           // Handle navigation to Feedback
@@ -288,7 +288,7 @@ class OtherScreen extends StatelessWidget {
       },
       {
         'icon': Icons.help,
-        'title': 'Help & Information',
+        'title': 'Thông tin & trợ giúp',
         'color': Colors.purple,
         'onTap': () {
           // Handle navigation to Help & Information
@@ -296,12 +296,12 @@ class OtherScreen extends StatelessWidget {
       },
       {
         'icon': Icons.logout,
-        'title': 'Logout',
+        'title': 'Đăng xuất',
         'color': Colors.teal,
         'onTap': () {
           AuthService().logout();
           AppRoutes.navigateToLogin(context);
-          AppToast.showSuccess(context, "Logout successful");
+          AppToast.showSuccess(context, "Đăng xuất thành công");
         },
       },
     ];

@@ -33,7 +33,7 @@ class _ExpenseVsIncomeScreenState extends State<ExpenseVsIncomeScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Expense vs Income'),
+        title: Text('Tình hình thu chi'),
         backgroundColor: Theme.of(context).primaryColor,
         foregroundColor: Colors.white,
         centerTitle: true,
@@ -48,11 +48,11 @@ class _ExpenseVsIncomeScreenState extends State<ExpenseVsIncomeScreen>
             isScrollable: true,
             tabAlignment: TabAlignment.center,
             tabs: const [
-              Tab(text: 'CURRENT'),
-              Tab(text: 'MONTH'),
-              Tab(text: 'QUARTER'),
-              Tab(text: 'YEAR'),
-              Tab(text: 'CUSTOM'),
+              Tab(text: 'Hiện tại'),
+              Tab(text: 'Tháng'),
+              Tab(text: 'Quý'),
+              Tab(text: 'Năm'),
+              Tab(text: 'Tùy chọn'),
             ],
           ),
           Expanded(

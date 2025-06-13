@@ -34,7 +34,7 @@ class _IncomeAnalysisState extends State<IncomeAnalysis>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Income Analysis"),
+        title: Text("Phân tích thu"),
         backgroundColor: Theme.of(context).primaryColor,
         foregroundColor: Colors.white,
         centerTitle: true,
@@ -47,9 +47,9 @@ class _IncomeAnalysisState extends State<IncomeAnalysis>
             unselectedLabelColor: Colors.grey,
             indicatorColor: Theme.of(context).primaryColor,
             tabs: const [
-              Tab(text: 'DAY'),
-              Tab(text: 'MONTH'),
-              Tab(text: 'YEAR'),
+              Tab(text: 'Ngày'),
+              Tab(text: 'Tháng'),
+              Tab(text: 'Năm'),
             ],
           ),
           Expanded(

@@ -26,7 +26,7 @@ class CurrencyPicker extends StatelessWidget {
         final selectedCurrency = appState.currency;
 
         return GeneralSettingSelectInput(
-          title: "Currency",
+          title: "Đơn vị tiền",
           selectedValue:
               selectedCurrency != null
                   ? "${selectedCurrency.name} (${selectedCurrency.symbol})"

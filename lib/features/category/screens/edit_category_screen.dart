@@ -98,13 +98,9 @@ class _EditCategoryScreenState extends State<EditCategoryScreen> {
           _isLoading = false;
         });
 
-        AppToast.showSuccess(context, "Category created successfully");
+        AppToast.showSuccess(context, "Đã lưu");
 
         AdService().showAdIfEligible();
-
-        Future.delayed(const Duration(seconds: 1), () {
-          Navigator.pop(context);
-        });
       }
     } catch (error) {
       if (mounted) {
@@ -127,7 +123,7 @@ class _EditCategoryScreenState extends State<EditCategoryScreen> {
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
-          'Edit Category',
+          'Chỉnh sửa danh mục',
           style: const TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.w500,
@@ -149,7 +145,7 @@ class _EditCategoryScreenState extends State<EditCategoryScreen> {
                       ),
                     )
                     : const Text(
-                      'Save',
+                      'Lưu',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 18,
@@ -191,7 +187,7 @@ class _EditCategoryScreenState extends State<EditCategoryScreen> {
                       TextButton(
                         onPressed: _showIconSelectionBottomSheet,
                         child: Text(
-                          'Change Icon',
+                          'Đổi biểu tượng',
                           style: TextStyle(
                             color: Theme.of(context).primaryColor,
                             fontWeight: FontWeight.w500,
@@ -205,17 +201,17 @@ class _EditCategoryScreenState extends State<EditCategoryScreen> {
 
                 // Category Name
                 const Text(
-                  'Category Name',
+                  'Tên danh mục',
                   style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
                 ),
                 const SizedBox(height: 10),
 
                 FormInput(
                   controller: _nameController,
-                  placeholder: 'Enter category name',
+                  placeholder: 'Điền tên danh mục',
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter a category name';
+                      return 'Tên không được để trống';
                     }
                     return null;
                   },
@@ -248,7 +244,7 @@ class _EditCategoryScreenState extends State<EditCategoryScreen> {
                               ),
                             )
                             : const Text(
-                              'Save',
+                              'Lưu',
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,

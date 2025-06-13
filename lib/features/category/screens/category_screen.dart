@@ -73,7 +73,7 @@ class _CategoryScreenState extends State<CategoryScreen> with TickerProviderStat
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: const Text(
-          'Categories',
+          'Danh mục',
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.w500,
@@ -138,7 +138,7 @@ class _CategoryScreenState extends State<CategoryScreen> with TickerProviderStat
             labelColor: theme.colorScheme.primary,
             unselectedLabelColor: Colors.grey,
             indicatorColor: theme.colorScheme.primary,
-            tabs: const [Tab(text: 'Expense'), Tab(text: 'Income')],
+            tabs: const [Tab(text: 'Chi tiền'), Tab(text: 'Thu tiền')],
           ),
 
           // Tab content with real data from AppState

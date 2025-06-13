@@ -14,7 +14,7 @@ class ListItemFilter<T> extends StatefulWidget {
     required this.getItemName,
     this.itemBuilder,
     this.onSelectionChanged,
-    this.searchHint = 'Search',
+    this.searchHint = 'Tìm kiếm',
     this.selectedItems,
   });
 
@@ -141,13 +141,13 @@ class _ListItemFilterState<T> extends State<ListItemFilter<T>> {
             Row(
               children: [
                 Checkbox(value: _selectAll, onChanged: _toggleSelectAll),
-                const Text('Select All'),
+                const Text('Chọn tất cả'),
               ],
             ),
             Padding(
               padding: const EdgeInsets.only(right: 16.0),
               child: Text(
-                '(${_selectedItems.length}/${_filteredItems.length}) selected',
+                '(${_selectedItems.length}/${_filteredItems.length}) Đã chọn',
               ),
             ),
           ],

@@ -52,8 +52,8 @@ class DayIncomeAnalysisChart extends StatelessWidget {
     return TimeSeries(
       preparedData,
       height: 300,
-      totalTitle: "Total Income",
-      averageTitle: "Average spending/day",
+      totalTitle: "Tổng thu",
+      averageTitle: "Trung bình thu/ngày",
     );
   }
 }

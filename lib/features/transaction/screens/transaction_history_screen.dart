@@ -44,7 +44,7 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
           height: 80,
           child: const Center(
             child: Text(
-              'No transactions found',
+              'Không có giao dịch nào',
               style: TextStyle(fontSize: 16, color: Colors.grey),
             ),
           ),
@@ -122,7 +122,7 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
         ),
         title: Center(
           child: const Text(
-            'Transaction history',
+            'Lịch sử giao dịch',
             style: TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.w500,

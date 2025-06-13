@@ -22,7 +22,7 @@ class YearDetailAnalysis extends StatelessWidget {
           height: 80,
           child: const Center(
             child: Text(
-              'No details available',
+              'Không có ghi chép',
               style: TextStyle(fontSize: 16, color: Colors.grey),
             ),
           ),
@@ -98,7 +98,7 @@ class YearDetailAnalysis extends StatelessWidget {
       children: [
         Padding(
           padding: const EdgeInsets.all(8.0),
-          child: const Text("Details"),
+          child: const Text("Chi tiết"),
         ),
         const SizedBox(height: 8),
         ..._buildDetails(context),

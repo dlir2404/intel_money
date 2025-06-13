@@ -21,11 +21,11 @@ class CustomBottomAppBar extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            _buildNavItem(context, 0, Icons.home_outlined, Icons.home, 'Home'),
-            _buildNavItem(context, 1, Icons.account_balance_wallet_outlined, Icons.account_balance_wallet, 'Wallet'),
+            _buildNavItem(context, 0, Icons.home_outlined, Icons.home, 'Tổng quan'),
+            _buildNavItem(context, 1, Icons.account_balance_wallet_outlined, Icons.account_balance_wallet, 'Ví'),
             const SizedBox(width: 40), // Space for FAB
-            _buildNavItem(context, 3, Icons.bar_chart_outlined, Icons.bar_chart, 'Report'),
-            _buildNavItem(context, 4, Icons.grid_view_outlined, Icons.grid_view, 'Other'),
+            _buildNavItem(context, 3, Icons.bar_chart_outlined, Icons.bar_chart, 'Báo cáo'),
+            _buildNavItem(context, 4, Icons.grid_view_outlined, Icons.grid_view, 'Khác'),
           ],
         ),
       ),

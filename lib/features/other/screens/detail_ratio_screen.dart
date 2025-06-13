@@ -225,7 +225,7 @@ class _DetailRatioScreenState extends State<DetailRatioScreen>
             labelColor: Theme.of(context).colorScheme.primary,
             unselectedLabelColor: Colors.grey,
             indicatorColor: Theme.of(context).colorScheme.primary,
-            tabs: const [Tab(text: 'EXPENSE'), Tab(text: 'INCOME')],
+            tabs: const [Tab(text: 'Chi tiền'), Tab(text: 'Thu tiền')],
           ),
           Expanded(
             child: TabBarView(
@@ -233,15 +233,15 @@ class _DetailRatioScreenState extends State<DetailRatioScreen>
               children: [
                 _buildTab(
                   type: TransactionType.expense,
-                  totalTitle: "Total Expense",
-                  emptyTitle: "No expense record found",
+                  totalTitle: "Tổng chi",
+                  emptyTitle: "Không có ghi chép chi tiền nào",
                   total: _statisticData.totalExpense,
                   data: _statisticData.byCategoryExpense,
                 ),
                 _buildTab(
                   type: TransactionType.income,
-                  totalTitle: "Total Income",
-                  emptyTitle: "No income record found",
+                  totalTitle: "Tổng thu",
+                  emptyTitle: "Không có ghi chép thu tiền nào",
                   total: _statisticData.totalIncome,
                   data: _statisticData.byCategoryIncome,
                 ),

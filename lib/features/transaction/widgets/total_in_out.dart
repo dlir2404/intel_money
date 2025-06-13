@@ -37,7 +37,7 @@ class TotalInOut extends StatelessWidget {
               child: Column(
                 children: [
                   Text(
-                    "Total Income",
+                    "Tổng thu",
                     style: TextStyle(fontWeight: FontWeight.w500),
                   ),
                   const SizedBox(height: 4),
@@ -60,7 +60,7 @@ class TotalInOut extends StatelessWidget {
                 child: Column(
                   children: [
                     Text(
-                      "Total Expense",
+                      "Tổng chi",
                       style: TextStyle(fontWeight: FontWeight.w500),
                     ),
                     const SizedBox(height: 4),

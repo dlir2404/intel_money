@@ -17,13 +17,13 @@ extension CurrencyUnitExtension on CurrencyUnit {
   String get name {
     switch (this) {
       case CurrencyUnit.k:
-        return 'Thousand';
+        return 'Nghìn';
       case CurrencyUnit.m:
-        return 'Million';
+        return 'Triệu';
       case CurrencyUnit.b:
-        return 'Billion';
+        return 'Tỉ';
       case CurrencyUnit.t:
-        return 'Trillion';
+        return 'Nghìn tỉ';
     }
   }
 

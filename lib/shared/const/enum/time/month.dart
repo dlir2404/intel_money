@@ -48,29 +48,29 @@ extension MonthExtension on Month{
   String get name {
     switch (this) {
       case Month.january:
-        return 'January';
+        return 'Tháng 1';
       case Month.february:
-        return 'February';
+        return 'Tháng 2';
       case Month.march:
-        return 'March';
+        return 'Tháng 3';
       case Month.april:
-        return 'April';
+        return 'Tháng 4';
       case Month.may:
-        return 'May';
+        return 'Tháng 5';
       case Month.june:
-        return 'June';
+        return 'Tháng 6';
       case Month.july:
-        return 'July';
+        return 'Tháng 4';
       case Month.august:
-        return 'August';
+        return 'Tháng 8';
       case Month.september:
-        return 'September';
+        return 'Tháng 9';
       case Month.october:
-        return 'October';
+        return 'Tháng 10';
       case Month.november:
-        return 'November';
+        return 'Tháng 11';
       case Month.december:
-        return 'December';
+        return 'Tháng 12';
     }
   }
 

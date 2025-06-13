@@ -31,7 +31,7 @@ class _ExpenseAnalysisState extends State<ExpenseAnalysis>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Expense Analysis"),
+        title: Text("Phân tích chi tiêu"),
         backgroundColor: Theme.of(context).primaryColor,
         foregroundColor: Colors.white,
         centerTitle: true,
@@ -44,9 +44,9 @@ class _ExpenseAnalysisState extends State<ExpenseAnalysis>
             unselectedLabelColor: Colors.grey,
             indicatorColor: Theme.of(context).primaryColor,
             tabs: const [
-              Tab(text: 'DAY'),
-              Tab(text: 'MONTH'),
-              Tab(text: 'YEAR'),
+              Tab(text: 'Ngày'),
+              Tab(text: 'Tháng'),
+              Tab(text: 'Năm'),
             ],
           ),
           Expanded(

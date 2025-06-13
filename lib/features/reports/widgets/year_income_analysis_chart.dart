@@ -51,8 +51,8 @@ class YearIncomeAnalysisChart extends StatelessWidget {
     return TimeSeries(
       preparedData,
       height: 300,
-      totalTitle: "Total Income",
-      averageTitle: "Average spending/year",
+      totalTitle: "Tổng thu",
+      averageTitle: "Trung bình thu/năm",
     );
   }
 }

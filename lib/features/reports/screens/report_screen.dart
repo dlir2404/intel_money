@@ -13,7 +13,7 @@ class ReportScreen extends StatelessWidget {
   static final List<Map<String, dynamic>> items = [
     {
       'icon': Icons.bar_chart_rounded,
-      'title': 'Financial Statement',
+      'title': 'Tài chính hiện tại',
       'color': Colors.blue,
       'ontap': (BuildContext context) {
         AdService().showAdIfEligible();
@@ -27,7 +27,7 @@ class ReportScreen extends StatelessWidget {
     },
     {
       'icon': Icons.stacked_line_chart_rounded,
-      'title': 'Expense vs Income',
+      'title': 'Tình hình thu chi',
       'color': Colors.greenAccent,
       'ontap': (BuildContext context) {
         AdService().showAdIfEligible();
@@ -41,7 +41,7 @@ class ReportScreen extends StatelessWidget {
     },
     {
       'icon': Icons.insert_chart_outlined_rounded,
-      'title': 'Expense analysis',
+      'title': 'Phân tích chi tiêu',
       'color': Colors.red,
       'ontap': (BuildContext context) {
         AdService().showAdIfEligible();
@@ -53,7 +53,7 @@ class ReportScreen extends StatelessWidget {
     },
     {
       'icon': Icons.insert_chart_outlined_rounded,
-      'title': 'Income analysis',
+      'title': 'Phân tích thu',
       'color': Colors.green,
       'ontap': (BuildContext context) {
         AdService().showAdIfEligible();
@@ -65,25 +65,25 @@ class ReportScreen extends StatelessWidget {
     },
     {
       'icon': Icons.checklist_rounded,
-      'title': 'Money lent/ borrowed',
+      'title': 'Theo dõi vay nợ',
       'color': Colors.orange,
       'ontap': null,
     },
     {
       'icon': Icons.person,
-      'title': 'Payee/Payer',
+      'title': 'Đối tượng thu/chi',
       'color': Colors.blue,
       'ontap': null,
     },
     {
       'icon': Icons.calendar_month_rounded,
-      'title': 'Trip/event',
+      'title': 'Chuyến đi/sự kiện',
       'color': Colors.greenAccent,
       'ontap': null,
     },
     {
       'icon': Icons.analytics_outlined,
-      'title': 'Financial analytic',
+      'title': 'Phân tích tài chính',
       'color': Colors.deepPurple,
       'ontap': null,
     },
@@ -95,7 +95,7 @@ class ReportScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Theme.of(context).primaryColor,
         foregroundColor: Colors.white,
-        title: const Text('Report'),
+        title: const Text('Báo cáo'),
         centerTitle: true,
       ),
       body: SingleChildScrollView(

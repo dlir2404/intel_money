@@ -18,9 +18,9 @@ class TimezonePicker extends StatelessWidget {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text("Change timezone"),
+          title: const Text("Chọn múi giờ"),
           content: Text(
-            'Are you sure you want to change the timezone to $timezone?',
+            'Bạn có chắc muốn đổi múi giờ thành $timezone?',
           ),
           actions: [
             TextButton(
@@ -32,7 +32,7 @@ class TimezonePicker extends StatelessWidget {
                 onConfirm();
                 Navigator.pop(context);
               },
-              child: const Text("Confirm"),
+              child: const Text("Xác nhận"),
             ),
           ],
         );
@@ -69,7 +69,7 @@ class TimezonePicker extends StatelessWidget {
         final timezones = state.timezones;
 
         return GeneralSettingSelectInput(
-          title: "Timezone",
+          title: "Múi giờ",
           onTap: () => _showTimezonePicker(context, timezones),
           selectedValue: selectedTimezone ?? "UTC",
         );

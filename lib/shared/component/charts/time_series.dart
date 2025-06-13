@@ -80,7 +80,7 @@ class TimeSeries extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "(Unit: ${currencyUnit.name})",
+          "(Đơn vị: ${currencyUnit.name})",
           style: const TextStyle(fontSize: 12, color: Colors.grey),
         ),
         SizedBox(

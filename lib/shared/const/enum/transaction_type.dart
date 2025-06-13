@@ -42,17 +42,17 @@ extension CategoryTypeExtension on TransactionType {
   String get name {
     switch (this) {
       case TransactionType.income:
-        return 'Income';
+        return 'Thu tiền';
       case TransactionType.expense:
-        return 'Expense';
+        return 'Chi tiền';
       case TransactionType.transfer:
-        return 'Transfer';
+        return 'Chuyển khoản';
       case TransactionType.lend:
-        return 'Lend';
+        return 'Cho vay';
       case TransactionType.borrow:
-        return 'Borrow';
+        return 'Đi vay';
       case TransactionType.modifyBalance:
-        return 'Modify Balance';
+        return 'Điều chỉnh số dư';
     }
   }
 

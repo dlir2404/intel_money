@@ -4,11 +4,7 @@ import 'package:camera/camera.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intel_money/core/models/scan_receipt_response.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:google_mlkit_text_recognition/google_mlkit_text_recognition.dart';
 import 'package:image_cropper/image_cropper.dart';
-
-import '../../../core/models/category.dart';
-import '../controller/transaction_controller.dart';
 
 class TakePictureScreen extends StatefulWidget {
   final Function(CroppedFile image)? processImage;
@@ -42,7 +38,7 @@ class _TakePictureScreenState extends State<TakePictureScreen> {
     final status = await Permission.camera.request();
     if (status.isDenied) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Camera permission is required')),
+        const SnackBar(content: Text('Cần quyền truy cập camera để chụp ảnh')),
       );
       return;
     }
@@ -108,7 +104,7 @@ class _TakePictureScreenState extends State<TakePictureScreen> {
         aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1),
         uiSettings: [
           AndroidUiSettings(
-            toolbarTitle: 'Crop Image',
+            toolbarTitle: 'Cắt ảnh',
             toolbarColor: Colors.black,
             statusBarColor: Colors.black,
             toolbarWidgetColor: Colors.white,
@@ -116,7 +112,7 @@ class _TakePictureScreenState extends State<TakePictureScreen> {
             activeControlsWidgetColor: Theme.of(context).primaryColor,
             lockAspectRatio: false,
           ),
-          IOSUiSettings(title: 'Crop Image'),
+          IOSUiSettings(title: 'Cắt ảnh'),
         ],
       );
 

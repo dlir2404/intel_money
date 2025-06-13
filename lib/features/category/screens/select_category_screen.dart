@@ -51,7 +51,7 @@ class _SelectCategoryScreenState extends State<SelectCategoryScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Select Category'),
+        title: const Text('Chọn danh mục'),
         centerTitle: true,
         backgroundColor: primaryColor,
         foregroundColor: Colors.white,
@@ -79,7 +79,7 @@ class _SelectCategoryScreenState extends State<SelectCategoryScreen> {
                     ],
                   ),
                   child: ListTile(
-                    title: const Text('(No item selected)'),
+                    title: const Text('(Không chọn)'),
                     onTap: () {
                       setState(() {
                         _selectedCategory = null;

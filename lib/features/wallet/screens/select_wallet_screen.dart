@@ -17,7 +17,8 @@ class SelectWalletScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Select Wallet'),
+        title: const Text('Chọn ví'),
+        centerTitle: true,
         backgroundColor: Theme.of(context).primaryColor,
         foregroundColor: Colors.white,
       ),

@@ -58,8 +58,8 @@ class MonthIncomeVsExpenseChart extends StatelessWidget {
       return DivergingStackedBarChart(
         upData: data.isNotEmpty ? data.first : [],
         downData: data.isNotEmpty ? data.last : [],
-        upTitle: "Income",
-        downTitle: "Expense",
+        upTitle: "Thu",
+        downTitle: "Chi",
         height: 300,
       );
     });

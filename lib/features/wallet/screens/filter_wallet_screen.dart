@@ -27,7 +27,7 @@ class _FilterWalletScreenState extends State<FilterWalletScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Filter Wallet'),
+        title: const Text('Chọn ví'),
         backgroundColor: Theme.of(context).primaryColor,
         foregroundColor: Colors.white,
         centerTitle: true,
@@ -119,7 +119,7 @@ class _FilterWalletScreenState extends State<FilterWalletScreen> {
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              child: const Text('Confirm'),
+              child: const Text('Xác nhận'),
             ),
           ),
         ],

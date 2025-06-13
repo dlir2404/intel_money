@@ -36,7 +36,7 @@ class _HomeBalanceState extends State<HomeBalance> {
                   Row(
                     children: [
                       Text(
-                        'Total Balance',
+                        'Tổng số dư',
                         style: TextStyle(color: Colors.grey[600], fontSize: 14),
                       ),
                       const SizedBox(width: 4),

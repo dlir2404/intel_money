@@ -43,10 +43,10 @@ class _RecentLendBorrowState extends State<RecentLendBorrow> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("Loan", style: const TextStyle(fontSize: 15)),
+                Text("Cho vay", style: const TextStyle(fontSize: 15)),
                 const SizedBox(height: 4),
                 Text(
-                  "Lent money to ${user.name}",
+                  "Cho ${user.name} vay",
                   style: TextStyle(
                     color: Colors.grey,
                     fontSize: 14,
@@ -56,7 +56,7 @@ class _RecentLendBorrowState extends State<RecentLendBorrow> {
                 const SizedBox(height: 4),
 
                 Text(
-                  "Collected date: Uncategorized",
+                  "Ngày thu: Không xác định",
                   style: const TextStyle(fontSize: 13),
                 ),
               ],
@@ -100,10 +100,10 @@ class _RecentLendBorrowState extends State<RecentLendBorrow> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text("Loan", style: const TextStyle(fontSize: 15)),
+                Text("Đi mượn", style: const TextStyle(fontSize: 15)),
                 const SizedBox(height: 4),
                 Text(
-                  "Borrow money from ${user.name}",
+                  "Đi mượn ${user.name}",
                   style: TextStyle(
                     color: Colors.grey,
                     fontSize: 14,
@@ -113,7 +113,7 @@ class _RecentLendBorrowState extends State<RecentLendBorrow> {
                 const SizedBox(height: 4),
 
                 Text(
-                  "Collected date: Uncategorized",
+                  "Ngày trả: Không xác định",
                   style: const TextStyle(fontSize: 13),
                 ),
               ],
@@ -156,7 +156,7 @@ class _RecentLendBorrowState extends State<RecentLendBorrow> {
           return SizedBox(
             height: 80,
             child: Center(
-              child: Text("No recent lend/borrow transactions found.", style: TextStyle(color: Colors.grey),),
+              child: Text("Không có ghi chép nào", style: TextStyle(color: Colors.grey),),
             ),
           );
         }
@@ -177,7 +177,7 @@ class _RecentLendBorrowState extends State<RecentLendBorrow> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Text(
-                      "More",
+                      "Xem thêm",
                       style: TextStyle(
                         fontSize: 16,
                         color: Theme.of(context).primaryColor,

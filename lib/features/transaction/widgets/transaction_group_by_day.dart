@@ -18,23 +18,23 @@ class TransactionGroupByDay extends StatelessWidget {
 
     String dayName =
         date.weekday == 1
-            ? "Monday"
+            ? "Thứ 2"
             : date.weekday == 2
-            ? "Tuesday"
+            ? "Thứ 3"
             : date.weekday == 3
-            ? "Wednesday"
+            ? "Thứ 4"
             : date.weekday == 4
-            ? "Thursday"
+            ? "Thứ 5"
             : date.weekday == 5
-            ? "Friday"
+            ? "Thứ 6"
             : date.weekday == 6
-            ? "Saturday"
-            : "Sunday";
+            ? "Thứ 7"
+            : "Chủ nhật";
 
     if (AppTime.isToday(date)) {
-      dayName = "Today";
+      dayName = "Hôm nay";
     } else if (AppTime.isYesterday(date)) {
-      dayName = "Yesterday";
+      dayName = "Hôm qua";
     }
 
     double totalIncome = 0;

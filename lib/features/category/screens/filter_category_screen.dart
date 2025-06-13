@@ -28,7 +28,7 @@ class _FilterCategoryScreenState extends State<FilterCategoryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Filter Category'),
+        title: const Text('Chọn danh mục'),
         backgroundColor: Theme.of(context).primaryColor,
         foregroundColor: Colors.white,
         centerTitle: true,
@@ -117,7 +117,7 @@ class _FilterCategoryScreenState extends State<FilterCategoryScreen> {
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              child: const Text('Confirm'),
+              child: const Text('Xác nhận'),
             ),
           ),
         ],

@@ -76,7 +76,7 @@ class _SelectDataSourceTypeScreenState extends State<SelectDataSourceTypeScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Data settings"),
+        title: Text("Cài đặt dữ liệu"),
         backgroundColor: Theme.of(context).primaryColor,
         foregroundColor: Colors.white,
         centerTitle: true,
@@ -93,11 +93,11 @@ class _SelectDataSourceTypeScreenState extends State<SelectDataSourceTypeScreen>
               isScrollable: true,
               tabAlignment: TabAlignment.center,
               tabs: const [
-                Tab(text: "Day"),
-                Tab(text: "Week"),
-                Tab(text: "Month"),
-                Tab(text: "Quarter"),
-                Tab(text: "Custom"),
+                Tab(text: "Ngày"),
+                Tab(text: "Tuần"),
+                Tab(text: "Tháng"),
+                Tab(text: "Quý"),
+                Tab(text: "Tùy chọn"),
               ],
             ),
             Expanded(
@@ -217,7 +217,7 @@ class DayDataSourceType extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text("Today"),
+                const Text("Hôm nay"),
                 if (type == TransactionDataSourceType.today)
                   const Icon(Icons.check, color: Colors.green),
               ],
@@ -236,7 +236,7 @@ class DayDataSourceType extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text("Yesterday"),
+                const Text("Hôm qua"),
                 if (type == TransactionDataSourceType.yesterday)
                   const Icon(Icons.check, color: Colors.green),
               ],
@@ -256,8 +256,8 @@ class DayDataSourceType extends StatelessWidget {
                 Text(
                   (type == TransactionDataSourceType.customDay &&
                           customTimeRange != null)
-                      ? "Other: ${AppTime.format(time: customTimeRange!['from']!)}"
-                      : "Other",
+                      ? "Ngày khác: ${AppTime.format(time: customTimeRange!['from']!)}"
+                      : "Ngày khác",
                 ),
                 if (type == TransactionDataSourceType.customDay)
                   const Icon(Icons.check, color: Colors.green),
@@ -485,7 +485,7 @@ class MonthDataSourceType extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text("This month"),
+                const Text("Tháng này"),
                 if (type == TransactionDataSourceType.thisMonth)
                   const Icon(Icons.check, color: Colors.green),
               ],
@@ -504,7 +504,7 @@ class MonthDataSourceType extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text("Last month"),
+                const Text("Tháng trước"),
                 if (type == TransactionDataSourceType.lastMonth)
                   const Icon(Icons.check, color: Colors.green),
               ],
@@ -524,8 +524,8 @@ class MonthDataSourceType extends StatelessWidget {
                 Text(
                   (type == TransactionDataSourceType.customMonth &&
                           customTimeRange != null)
-                      ? "Other: ${AppTime.format(time: customTimeRange!['from']!, pattern: "MM/YYYY")}"
-                      : "Other",
+                      ? "Tháng khác: ${AppTime.format(time: customTimeRange!['from']!, pattern: "MM/YYYY")}"
+                      : "Tháng khác",
                 ),
                 if (type == TransactionDataSourceType.customMonth)
                   const Icon(Icons.check, color: Colors.green),
@@ -777,7 +777,7 @@ class CustomDataSourceType extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text("All time"),
+                const Text("Toàn bộ thời gian"),
                 if (type == TransactionDataSourceType.allTime)
                   const Icon(Icons.check, color: Colors.green),
               ],
@@ -795,8 +795,8 @@ class CustomDataSourceType extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text((type == TransactionDataSourceType.customFromTo && customTimeRange != null)
-                    ? "Other: ${AppTime.format(time: customTimeRange!['from']!)} - ${AppTime.format(time: customTimeRange!['to']!)}"
-                    : "Other"),
+                    ? "Tùy chọn: ${AppTime.format(time: customTimeRange!['from']!)} - ${AppTime.format(time: customTimeRange!['to']!)}"
+                    : "Tùy chọn"),
                 if (type == TransactionDataSourceType.customFromTo)
                   const Icon(Icons.check, color: Colors.green),
               ],

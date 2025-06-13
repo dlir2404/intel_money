@@ -59,10 +59,10 @@ class _CategoriesFilterState extends State<CategoriesFilter> {
             const SizedBox(width: 8),
 
             _selectedCategories == null
-                ? Text('All categories', style: const TextStyle(fontSize: 16))
+                ? Text('Tất cả danh mục', style: const TextStyle(fontSize: 16))
                 : Text(
                   _selectedCategories!.isEmpty
-                      ? 'No categories selected'
+                      ? 'Không có danh mục nào'
                       : _selectedCategories!.length > 1
                       ? '${_selectedCategories![0].name}, +${_selectedCategories!.length - 1} more'
                       : _selectedCategories![0].name,

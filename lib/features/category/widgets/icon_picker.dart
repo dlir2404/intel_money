@@ -26,7 +26,7 @@ class IconPicker extends StatelessWidget {
           const Padding(
             padding: EdgeInsets.only(bottom: 20),
             child: Text(
-              'Select Icon',
+              'Chọn biểu tượng',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
           ),

@@ -110,7 +110,7 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
 
       AdService().showAdIfEligible();
       if (mounted) {
-        AppToast.showSuccess(context, 'Saved');
+        AppToast.showSuccess(context, 'Đã lưu');
         Navigator.pop(context);
       }
     } catch (e) {
@@ -129,19 +129,19 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Confirm Delete'),
+          title: const Text('Xác nhận xóa'),
           content: const Text(
-            'Are you sure you want to delete this transaction? This action cannot be undone.',
+            'Bạn có chắc muốn xóa giao dịch này? Hành động này không thể hoàn tác.',
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('Cancel'),
+              child: const Text('Hủy'),
             ),
             TextButton(
               onPressed: () => Navigator.of(context).pop(true),
               style: TextButton.styleFrom(foregroundColor: Colors.red),
-              child: const Text('Delete'),
+              child: const Text('Xóa'),
             ),
           ],
         );
@@ -158,7 +158,7 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
 
         if (mounted) {
           Navigator.pop(context);
-          AppToast.showSuccess(context, "Transaction deleted successfully");
+          AppToast.showSuccess(context, "Đã xóa giao dịch");
         }
       } catch (e) {
         if (mounted) {
@@ -222,13 +222,13 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
                         _amount = newValue;
                       });
                     },
-                    label: 'Amount',
+                    label: 'Số tiền',
                   )
                   : DifferentInput(
                     oldValue: _currentBalance,
                     newValue: _newRealBalance,
-                    oldLabel: 'Balance in the account',
-                    newLabel: 'Actual Balance',
+                    oldLabel: 'Số dư trên tài khoản',
+                    newLabel: 'Số dư thực tế',
                     onValueChanged: (double newValue) {
                       if (_category != null) {
                         if (_category!.type == CategoryType.income &&
@@ -252,7 +252,7 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
                   children: [
                     SelectCategoryInput(
                       category: _category,
-                      placeholder: 'Select Category',
+                      placeholder: 'Chọn danh mục',
                       categoryType:
                           _transactionType != TransactionType.modifyBalance
                               ? _transactionType.categoryType
@@ -274,7 +274,7 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
                 Column(
                   children: [
                     SelectRelatedUserInput(
-                      placeholder: 'Borrower',
+                      placeholder: 'Người vay',
                       relatedUser: _borrower,
                       onRelatedUserSelected: (user) {
                         setState(() {
@@ -290,7 +290,7 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
                 Column(
                   children: [
                     SelectRelatedUserInput(
-                      placeholder: 'Lender',
+                      placeholder: 'Người cho vay',
                       relatedUser: _lender,
                       onRelatedUserSelected: (user) {
                         setState(() {
@@ -304,7 +304,7 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
 
               SelectWalletInput(
                 wallet: _sourceWallet,
-                placeholder: "Select Source Wallet",
+                placeholder: "Chọn ví nguồn",
                 onWalletSelected: (wallet) {
                   setState(() {
                     _sourceWallet = wallet;
@@ -320,7 +320,7 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
                   children: [
                     SelectWalletInput(
                       wallet: _destinationWallet,
-                      placeholder: "Select Destination Wallet",
+                      placeholder: "Chọn ví đích",
                       onWalletSelected: (wallet) {
                         setState(() {
                           _destinationWallet = wallet;
@@ -333,7 +333,7 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
 
               DateInput(
                 selectedDate: _transactionDate,
-                placeholder: 'Transaction Date',
+                placeholder: 'Thời gian',
                 onDateSelected: (DateTime date) {
                   setState(() {
                     _transactionDate = date;
@@ -345,9 +345,8 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
               const SizedBox(height: 16),
 
               FormInput(
-                label: 'Description (Optional)',
+                label: 'Mô tả (tùy chọn)',
                 controller: _descriptionController,
-                placeholder: 'Add some notes about this transaction',
                 maxLines: 3,
                 prefixIcon: const Icon(Icons.description),
               ),
@@ -383,7 +382,7 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
                                 color: Colors.red,
                               ),
                               label: const Text(
-                                "Delete Transaction",
+                                "Xóa",
                                 style: TextStyle(color: Colors.red),
                               ),
                               style: OutlinedButton.styleFrom(
@@ -405,7 +404,7 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
                             : ElevatedButton.icon(
                               onPressed: _saveTransaction,
                               icon: const Icon(Icons.save, color: Colors.white),
-                              label: const Text("Save Transaction"),
+                              label: const Text("Lưu"),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Theme.of(context).primaryColor,
                                 foregroundColor: Colors.white,

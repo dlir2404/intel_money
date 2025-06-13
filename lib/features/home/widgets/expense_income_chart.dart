@@ -68,7 +68,7 @@ class _ExpenseIncomeChartState extends State<ExpenseIncomeChart> {
                           ),
                         ),
                         const SizedBox(width: 8),
-                        const Text('Income', style: TextStyle(fontSize: 16)),
+                        const Text('Thu', style: TextStyle(fontSize: 16)),
                       ],
                     ),
                     CurrencyDoubleText(
@@ -92,7 +92,7 @@ class _ExpenseIncomeChartState extends State<ExpenseIncomeChart> {
                           ),
                         ),
                         const SizedBox(width: 8),
-                        Text('Expense', style: const TextStyle(fontSize: 16)),
+                        Text('Chi', style: const TextStyle(fontSize: 16)),
                       ],
                     ),
                     CurrencyDoubleText(
@@ -105,8 +105,9 @@ class _ExpenseIncomeChartState extends State<ExpenseIncomeChart> {
 
                 Divider(color: Colors.grey[100]),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
+                    const Text('Chênh lệch', style: TextStyle(fontSize: 16)),
                     CurrencyDoubleText(value: income - expense, fontSize: 18),
                   ],
                 ),
@@ -152,7 +153,7 @@ class _ExpenseIncomeChartState extends State<ExpenseIncomeChart> {
     if (expense == 0){
       chartWidgets.add(const SizedBox(
           height: 160,
-          child: Center(child: Text("No expense record found"))
+          child: Center(child: Text("Không có chi tiêu nào"))
       ));
     } else {
       Map<String, double> expenseRate = {};
@@ -200,7 +201,7 @@ class _ExpenseIncomeChartState extends State<ExpenseIncomeChart> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text("Expense vs Income", style: TextStyle(fontSize: 20)),
+            const Text("Tình hình thu chi", style: TextStyle(fontSize: 20)),
             DropdownButtonHideUnderline(
               child: DropdownButton<StatisticThisTime>(
                 value: type,
@@ -224,24 +225,22 @@ class _ExpenseIncomeChartState extends State<ExpenseIncomeChart> {
               ),
             ),
         
-            if (statisticData != null &&
-                (statisticData.totalIncome != 0 ||
+            if ((statisticData.totalIncome != 0 ||
                     statisticData.totalExpense != 0))
               ..._buildChart(statisticData),
         
-            if (statisticData == null ||
-                (statisticData.totalIncome == 0 &&
+            if ((statisticData.totalIncome == 0 &&
                     statisticData.totalExpense == 0))
               SizedBox(
                 height: 160,
-                child: Center(child: const Text("No record found")),
+                child: Center(child: const Text("Không có ghi chép nào")),
               ),
         
             const SizedBox(height: 16),
             GestureDetector(
               onTap: () {
                 TransactionDataSourceType sourceType = TransactionDataSourceType.thisMonth;
-                switch (this.type) {
+                switch (type) {
                   case StatisticThisTime.today:
                     sourceType = TransactionDataSourceType.today;
                     break;
@@ -277,10 +276,10 @@ class _ExpenseIncomeChartState extends State<ExpenseIncomeChart> {
                 );
               },
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
+                  Expanded(child: const SizedBox()),
                   Text(
-                    "Transaction history",
+                    "Lịch sử giao dịch",
                     style: TextStyle(
                       fontSize: 16,
                       color: Theme.of(context).primaryColor,

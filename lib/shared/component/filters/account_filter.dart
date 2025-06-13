@@ -55,10 +55,10 @@ class _AccountFilterState extends State<AccountFilter> {
             const SizedBox(width: 8),
 
             _selectedWallets == null
-                ? Text('All accounts', style: const TextStyle(fontSize: 16))
+                ? Text('Tất cả ví', style: const TextStyle(fontSize: 16))
                 : Text(
                   _selectedWallets!.isEmpty
-                      ? 'No accounts selected'
+                      ? 'Không chọn ví nào'
                       : _selectedWallets!.length > 2
                       ? '${_selectedWallets![0].name}, ${_selectedWallets![1].name}, +${_selectedWallets!.length - 2} more'
                       : _selectedWallets!

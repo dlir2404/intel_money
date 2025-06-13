@@ -32,27 +32,27 @@ class _CurrentExpenseVsIncomeState extends State<CurrentExpenseVsIncome> {
           return Column(
             children: [
               ExpenseVsIncomeItem(
-                title: "Today",
+                title: "Hôm nay",
                 statisticData: today,
               ),
 
               ExpenseVsIncomeItem(
-                title: "This week",
+                title: "Tuần này",
                 statisticData: thisWeek,
               ),
 
               ExpenseVsIncomeItem(
-                title: "This month",
+                title: "Tháng này",
                 statisticData: thisMonth,
               ),
 
               ExpenseVsIncomeItem(
-                title: "This quarter",
+                title: "Quý này",
                 statisticData: thisQuarter,
               ),
 
               ExpenseVsIncomeItem(
-                title: "This year",
+                title: "Năm nay",
                 statisticData: thisYear,
               ),
             ],

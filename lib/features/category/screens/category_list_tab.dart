@@ -105,7 +105,7 @@ class CategoryListTab extends StatelessWidget {
             if (parent.editable) {
               _navigateToEditCategory(context, parent);
             } else {
-              AppToast.showWarning(context, 'Cannot edit this category');
+              AppToast.showWarning(context, 'Không thể chỉnh sửa danh mục này');
             }
           },
           onChildrenTap: (category) {

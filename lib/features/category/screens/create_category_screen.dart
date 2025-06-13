@@ -96,13 +96,9 @@ class _CreateCategoryScreenState extends State<CreateCategoryScreen> {
           _isLoading = false;
         });
 
-        AppToast.showSuccess(context, "Category created successfully");
+        AppToast.showSuccess(context, "Tạo danh mục thành công");
 
         AdService().showAdIfEligible();
-
-        Future.delayed(const Duration(seconds: 1), () {
-          Navigator.pop(context);
-        });
       }
     } catch (error) {
       if (mounted) {
@@ -121,7 +117,7 @@ class _CreateCategoryScreenState extends State<CreateCategoryScreen> {
 
     // Determine screen title based on category type
     final screenTitle =
-        'Create ${_categoryType == CategoryType.income ? 'Income' : 'Expense'} Category';
+        'Tạo danh mục ${_categoryType == CategoryType.income ? 'thu' : 'chi'}';
 
     return Scaffold(
       appBar: AppBar(
@@ -154,7 +150,7 @@ class _CreateCategoryScreenState extends State<CreateCategoryScreen> {
                       ),
                     )
                     : const Text(
-                      'Save',
+                      'Lưu',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 18,
@@ -196,7 +192,7 @@ class _CreateCategoryScreenState extends State<CreateCategoryScreen> {
                       TextButton(
                         onPressed: _showIconSelectionBottomSheet,
                         child: Text(
-                          'Change Icon',
+                          'Đổi biểu tượng',
                           style: TextStyle(
                             color: primaryColor,
                             fontWeight: FontWeight.w500,
@@ -210,17 +206,17 @@ class _CreateCategoryScreenState extends State<CreateCategoryScreen> {
 
                 // Category Name
                 const Text(
-                  'Category Name',
+                  'Tên danh mục',
                   style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
                 ),
                 const SizedBox(height: 10),
 
                 FormInput(
                   controller: _nameController,
-                  placeholder: 'Enter category name',
+                  placeholder: 'Điền tên danh mục',
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter a category name';
+                      return 'Tên không được để trống';
                     }
                     return null;
                   },
@@ -229,13 +225,13 @@ class _CreateCategoryScreenState extends State<CreateCategoryScreen> {
 
                 // Parent Category
                 const Text(
-                  'Parent Category',
+                  'Danh mục cha',
                   style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
                 ),
                 const SizedBox(height: 10),
                 SelectCategoryInput(
                   category: _parentCategory,
-                  placeholder: 'Select Parent Category',
+                  placeholder: 'Chọn danh mục cha',
                   categoryType: _categoryType,
                   onCategorySelected: (category) {
                     if (category != null) {
@@ -273,7 +269,7 @@ class _CreateCategoryScreenState extends State<CreateCategoryScreen> {
                               ),
                             )
                             : const Text(
-                              'Create Category',
+                              'Tạo danh mục',
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,

@@ -23,7 +23,7 @@ class GeneralSettingScreen extends StatelessWidget {
         ),
         title: Center(
           child: const Text(
-            'General setting',
+            'Cài đặt chung',
             style: TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.w500,
@@ -36,7 +36,7 @@ class GeneralSettingScreen extends StatelessWidget {
       body: Column(
         children: [
           GeneralSettingGroup(
-            title: "Display",
+            title: "Hiển thị",
             widgets: [
               GeneralSettingSelectInput(
                 title: "Theme",

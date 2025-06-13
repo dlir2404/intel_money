@@ -109,7 +109,7 @@ class _DayRangePickerState extends State<DayRangePicker> {
               Padding(
                 padding: const EdgeInsets.only(top: 16, left: 24, bottom: 16),
                 child: Text(
-                  'Select Date Range',
+                  'Chọn ngày',
                   style: TextStyle(fontWeight: FontWeight.w500),
                 ),
               ),

@@ -56,15 +56,15 @@ extension StatisticThisTimeExtension on StatisticThisTime {
   String get name {
     switch (this) {
       case StatisticThisTime.today:
-        return 'Today';
+        return 'Hôm nay';
       case StatisticThisTime.thisWeek:
-        return 'This Week';
+        return 'Tuần này';
       case StatisticThisTime.thisMonth:
-        return 'This Month';
+        return 'Tháng này';
       case StatisticThisTime.thisQuarter:
-        return 'This Quarter';
+        return 'Quý này';
       case StatisticThisTime.thisYear:
-        return 'This Year';
+        return 'Năm nay';
     }
   }
 }

@@ -22,35 +22,35 @@ extension TransactionDataSourceTypeExtension on TransactionDataSourceType {
   String get name {
     switch (this) {
       case TransactionDataSourceType.yesterday:
-        return "Yesterday";
+        return "Hôm qua";
       case TransactionDataSourceType.today:
-        return "Today";
+        return "Hôm nay";
       case TransactionDataSourceType.customDay:
-        return "Custom day";
+        return "Ngày khác";
       case TransactionDataSourceType.thisWeek:
-        return "This week";
+        return "Tuần này";
       case TransactionDataSourceType.lastWeek:
-        return "Last week";
+        return "Tuần trước";
       case TransactionDataSourceType.thisMonth:
-        return "This month";
+        return "Tháng này";
       case TransactionDataSourceType.lastMonth:
-        return "Last month";
+        return "Tháng trước";
       case TransactionDataSourceType.customMonth:
-        return "Custom month";
+        return "Tháng khác";
       case TransactionDataSourceType.quarter1:
-        return "Quarter I";
+        return "Quý I";
       case TransactionDataSourceType.quarter2:
-        return "Quarter II";
+        return "Quý II";
       case TransactionDataSourceType.quarter3:
-        return "Quarter III";
+        return "Quý III";
       case TransactionDataSourceType.quarter4:
-        return "Quarter IV";
+        return "Quý IV";
       case TransactionDataSourceType.thisYear:
-        return "This year";
+        return "Năm nay";
       case TransactionDataSourceType.allTime:
-        return "All time";
+        return "Toàn bộ thời gian";
       case TransactionDataSourceType.customFromTo:
-        return "Custom From To";
+        return "Tùy chọn";
     }
   }
 
