@@ -26,20 +26,6 @@ class _HomeScreenState extends State<HomeScreen> {
         title: Text("Hello ${user?.name}!"),
         foregroundColor: Colors.white,
         backgroundColor: Theme.of(context).primaryColor,
-        actions: [
-          IconButton(
-            icon: Icon(Icons.sync),
-            onPressed: () {
-              // Sync data action
-            },
-          ),
-          IconButton(
-            icon: Icon(Icons.notifications),
-            onPressed: () {
-              // Navigate to notification page
-            },
-          ),
-        ],
       ),
       body: SingleChildScrollView(
         child: Column(
