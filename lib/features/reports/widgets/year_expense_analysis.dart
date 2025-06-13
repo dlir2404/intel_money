@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intel_money/features/reports/widgets/year_detail_analysis.dart';
 import 'package:intel_money/features/reports/widgets/year_expense_analysis_chart.dart';
 import 'package:intel_money/shared/component/filters/year_range_picker.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
@@ -56,63 +57,79 @@ class _YearExpenseAnalysisState extends State<YearExpenseAnalysis> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        YearRangePicker(
-          startDate: _startDate,
-          endDate: _endDate,
-          onChanged: (PickerDateRange? range) {
-            if (range != null) {
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          YearRangePicker(
+            startDate: _startDate,
+            endDate: _endDate,
+            onChanged: (PickerDateRange? range) {
+              if (range != null) {
+                setState(() {
+                  _startDate = range.startDate;
+                  _endDate = range.endDate;
+                  _isDataLoaded = false;
+                });
+              }
+            },
+          ),
+          const SizedBox(height: 2),
+
+          CategoriesFilter(
+            categoryType: CategoryType.expense,
+            selectedCategories: _selectedCategories,
+            onSelectionChanged: (List<Category>? categories) {
               setState(() {
-                _startDate = range.startDate;
-                _endDate = range.endDate;
+                _selectedCategories = categories;
                 _isDataLoaded = false;
               });
-            }
-          },
-        ),
-        const SizedBox(height: 2),
+            },
+          ),
+          const SizedBox(height: 2),
 
-        CategoriesFilter(
-          categoryType: CategoryType.expense,
-          selectedCategories: _selectedCategories,
-          onSelectionChanged: (List<Category>? categories) {
-            setState(() {
-              _selectedCategories = categories;
-              _isDataLoaded = false;
-            });
-          },
-        ),
-        const SizedBox(height: 2),
+          AccountFilter(
+            selectedWallets: _selectedWallets,
+            onSelectionChanged: (List<Wallet>? wallets) {
+              setState(() {
+                _selectedWallets = wallets;
+                _isDataLoaded = false;
+              });
+            },
+          ),
+          const SizedBox(height: 6),
 
-        AccountFilter(
-          selectedWallets: _selectedWallets,
-          onSelectionChanged: (List<Wallet>? wallets) {
-            setState(() {
-              _selectedWallets = wallets;
-              _isDataLoaded = false;
-            });
-          },
-        ),
-        const SizedBox(height: 6),
+          FutureBuilder(
+            future: _loadData(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
 
-        FutureBuilder(
-          future: _loadData(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            }
+              return Column(
+                children: [
+                  Container(
+                    color: Colors.white,
+                    padding: const EdgeInsets.only(top: 12, bottom: 12, left: 16),
+                    child: YearExpenseAnalysisChart(
+                      data: _data,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
 
-            return Container(
-              color: Colors.white,
-              padding: const EdgeInsets.only(top: 12, bottom: 12, left: 16),
-              child: YearExpenseAnalysisChart(
-                data: _data,
-              ),
-            );
-          },
-        ),
-      ],
+                  Container(
+                    color: Colors.white,
+                    child: YearDetailAnalysis(
+                      data: _data,
+                      type: AnalysisType.expense,
+                    ),
+                  ),
+                  const SizedBox(height: 40,)
+                ],
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 }
