@@ -52,7 +52,11 @@ class _DetailRatioScreenState extends State<DetailRatioScreen>
     return result;
   }
 
-  Widget _buildDescription(double total, List<ByCategoryData> data, TransactionType type) {
+  Widget _buildDescription(
+    double total,
+    List<ByCategoryData> data,
+    TransactionType type,
+  ) {
     return Container(
       color: Colors.white,
       child: Column(
@@ -63,8 +67,81 @@ class _DetailRatioScreenState extends State<DetailRatioScreen>
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder:
-                        (context) =>
-                            TransactionsOfCategories(title: item.category.name, transactions: item.transactions,),
+                        (context) => TransactionsOfCategories(
+                          title: item.category.name,
+                          transactions: item.transactions,
+                          onListChanged: (newListTransaction) {
+                            if (newListTransaction.isEmpty) {
+                              if (type == TransactionType.expense) {
+                                _statisticData.byCategoryExpense =
+                                    _statisticData.byCategoryExpense
+                                        .where(
+                                          (e) =>
+                                              e.category.id != item.category.id,
+                                        )
+                                        .toList();
+
+                                _statisticData.totalExpense = _statisticData
+                                    .byCategoryExpense
+                                    .fold(0.0, (sum, e) => sum + e.amount);
+                              } else {
+                                _statisticData.byCategoryIncome =
+                                    _statisticData.byCategoryIncome
+                                        .where(
+                                          (e) =>
+                                              e.category.id != item.category.id,
+                                        )
+                                        .toList();
+
+                                _statisticData.totalIncome = _statisticData
+                                    .byCategoryIncome
+                                    .fold(0.0, (sum, e) => sum + e.amount);
+                              }
+                            } else {
+                              if (type == TransactionType.expense) {
+                                _statisticData.byCategoryExpense =
+                                    _statisticData.byCategoryExpense.map((e) {
+                                      if (e.category.id == item.category.id) {
+                                        return ByCategoryData(
+                                          category: e.category,
+                                          amount: newListTransaction.fold(
+                                            0.0,
+                                            (sum, t) => sum + t.amount,
+                                          ),
+                                          transactions: newListTransaction,
+                                        );
+                                      }
+                                      return e;
+                                    }).toList();
+
+                                _statisticData.totalExpense = _statisticData
+                                    .byCategoryExpense
+                                    .fold(0.0, (sum, e) => sum + e.amount);
+                              } else {
+                                _statisticData.byCategoryIncome =
+                                    _statisticData.byCategoryIncome.map((e) {
+                                      if (e.category.id == item.category.id) {
+                                        return ByCategoryData(
+                                          category: e.category,
+                                          amount: newListTransaction.fold(
+                                            0.0,
+                                            (sum, t) => sum + t.amount,
+                                          ),
+                                          transactions: newListTransaction,
+                                        );
+                                      }
+                                      return e;
+                                    }).toList();
+
+                                _statisticData.totalIncome = _statisticData
+                                    .byCategoryIncome
+                                    .fold(0.0, (sum, e) => sum + e.amount);
+                              }
+                            }
+
+                            setState(() {});
+                          },
+                        ),
                   ),
                 );
               },
@@ -129,7 +206,10 @@ class _DetailRatioScreenState extends State<DetailRatioScreen>
                             flex: item.amount.toInt(),
                             child: Container(
                               height: 4,
-                              color: type == TransactionType.income ? Colors.green : Colors.redAccent,
+                              color:
+                                  type == TransactionType.income
+                                      ? Colors.green
+                                      : Colors.redAccent,
                             ),
                           ),
                           Expanded(

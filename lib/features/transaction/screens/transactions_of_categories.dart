@@ -6,11 +6,32 @@ import 'package:intel_money/shared/const/enum/category_type.dart';
 import '../../../core/models/statistic_data.dart';
 import '../../../core/models/transaction.dart';
 import '../../../shared/component/typos/currency_double_text.dart';
+import 'edit_transaction_screen.dart';
 
-class TransactionsOfCategories extends StatelessWidget {
+class TransactionsOfCategories extends StatefulWidget {
   final List<Transaction> transactions;
   final String title;
-  const TransactionsOfCategories({super.key, required this.transactions, required this.title});
+  final Function(List<Transaction>)? onListChanged;
+
+  const TransactionsOfCategories({
+    super.key,
+    required this.transactions,
+    required this.title, this.onListChanged,
+  });
+
+  @override
+  State<TransactionsOfCategories> createState() =>
+      _TransactionsOfCategoriesState();
+}
+
+class _TransactionsOfCategoriesState extends State<TransactionsOfCategories> {
+  List<Transaction> _transactions = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _transactions = widget.transactions;
+  }
 
   Widget _buildGroupTransactions(
     Category category,
@@ -75,7 +96,43 @@ class TransactionsOfCategories extends StatelessWidget {
           ...transactions.map((item) {
             return Column(
               children: [
-                TransactionItemV2(transaction: item),
+                InkWell(
+                  onTap: () async {
+                    final returnData = await Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder:
+                            (context) =>
+                                EditTransactionScreen(transaction: item),
+                      ),
+                    );
+
+                    if (returnData != null &&
+                        returnData['removedTransaction'] != null) {
+                      // Handle transaction removal
+                      setState(() {
+                        _transactions.remove(item);
+                      });
+
+                      if (widget.onListChanged != null) {
+                        widget.onListChanged!(_transactions);
+                      }
+                    } else if (returnData != null &&
+                        returnData['updatedTransaction'] != null) {
+                      // Handle transaction update
+                      final updatedTransaction =
+                          returnData['updatedTransaction'] as Transaction;
+                      setState(() {
+                        _transactions.remove(item);
+                        _transactions.add(updatedTransaction);
+                      });
+
+                      if (widget.onListChanged != null) {
+                        widget.onListChanged!(_transactions);
+                      }
+                    }
+                  },
+                  child: TransactionItemV2(transaction: item),
+                ),
                 Divider(height: 0, thickness: 0.5),
               ],
             );
@@ -88,7 +145,7 @@ class TransactionsOfCategories extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Map<Category, List<Transaction>> groupedData = {};
-    for (var transaction in transactions) {
+    for (var transaction in _transactions) {
       final cat = transaction.category!;
       if (!groupedData.containsKey(cat)) {
         groupedData[cat] = [];
@@ -98,7 +155,7 @@ class TransactionsOfCategories extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(title),
+        title: Text(widget.title),
         backgroundColor: Theme.of(context).primaryColor,
         foregroundColor: Colors.white,
         centerTitle: true,
@@ -109,10 +166,7 @@ class TransactionsOfCategories extends StatelessWidget {
           child: Column(
             children: [
               ...groupedData.entries.map((item) {
-                return _buildGroupTransactions(
-                  item.key,
-                  item.value,
-                );
+                return _buildGroupTransactions(item.key, item.value);
               }),
             ],
           ),

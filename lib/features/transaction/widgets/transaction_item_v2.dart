@@ -78,34 +78,25 @@ class TransactionItemV2 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => EditTransactionScreen(transaction: transaction),
+    return Container(
+      color: Colors.white,
+      padding: const EdgeInsets.all(8),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              const SizedBox(width: 16),
+
+              _buildDay(),
+              Expanded(child: const SizedBox()),
+
+              _buildValue(),
+              const SizedBox(width: 12),
+            ],
           ),
-        );
-      },
-      child: Container(
-        color: Colors.white,
-        padding: const EdgeInsets.all(8),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                const SizedBox(width: 16),
 
-                _buildDay(),
-                Expanded(child: const SizedBox()),
-
-                _buildValue(),
-                const SizedBox(width: 12),
-              ],
-            ),
-
-            _buildWallet(),
-          ],
-        ),
+          _buildWallet(),
+        ],
       ),
     );
   }
