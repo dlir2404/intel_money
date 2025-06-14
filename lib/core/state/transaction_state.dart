@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:intel_money/shared/helper/app_time.dart';
 
 import '../models/transaction.dart';
 
@@ -20,10 +21,19 @@ class TransactionState extends ChangeNotifier {
   void addTransaction(Transaction transaction) {
     bool isInserted = false;
     for (var i = 0; i < _transactions.length; i++) {
-      if (transaction.transactionDate.isAfter(_transactions[i].transactionDate) || transaction.transactionDate.isAtSameMomentAs(_transactions[i].transactionDate)) {
+      if (transaction.transactionDate.isAfter(_transactions[i].transactionDate)) {
         _transactions.insert(i, transaction);
         isInserted = true;
         break;
+      }
+
+      if (AppTime.isSame(transaction.transactionDate, _transactions[i].transactionDate)) {
+        if (transaction.id > _transactions[i].id) {
+          // If the transaction date is the same, insert based on ID
+          _transactions.insert(i, transaction);
+          isInserted = true;
+          break;
+        }
       }
     }
 
