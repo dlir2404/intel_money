@@ -68,6 +68,8 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
 
     _currentBalance = 0;
     _newRealBalance = 0;
+
+    _descriptionController.text = widget.transaction.description ?? '';
     if (widget.transaction is LendTransaction) {
       _borrower = (widget.transaction as LendTransaction).borrower;
     } else if (widget.transaction is BorrowTransaction) {
