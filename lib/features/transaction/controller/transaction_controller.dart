@@ -274,7 +274,7 @@ class TransactionController {
     updateStatesAfterCreateTransaction(newTransaction);
   }
 
-  Future<void> saveTransaction({
+  Future<Transaction> saveTransaction({
     required Transaction oldTransaction,
     required double amount,
     required TransactionType transactionType,
@@ -393,6 +393,8 @@ class TransactionController {
     updateStatesAfterRemoveTransaction(oldTransaction);
 
     updateStatesAfterCreateTransaction(newTransaction);
+
+    return newTransaction;
   }
 
   void _validateFields({

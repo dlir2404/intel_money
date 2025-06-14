@@ -92,7 +92,7 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
     });
 
     try {
-      await _transactionController.saveTransaction(
+      final newTransaction = await _transactionController.saveTransaction(
         oldTransaction: widget.transaction,
         amount: _amount,
         transactionType: _transactionType,
@@ -111,7 +111,12 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
       AdService().showAdIfEligible();
       if (mounted) {
         AppToast.showSuccess(context, 'Đã lưu');
-        Navigator.pop(context);
+
+        final returnData = {
+          "updatedTransaction": newTransaction,
+        };
+
+        Navigator.pop(context, returnData);
       }
     } catch (e) {
       if (mounted) {
@@ -156,8 +161,12 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
       try {
         await _transactionController.deleteTransaction(widget.transaction);
 
+        final returnData = {
+          "removedTransaction": widget.transaction,
+        };
+
         if (mounted) {
-          Navigator.pop(context);
+          Navigator.pop(context, returnData);
           AppToast.showSuccess(context, "Đã xóa giao dịch");
         }
       } catch (e) {
