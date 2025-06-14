@@ -55,11 +55,11 @@ class CategoryState extends ChangeNotifier {
     );
 
     _otherIncomeCategory = categories.firstWhere(
-      (element) => element.name == "Other" && element.type == CategoryType.income,
+      (element) => element.name == "Khác" && element.type == CategoryType.income,
     );
 
     _otherExpenseCategory = categories.firstWhere(
-      (element) => element.name == "Other" && element.type == CategoryType.expense,
+      (element) => element.name == "Khác" && element.type == CategoryType.expense,
     );
 
     notifyListeners();
