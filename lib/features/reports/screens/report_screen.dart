@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intel_money/features/reports/screens/expense_vs_income_screen.dart';
 import 'package:intel_money/features/reports/screens/income_analysis.dart';
+import 'package:intel_money/features/reports/screens/lend_borrow_screen.dart';
 
 import '../../../core/services/ad_service.dart';
 import 'expense_analysis.dart';
@@ -67,7 +68,13 @@ class ReportScreen extends StatelessWidget {
       'icon': Icons.checklist_rounded,
       'title': 'Theo dõi vay nợ',
       'color': Colors.orange,
-      'ontap': null,
+      'ontap': (BuildContext context) {
+        AdService().showAdIfEligible();
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const LendBorrowScreen()),
+        );
+      },
     },
     {
       'icon': Icons.person,

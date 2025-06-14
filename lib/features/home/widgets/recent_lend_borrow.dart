@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 
 import '../../../core/models/related_user.dart';
 import '../../../shared/component/typos/currency_double_text.dart';
+import '../../reports/screens/lend_borrow_screen.dart';
 
 class RecentLendBorrow extends StatefulWidget {
   const RecentLendBorrow({super.key});
@@ -171,7 +172,10 @@ class _RecentLendBorrowState extends State<RecentLendBorrow> {
 
               InkWell(
                 onTap: () {
-                  // Navigate to lend / borrow screen
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const LendBorrowScreen()),
+                  );
                 },
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
