@@ -12,20 +12,20 @@ import '../../../shared/helper/app_time.dart';
 import '../../transaction/screens/select_data_source_type_screen.dart';
 import '../../transaction/widgets/select_data_source_type_button.dart';
 
-class LendTab extends StatefulWidget {
-  const LendTab({super.key});
+class BorrowTab extends StatefulWidget {
+  const BorrowTab({super.key});
 
   @override
-  State<LendTab> createState() => _LendTabState();
+  State<BorrowTab> createState() => _BorrowTabState();
 }
 
-class _LendTabState extends State<LendTab> {
+class _BorrowTabState extends State<BorrowTab> {
   TransactionDataSourceType type = TransactionDataSourceType.allTime;
   Map<String, DateTime>? customTimeRange;
 
-  Map<RelatedUser, LendData> _totalDebtMap = {};
-  double _totalLendAmount = 0;
-  double _totalCollectedAmount = 0;
+  Map<RelatedUser, BorrowData> _totalDebtMap = {};
+  double _totalBorowAmount = 0;
+  double _totalPaidAmount = 0;
 
   Future<void> _prepareData(
     List<Transaction> allTransactions,
@@ -58,28 +58,28 @@ class _LendTabState extends State<LendTab> {
       sourceTransactions = result;
     }
 
-    Map<RelatedUser, LendData> totalDebtMap = {};
+    Map<RelatedUser, BorrowData> totalDebtMap = {};
     double totalCollectedAmount = 0;
     double totalLendAmount = 0;
     for (var transaction in sourceTransactions) {
-      if (transaction.type != TransactionType.lend) continue;
+      if (transaction.type != TransactionType.borrow) continue;
 
       if (!totalDebtMap.containsKey(
-        (transaction as LendTransaction).borrower,
+        (transaction as BorrowTransaction).lender,
       )) {
-        totalDebtMap[transaction.borrower] = LendData(
+        totalDebtMap[transaction.lender] = BorrowData(
           total: 0,
-          collected: 0,
+          paid: 0,
           transactions: [],
         );
       }
-      totalDebtMap[transaction.borrower]!.total += transaction.amount;
-      totalDebtMap[transaction.borrower]!.transactions.add(transaction);
+      totalDebtMap[transaction.lender]!.total += transaction.amount;
+      totalDebtMap[transaction.lender]!.transactions.add(transaction);
       totalLendAmount += transaction.amount;
     }
 
     _totalDebtMap = totalDebtMap;
-    _totalLendAmount = totalLendAmount;
+    _totalBorowAmount = totalLendAmount;
     setState(() {});
   }
 
@@ -149,40 +149,40 @@ class _LendTabState extends State<LendTab> {
                     children: [
                       type == TransactionDataSourceType.allTime
                           ? Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    "Cần thu",
-                                    style: TextStyle(fontSize: 16),
-                                  ),
-                                  CurrencyDoubleText(
-                                    value: _totalLendAmount - _totalCollectedAmount,
-                                    fontSize: 16,
-                                    color: Colors.green,
-                                  ),
-                                ],
+                              Text(
+                                "Phải trả",
+                                style: TextStyle(fontSize: 16),
                               ),
-                              const SizedBox(height: 8),
-                              LinearProgressIndicator(
-                                value: _totalCollectedAmount / _totalLendAmount,
-                                backgroundColor: Colors.grey[300],
-                                color: Colors.green, // Progress color
+                              CurrencyDoubleText(
+                                value: _totalBorowAmount - _totalPaidAmount,
+                                fontSize: 16,
+                                color: Colors.red,
                               ),
-                              const SizedBox(height: 8),
                             ],
-                          )
+                          ),
+                          const SizedBox(height: 8),
+                          LinearProgressIndicator(
+                            value: _totalPaidAmount / _totalBorowAmount,
+                            backgroundColor: Colors.grey[300],
+                            color: Colors.red, // Progress color
+                          ),
+                          const SizedBox(height: 8),
+                        ],
+                      )
                           : const SizedBox.shrink(),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            "Tổng tiền đã cho vay",
+                            "Tổng tiền đã vay",
                             style: TextStyle(fontSize: 16),
                           ),
                           CurrencyDoubleText(
-                            value: _totalLendAmount,
+                            value: _totalBorowAmount,
                             fontSize: 16,
                           ),
                         ],
@@ -192,12 +192,12 @@ class _LendTabState extends State<LendTab> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            "Tổng tiền đã thu",
+                            "Tổng tiền đã trả",
                             style: TextStyle(fontSize: 16),
                           ),
                           CurrencyDoubleText(
-                            value: _totalCollectedAmount,
-                            color: Colors.green,
+                            value: _totalPaidAmount,
+                            color: Colors.red,
                             fontSize: 16,
                           ),
                         ],
@@ -259,8 +259,8 @@ class _LendTabState extends State<LendTab> {
                                             fontSize: 16,
                                           ),
                                           CurrencyDoubleText(
-                                            value: lendData.collected,
-                                            color: Colors.green,
+                                            value: lendData.paid,
+                                            color: Colors.red,
                                             fontSize: 16,
                                           ),
                                         ],
@@ -291,14 +291,14 @@ class _LendTabState extends State<LendTab> {
   }
 }
 
-class LendData {
+class BorrowData {
   double total;
-  double collected;
+  double paid;
   List<Transaction> transactions;
 
-  LendData({
+  BorrowData({
     required this.total,
-    required this.collected,
+    required this.paid,
     required this.transactions,
   });
 }

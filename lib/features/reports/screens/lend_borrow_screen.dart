@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intel_money/features/reports/widgets/borrow_tab.dart';
 
 import '../widgets/lend_tab.dart';
 
@@ -48,7 +49,7 @@ class _LendBorrowScreenState extends State<LendBorrowScreen>
               controller: _tabController,
               children: const [
                 LendTab(),
-                Center(child: Text("Danh sách còn nợ")),
+                BorrowTab(),
               ],
             ),
           ),
