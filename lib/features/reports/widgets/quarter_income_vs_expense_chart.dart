@@ -15,17 +15,17 @@ class QuarterIncomeVsExpenseChart extends StatelessWidget {
     }
 
     final incomeData = [
-      GroupedBarData("Quarter I", yearData.byQuarterStatistic![0].totalIncome),
-      GroupedBarData("Quarter II", yearData.byQuarterStatistic![1].totalIncome),
-      GroupedBarData("Quarter III", yearData.byQuarterStatistic![2].totalIncome),
-      GroupedBarData("Quarter IV", yearData.byQuarterStatistic![3].totalIncome),
+      GroupedBarData("Quý I", yearData.byQuarterStatistic![0].totalIncome),
+      GroupedBarData("Quý II", yearData.byQuarterStatistic![1].totalIncome),
+      GroupedBarData("Quý III", yearData.byQuarterStatistic![2].totalIncome),
+      GroupedBarData("Quý IV", yearData.byQuarterStatistic![3].totalIncome),
     ];
 
     final expenseData = [
-      GroupedBarData("Quarter I", yearData.byQuarterStatistic![0].totalExpense),
-      GroupedBarData("Quarter II", yearData.byQuarterStatistic![1].totalExpense),
-      GroupedBarData("Quarter III", yearData.byQuarterStatistic![2].totalExpense),
-      GroupedBarData("Quarter IV", yearData.byQuarterStatistic![3].totalExpense),
+      GroupedBarData("Quý I", yearData.byQuarterStatistic![0].totalExpense),
+      GroupedBarData("Quý II", yearData.byQuarterStatistic![1].totalExpense),
+      GroupedBarData("Quý III", yearData.byQuarterStatistic![2].totalExpense),
+      GroupedBarData("Quý IV", yearData.byQuarterStatistic![3].totalExpense),
     ];
 
     return [
@@ -46,7 +46,7 @@ class QuarterIncomeVsExpenseChart extends StatelessWidget {
           Colors.green,
           Colors.red,
         ],
-        titles: ["Income", "Expense"],
+        titles: ["Thu", "Chi"],
         height: 300,
       );
     });

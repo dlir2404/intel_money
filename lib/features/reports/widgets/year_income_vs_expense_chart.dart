@@ -40,7 +40,7 @@ class YearIncomeVsExpenseChart extends StatelessWidget {
           Colors.green,
           Colors.red,
         ],
-        titles: ["Income", "Expense"],
+        titles: ["Thu", "Chi"],
         height: 300,
       );
     });

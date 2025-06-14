@@ -244,7 +244,7 @@ class StatisticState extends ChangeNotifier {
       _thisYearStatisticData!.byMonthStatistic![month - 1].totalExpense += newTransaction.amount;
 
       //by quarter statistic
-      final quarter = (newTransaction.transactionDate.month / 3).toInt() + 1;
+      final quarter = AppTime.getQuarter(newTransaction.transactionDate);
       _thisYearStatisticData!.byQuarterStatistic![quarter - 1].totalExpense += newTransaction.amount;
     } else if (newTransaction.type == TransactionType.income) {
       _thisYearStatisticData!.totalIncome += newTransaction.amount;
@@ -268,7 +268,7 @@ class StatisticState extends ChangeNotifier {
       _thisYearStatisticData!.byMonthStatistic![month - 1].totalIncome += newTransaction.amount;
 
       //by quarter statistic
-      final quarter = (newTransaction.transactionDate.month / 3).toInt() + 1;
+      final quarter = AppTime.getQuarter(newTransaction.transactionDate);
       _thisYearStatisticData!.byQuarterStatistic![quarter - 1].totalIncome += newTransaction.amount;
     }
   }
@@ -298,7 +298,7 @@ class StatisticState extends ChangeNotifier {
       _thisYearStatisticData!.byMonthStatistic![month - 1].totalExpense -= removedTransaction.amount;
 
       //by quarter statistic
-      final quarter = (removedTransaction.transactionDate.month / 3).toInt() + 1;
+      final quarter = AppTime.getQuarter(removedTransaction.transactionDate);
       _thisYearStatisticData!.byQuarterStatistic![quarter - 1].totalExpense -= removedTransaction.amount;
     } else if (removedTransaction.type == TransactionType.income) {
       _thisYearStatisticData!.totalIncome -= removedTransaction.amount;
@@ -320,7 +320,7 @@ class StatisticState extends ChangeNotifier {
       _thisYearStatisticData!.byMonthStatistic![month - 1].totalIncome -= removedTransaction.amount;
 
       //by quarter statistic
-      final quarter = (removedTransaction.transactionDate.month / 3).toInt() + 1;
+      final quarter = AppTime.getQuarter(removedTransaction.transactionDate);
       _thisYearStatisticData!.byQuarterStatistic![quarter - 1].totalIncome -= removedTransaction.amount;
     }
   }
