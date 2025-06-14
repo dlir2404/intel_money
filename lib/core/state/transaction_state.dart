@@ -39,7 +39,7 @@ class TransactionState extends ChangeNotifier {
 
     //no transaction date is after the new transaction date
     if (!isInserted) {
-      _transactions.insert(0, transaction);
+      _transactions.insert(_transactions.length, transaction);
     }
 
     notifyListeners();
