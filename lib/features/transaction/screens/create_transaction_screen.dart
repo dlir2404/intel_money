@@ -207,6 +207,12 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
             } else if (transactionType == TransactionType.borrow) {
               final state = Provider.of<CategoryState>(context, listen: false);
               _selectedCategory = state.borrowCategory;
+            } else if (transactionType == TransactionType.collectingDebt) {
+              final state = Provider.of<CategoryState>(context, listen: false);
+              _selectedCategory = state.collectingDebtCategory;
+            } else if (transactionType == TransactionType.repayment) {
+              final state = Provider.of<CategoryState>(context, listen: false);
+              _selectedCategory = state.repaymentCategory;
             } else {
               _selectedCategory = null;
             }
@@ -309,7 +315,7 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
                   ],
                 ),
 
-              if (_selectedTransactionType == TransactionType.lend)
+              if (_selectedTransactionType == TransactionType.lend || _selectedTransactionType == TransactionType.collectingDebt)
                 Column(
                   children: [
                     SelectRelatedUserInput(
@@ -324,7 +330,7 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
                   ],
                 ),
 
-              if (_selectedTransactionType == TransactionType.borrow)
+              if (_selectedTransactionType == TransactionType.borrow || _selectedTransactionType == TransactionType.repayment)
                 Column(
                   children: [
                     SelectRelatedUserInput(

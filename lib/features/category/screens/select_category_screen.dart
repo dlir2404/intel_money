@@ -41,6 +41,8 @@ class _SelectCategoryScreenState extends State<SelectCategoryScreen> {
         return [];
       case CategoryType.borrow:
         return [];
+      default:
+        return [];
     }
   }
 

@@ -34,7 +34,7 @@ class WalletListTab extends StatelessWidget {
                     Text('Tổng số dư khả dụng:'),
                     CurrencyDoubleText(
                       value: totalBalance,
-                      color: totalBalance > 0 ? Colors.green : Colors.red,
+                      color: totalBalance >= 0 ? Colors.green : Colors.red,
                       fontWeight: FontWeight.w500,
                     )
                   ],

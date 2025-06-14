@@ -53,6 +53,10 @@ class Transaction {
         return TransferTransaction.fromJson(json);
       case TransactionType.modifyBalance:
         return ModifyBalanceTransaction.fromJson(json);
+      case TransactionType.collectingDebt:
+        return CollectingDebtTransaction.fromJson(json);
+      case TransactionType.repayment:
+        return RepaymentTransaction.fromJson(json);
       default:
         break;
     }
@@ -314,6 +318,115 @@ class ModifyBalanceTransaction extends Transaction {
       id: id ?? this.id,
       amount: amount ?? this.amount,
       newRealBalance: newRealBalance ?? this.newRealBalance,
+      transactionDate: transactionDate ?? this.transactionDate,
+      sourceWallet: sourceWallet ?? this.sourceWallet,
+      category: category ?? this.category,
+      description: description ?? this.description,
+      image: image ?? this.image,
+    );
+  }
+}
+
+class CollectingDebtTransaction extends Transaction {
+  RelatedUser borrower;
+
+  CollectingDebtTransaction({
+    required super.id,
+    required super.amount,
+    required this.borrower,
+    required super.transactionDate,
+    required super.sourceWallet,
+    super.category,
+    super.description,
+    super.image,
+  }) : super(type: TransactionType.collectingDebt);
+
+  factory CollectingDebtTransaction.fromJson(Map<String, dynamic> json) {
+    final borrower = RelatedUser.fromContext(json['extraInfo']['borrowerId']);
+    return CollectingDebtTransaction(
+      id: json['id'],
+      amount: double.parse(json['amount'].toString()),
+      borrower: borrower,
+      transactionDate: AppTime.parseFromApi(json['transactionDate']),
+      sourceWallet: Wallet.fromContext(json['sourceWalletId']),
+      category: Category.fromContext(json['categoryId']),
+      description: json['description'],
+      image: json['image'],
+    );
+  }
+
+  @override
+  CollectingDebtTransaction copyWith({
+    int? id,
+    TransactionType? type,
+    double? amount,
+    Category? category,
+    Wallet? sourceWallet,
+    DateTime? transactionDate,
+    String? description,
+    bool? notAddToReport,
+    String? image,
+    RelatedUser? borrower,
+  }) {
+    return CollectingDebtTransaction(
+      id: id ?? this.id,
+      amount: amount ?? this.amount,
+      borrower: borrower ?? this.borrower,
+      transactionDate: transactionDate ?? this.transactionDate,
+      sourceWallet: sourceWallet ?? this.sourceWallet,
+      category: category ?? this.category,
+      description: description ?? this.description,
+      image: image ?? this.image,
+    );
+  }
+}
+
+
+class RepaymentTransaction extends Transaction {
+  RelatedUser lender;
+
+  RepaymentTransaction({
+    required super.id,
+    required super.amount,
+    required this.lender,
+    required super.transactionDate,
+    required super.sourceWallet,
+    super.category,
+    super.description,
+    super.image,
+  }) : super(type: TransactionType.repayment);
+
+  factory RepaymentTransaction.fromJson(Map<String, dynamic> json) {
+    final lender = RelatedUser.fromContext(json['extraInfo']['lenderId']);
+    return RepaymentTransaction(
+      id: json['id'],
+      amount: double.parse(json['amount'].toString()),
+      lender: lender,
+      transactionDate: AppTime.parseFromApi(json['transactionDate']),
+      sourceWallet: Wallet.fromContext(json['sourceWalletId']),
+      category: Category.fromContext(json['categoryId']),
+      description: json['description'],
+      image: json['image'],
+    );
+  }
+
+  @override
+  RepaymentTransaction copyWith({
+    int? id,
+    TransactionType? type,
+    double? amount,
+    Category? category,
+    Wallet? sourceWallet,
+    DateTime? transactionDate,
+    String? description,
+    bool? notAddToReport,
+    String? image,
+    RelatedUser? lender,
+  }) {
+    return RepaymentTransaction(
+      id: id ?? this.id,
+      amount: amount ?? this.amount,
+      lender: lender ?? this.lender,
       transactionDate: transactionDate ?? this.transactionDate,
       sourceWallet: sourceWallet ?? this.sourceWallet,
       category: category ?? this.category,

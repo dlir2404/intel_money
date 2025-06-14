@@ -26,10 +26,12 @@ import '../../../shared/const/enum/transaction_data_source_type.dart';
 import '../../../shared/const/enum/transaction_type.dart';
 
 class TransactionController {
-  static final TransactionController _instance = TransactionController._internal();
-  factory TransactionController() => _instance;
-  TransactionController._internal();
+  static final TransactionController _instance =
+      TransactionController._internal();
 
+  factory TransactionController() => _instance;
+
+  TransactionController._internal();
 
   final TransactionService _transactionService = TransactionService();
   final RelatedUserService _relatedUserService = RelatedUserService();
@@ -250,8 +252,27 @@ class TransactionController {
           borrowerId: borrower!.id!,
         );
         break;
+      case TransactionType.collectingDebt:
+        newTransaction = await _transactionService
+            .createCollectingDebtTransaction(
+              amount: amount,
+              transactionDate: transactionDate!,
+              sourceWalletId: sourceWallet!.id,
+              categoryId: category!.id,
+              borrowerId: borrower!.id!,
+            );
+        break;
       case TransactionType.borrow:
         newTransaction = await _transactionService.createBorrowTransaction(
+          amount: amount,
+          transactionDate: transactionDate!,
+          sourceWalletId: sourceWallet!.id,
+          categoryId: category!.id,
+          lenderId: lender!.id!,
+        );
+        break;
+      case TransactionType.repayment:
+        newTransaction = await _transactionService.createRepaymentTransaction(
           amount: amount,
           transactionDate: transactionDate!,
           sourceWalletId: sourceWallet!.id,
@@ -367,8 +388,29 @@ class TransactionController {
           borrowerId: borrower!.id!,
         );
         break;
+      case TransactionType.collectingDebt:
+        newTransaction = await _transactionService
+            .updateCollectingDebtTransaction(
+              transactionId: oldTransaction.id,
+              amount: amount,
+              transactionDate: transactionDate!,
+              sourceWalletId: sourceWallet!.id,
+              categoryId: category!.id,
+              borrowerId: borrower!.id!,
+            );
+        break;
       case TransactionType.borrow:
         newTransaction = await _transactionService.updateBorrowTransaction(
+          transactionId: oldTransaction.id,
+          amount: amount,
+          transactionDate: transactionDate!,
+          sourceWalletId: sourceWallet!.id,
+          categoryId: category!.id,
+          lenderId: lender!.id!,
+        );
+        break;
+      case TransactionType.repayment:
+        newTransaction = await _transactionService.updateRepaymentTransaction(
           transactionId: oldTransaction.id,
           amount: amount,
           transactionDate: transactionDate!,
@@ -588,6 +630,29 @@ class TransactionController {
           newTransaction.amount,
         );
         break;
+      case TransactionType.collectingDebt:
+        if (mostSoonModifyBalanceTransaction != null) {
+          updateMostSoonModifyBalanceTransactionAfterCreateTransaction(
+            transaction: newTransaction,
+            mostSoonModifyBalanceTransaction:
+                mostSoonModifyBalanceTransaction as ModifyBalanceTransaction,
+          );
+        } else {
+          _walletState.increaseWalletBalance(
+            newTransaction.sourceWallet.id,
+            newTransaction.amount,
+          );
+        }
+
+        //decrease user total loan
+        _appState.decreaseUserTotalLoan(newTransaction.amount);
+
+        //increase borrower total debt
+        _relatedUserState.decreaseRelatedUserTotalDebt(
+          (newTransaction as CollectingDebtTransaction).borrower.id!,
+          newTransaction.amount,
+        );
+        break;
       case TransactionType.borrow:
         if (mostSoonModifyBalanceTransaction != null) {
           updateMostSoonModifyBalanceTransactionAfterCreateTransaction(
@@ -608,6 +673,29 @@ class TransactionController {
         //increase lender total loan
         _relatedUserState.increaseRelatedUserTotalLoan(
           (newTransaction as BorrowTransaction).lender.id!,
+          newTransaction.amount,
+        );
+        break;
+      case TransactionType.repayment:
+        if (mostSoonModifyBalanceTransaction != null) {
+          updateMostSoonModifyBalanceTransactionAfterCreateTransaction(
+            transaction: newTransaction,
+            mostSoonModifyBalanceTransaction:
+                mostSoonModifyBalanceTransaction as ModifyBalanceTransaction,
+          );
+        } else {
+          _walletState.decreaseWalletBalance(
+            newTransaction.sourceWallet.id,
+            newTransaction.amount,
+          );
+        }
+
+        //decrease user total debt
+        _appState.decreaseUserTotalDebt(newTransaction.amount);
+
+        //decrease lender total loan
+        _relatedUserState.decreaseRelatedUserTotalLoan(
+          (newTransaction as RepaymentTransaction).lender.id!,
           newTransaction.amount,
         );
         break;
@@ -700,6 +788,28 @@ class TransactionController {
         (transaction as LendTransaction).borrower.id!,
         transaction.amount,
       );
+    } else if (transaction.type == TransactionType.collectingDebt) {
+      if (mostSoonModifyBalanceTransaction != null) {
+        updateMostSoonModifyBalanceTransactionBeforeRemoveTransaction(
+          transaction: transaction,
+          mostSoonModifyBalanceTransaction:
+              mostSoonModifyBalanceTransaction as ModifyBalanceTransaction,
+        );
+      } else {
+        _walletState.decreaseWalletBalance(
+          transaction.sourceWallet.id,
+          transaction.amount,
+        );
+      }
+
+      //increase user total loan
+      _appState.increaseUserTotalLoan(transaction.amount);
+
+      //increase borrower total debt
+      _relatedUserState.increaseRelatedUserTotalDebt(
+        (transaction as CollectingDebtTransaction).borrower.id!,
+        transaction.amount,
+      );
     } else if (transaction.type == TransactionType.borrow) {
       if (mostSoonModifyBalanceTransaction != null) {
         updateMostSoonModifyBalanceTransactionBeforeRemoveTransaction(
@@ -720,6 +830,28 @@ class TransactionController {
       //decrease lender total loan
       _relatedUserState.decreaseRelatedUserTotalLoan(
         (transaction as BorrowTransaction).lender.id!,
+        transaction.amount,
+      );
+    } else if (transaction.type == TransactionType.repayment) {
+      if (mostSoonModifyBalanceTransaction != null) {
+        updateMostSoonModifyBalanceTransactionBeforeRemoveTransaction(
+          transaction: transaction,
+          mostSoonModifyBalanceTransaction:
+              mostSoonModifyBalanceTransaction as ModifyBalanceTransaction,
+        );
+      } else {
+        _walletState.increaseWalletBalance(
+          transaction.sourceWallet.id,
+          transaction.amount,
+        );
+      }
+
+      //increase user total debt
+      _appState.increaseUserTotalDebt(transaction.amount);
+
+      //increase lender total loan
+      _relatedUserState.increaseRelatedUserTotalLoan(
+        (transaction as RepaymentTransaction).lender.id!,
         transaction.amount,
       );
     } else if (transaction.type == TransactionType.transfer) {
@@ -902,8 +1034,12 @@ class TransactionController {
         }
       } else if (transactions[i].type == TransactionType.lend) {
         diff -= transactions[i].amount; // lend out
+      } else if (transactions[i].type == TransactionType.collectingDebt) {
+        diff += transactions[i].amount; // collecting debt
       } else if (transactions[i].type == TransactionType.borrow) {
         diff += transactions[i].amount; // borrow in
+      } else if (transactions[i].type == TransactionType.repayment) {
+        diff -= transactions[i].amount;
       } else if (transactions[i].type == TransactionType.modifyBalance) {
         baseBalance =
             (transactions[i] as ModifyBalanceTransaction).newRealBalance;
@@ -937,6 +1073,10 @@ class TransactionController {
       newDiff = oldDiff - transaction.amount; //borrow in
     } else if (transaction.type == TransactionType.modifyBalance) {
       newDiff = oldDiff - transaction.amount;
+    } else if (transaction.type == TransactionType.collectingDebt) {
+      newDiff = oldDiff - transaction.amount; //collecting debt
+    } else if (transaction.type == TransactionType.repayment) {
+      newDiff = oldDiff + transaction.amount; //repayment
     } else {
       newDiff = oldDiff; //default case, should not happen
     }
@@ -986,6 +1126,10 @@ class TransactionController {
       newDiff = oldDiff + transaction.amount; //borrow in
     } else if (transaction.type == TransactionType.modifyBalance) {
       newDiff = oldDiff + transaction.amount;
+    } else if (transaction.type == TransactionType.collectingDebt) {
+      newDiff = oldDiff + transaction.amount; //collecting debt
+    } else if (transaction.type == TransactionType.repayment) {
+      newDiff = oldDiff - transaction.amount; //repayment
     } else {
       newDiff = oldDiff; //default case, should not happen
     }

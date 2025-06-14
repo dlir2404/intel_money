@@ -3,7 +3,7 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 
 import 'category_type.dart';
 
-enum TransactionType { income, expense, transfer, lend, borrow, modifyBalance }
+enum TransactionType { income, expense, transfer, lend, borrow, modifyBalance, collectingDebt, repayment }
 
 extension CategoryTypeExtension on TransactionType {
   CategoryType get categoryType {
@@ -16,6 +16,10 @@ extension CategoryTypeExtension on TransactionType {
         return CategoryType.lend;
       case TransactionType.borrow:
         return CategoryType.borrow;
+      case TransactionType.collectingDebt:
+        return CategoryType.collectingDebt;
+      case TransactionType.repayment:
+        return CategoryType.repayment;
       //TODO: change later
       default:
         return CategoryType.expense;
@@ -36,6 +40,10 @@ extension CategoryTypeExtension on TransactionType {
         return 'BORROW';
       case TransactionType.modifyBalance:
         return 'MODIFY_BALANCE';
+      case TransactionType.collectingDebt:
+        return 'COLLECTING_DEBT';
+      case TransactionType.repayment:
+        return 'REPAYMENT';
     }
   }
 
@@ -53,6 +61,10 @@ extension CategoryTypeExtension on TransactionType {
         return 'Đi vay';
       case TransactionType.modifyBalance:
         return 'Điều chỉnh số dư';
+      case TransactionType.collectingDebt:
+        return 'Thu nợ';
+      case TransactionType.repayment:
+        return 'Trả nợ';
     }
   }
 
@@ -70,6 +82,10 @@ extension CategoryTypeExtension on TransactionType {
         return MdiIcons.cashPlus;
       case TransactionType.modifyBalance:
         return MdiIcons.clipboardEditOutline;
+      case TransactionType.collectingDebt:
+        return MdiIcons.accountCash;
+      case TransactionType.repayment:
+        return MdiIcons.accountCashOutline;
     }
   }
 
@@ -87,6 +103,10 @@ extension CategoryTypeExtension on TransactionType {
         return Colors.greenAccent;
       case TransactionType.modifyBalance:
         return Colors.blue;
+      case TransactionType.collectingDebt:
+        return Colors.purple;
+      case TransactionType.repayment:
+        return Colors.teal;
     }
   }
 }

@@ -29,7 +29,9 @@ class SelectCategoryInput extends StatefulWidget {
 class _SelectCategoryInputState extends State<SelectCategoryInput> {
   void _navigateToSelectParentCategory() async {
     if (widget.categoryType == CategoryType.lend ||
-        widget.categoryType == CategoryType.borrow) {
+        widget.categoryType == CategoryType.borrow ||
+        widget.categoryType == CategoryType.collectingDebt ||
+        widget.categoryType == CategoryType.repayment) {
       //do nothing
       return;
     }

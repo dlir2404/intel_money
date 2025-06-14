@@ -37,53 +37,51 @@ class _CreateTransactionAppbarState extends State<CreateTransactionAppbar> {
       builder: (context) {
         return Padding(
           padding: const EdgeInsets.only(top: 16.0), // Add top padding
-          child: Wrap(
-            children: [
-              Column(
-                mainAxisSize: MainAxisSize.min, // Adjust height to fit children
-                children:
-                    TransactionType.values.map((transactionType) {
-                      final isLast =
-                          transactionType == TransactionType.values.last;
-                      return Column(
-                        children: [
-                          ListTile(
-                            title: Text(transactionType.name),
-                            onTap: () {
-                              if (widget.onTransactionTypeChanged != null) {
-                                widget.onTransactionTypeChanged!(
-                                  transactionType,
-                                );
-                              }
-                              Navigator.pop(context);
-                            },
-                            leading: Container(
-                              padding: const EdgeInsets.all(8.0),
-                              decoration: ShapeDecoration(
-                                shape: const CircleBorder(),
-                                color: transactionType.color,
-                              ),
-                              child: Icon(
-                                transactionType.icon,
-                                color: Colors.white,
-                              ),
+          child: SingleChildScrollView( // Make content scrollable
+            child: Wrap(
+              children: [
+                Column(
+                  mainAxisSize: MainAxisSize.min, // Adjust height to fit children
+                  children: TransactionType.values.map((transactionType) {
+                    final isLast = transactionType == TransactionType.values.last;
+                    return Column(
+                      children: [
+                        ListTile(
+                          title: Text(transactionType.name),
+                          onTap: () {
+                            if (widget.onTransactionTypeChanged != null) {
+                              widget.onTransactionTypeChanged!(
+                                transactionType,
+                              );
+                            }
+                            Navigator.pop(context);
+                          },
+                          leading: Container(
+                            padding: const EdgeInsets.all(8.0),
+                            decoration: ShapeDecoration(
+                              shape: const CircleBorder(),
+                              color: transactionType.color,
                             ),
-                            trailing:
-                                transactionType ==
-                                        widget.selectedTransactionType
-                                    ? const Icon(
-                                      Icons.check,
-                                      color: Colors.green,
-                                    )
-                                    : null,
+                            child: Icon(
+                              transactionType.icon,
+                              color: Colors.white,
+                            ),
                           ),
-                          !isLast ? const Divider() : const SizedBox(height: 8),
-                          // Add divider only if not the last item
-                        ],
-                      );
-                    }).toList(),
-              ),
-            ],
+                          trailing: transactionType == widget.selectedTransactionType
+                              ? const Icon(
+                            Icons.check,
+                            color: Colors.green,
+                          )
+                              : null,
+                        ),
+                        !isLast ? const Divider() : const SizedBox(height: 8),
+                        // Add divider only if not the last item
+                      ],
+                    );
+                  }).toList(),
+                ),
+              ],
+            ),
           ),
         );
       },
