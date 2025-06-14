@@ -940,13 +940,13 @@ class TransactionController {
     }
 
     ModifyBalanceTransaction updated;
-    if (oldDiff <= 0 && newDiff > 0) {
+    if (oldDiff < 0 && newDiff > 0) {
       //it means that change from expense to income
       updated = mostSoonModifyBalanceTransaction.copyWith(
         category: CategoryState().otherIncomeCategory,
         amount: newDiff,
       );
-    } else if (oldDiff > 0 && newDiff <= 0) {
+    } else if (oldDiff > 0 && newDiff < 0) {
       //it means that change from income to expense
       updated = mostSoonModifyBalanceTransaction.copyWith(
         category: CategoryState().otherExpenseCategory,
@@ -989,13 +989,13 @@ class TransactionController {
     }
 
     ModifyBalanceTransaction updated;
-    if (oldDiff <= 0 && newDiff > 0) {
+    if (oldDiff < 0 && newDiff > 0) {
       //it means that change from expense to income
       updated = mostSoonModifyBalanceTransaction.copyWith(
         category: CategoryState().otherIncomeCategory,
         amount: newDiff,
       );
-    } else if (oldDiff > 0 && newDiff <= 0) {
+    } else if (oldDiff > 0 && newDiff < 0) {
       //it means that change from income to expense
       updated = mostSoonModifyBalanceTransaction.copyWith(
         category: CategoryState().otherExpenseCategory,
