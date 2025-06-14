@@ -24,7 +24,7 @@ class _BorrowTabState extends State<BorrowTab> {
   Map<String, DateTime>? customTimeRange;
 
   Map<RelatedUser, BorrowData> _totalDebtMap = {};
-  double _totalBorowAmount = 0;
+  double _totalBorrowAmount = 0;
   double _totalPaidAmount = 0;
 
   Future<void> _prepareData(
@@ -62,24 +62,38 @@ class _BorrowTabState extends State<BorrowTab> {
     double totalCollectedAmount = 0;
     double totalLendAmount = 0;
     for (var transaction in sourceTransactions) {
-      if (transaction.type != TransactionType.borrow) continue;
-
-      if (!totalDebtMap.containsKey(
-        (transaction as BorrowTransaction).lender,
-      )) {
-        totalDebtMap[transaction.lender] = BorrowData(
-          total: 0,
-          paid: 0,
-          transactions: [],
-        );
+      if (transaction.type == TransactionType.borrow) {
+        if (!totalDebtMap.containsKey(
+          (transaction as BorrowTransaction).lender,
+        )) {
+          totalDebtMap[transaction.lender] = BorrowData(
+            total: 0,
+            paid: 0,
+            transactions: [],
+          );
+        }
+        totalDebtMap[transaction.lender]!.total += transaction.amount;
+        totalDebtMap[transaction.lender]!.transactions.add(transaction);
+        totalLendAmount += transaction.amount;
+      } else if (transaction.type == TransactionType.repayment) {
+        if (!totalDebtMap.containsKey(
+          (transaction as RepaymentTransaction).lender,
+        )) {
+          totalDebtMap[transaction.lender] = BorrowData(
+            total: 0,
+            paid: 0,
+            transactions: [],
+          );
+        }
+        totalDebtMap[transaction.lender]!.paid += transaction.amount;
+        totalDebtMap[transaction.lender]!.transactions.add(transaction);
+        totalCollectedAmount += transaction.amount;
       }
-      totalDebtMap[transaction.lender]!.total += transaction.amount;
-      totalDebtMap[transaction.lender]!.transactions.add(transaction);
-      totalLendAmount += transaction.amount;
     }
 
     _totalDebtMap = totalDebtMap;
-    _totalBorowAmount = totalLendAmount;
+    _totalBorrowAmount = totalLendAmount;
+    _totalPaidAmount = totalCollectedAmount;
     setState(() {});
   }
 
@@ -158,7 +172,7 @@ class _BorrowTabState extends State<BorrowTab> {
                                 style: TextStyle(fontSize: 16),
                               ),
                               CurrencyDoubleText(
-                                value: _totalBorowAmount - _totalPaidAmount,
+                                value: _totalBorrowAmount - _totalPaidAmount,
                                 fontSize: 16,
                                 color: Colors.red,
                               ),
@@ -166,7 +180,7 @@ class _BorrowTabState extends State<BorrowTab> {
                           ),
                           const SizedBox(height: 8),
                           LinearProgressIndicator(
-                            value: _totalPaidAmount / _totalBorowAmount,
+                            value: _totalPaidAmount / _totalBorrowAmount,
                             backgroundColor: Colors.grey[300],
                             color: Colors.red, // Progress color
                           ),
@@ -182,7 +196,7 @@ class _BorrowTabState extends State<BorrowTab> {
                             style: TextStyle(fontSize: 16),
                           ),
                           CurrencyDoubleText(
-                            value: _totalBorowAmount,
+                            value: _totalBorrowAmount,
                             fontSize: 16,
                           ),
                         ],

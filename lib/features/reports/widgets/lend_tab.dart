@@ -62,24 +62,40 @@ class _LendTabState extends State<LendTab> {
     double totalCollectedAmount = 0;
     double totalLendAmount = 0;
     for (var transaction in sourceTransactions) {
-      if (transaction.type != TransactionType.lend) continue;
+      if (transaction.type == TransactionType.lend) {
+        if (!totalDebtMap.containsKey(
+          (transaction as LendTransaction).borrower,
+        )) {
+          totalDebtMap[transaction.borrower] = LendData(
+            total: 0,
+            collected: 0,
+            transactions: [],
+          );
+        }
 
-      if (!totalDebtMap.containsKey(
-        (transaction as LendTransaction).borrower,
-      )) {
-        totalDebtMap[transaction.borrower] = LendData(
-          total: 0,
-          collected: 0,
-          transactions: [],
-        );
+        totalDebtMap[transaction.borrower]!.total += transaction.amount;
+        totalDebtMap[transaction.borrower]!.transactions.add(transaction);
+        totalLendAmount += transaction.amount;
+      } else if (transaction.type == TransactionType.collectingDebt) {
+        if (!totalDebtMap.containsKey(
+          (transaction as CollectingDebtTransaction).borrower,
+        )) {
+          totalDebtMap[transaction.borrower] = LendData(
+            total: 0,
+            collected: 0,
+            transactions: [],
+          );
+        }
+
+        totalDebtMap[transaction.borrower]!.collected += transaction.amount;
+        totalDebtMap[transaction.borrower]!.transactions.add(transaction);
+        totalCollectedAmount += transaction.amount;
       }
-      totalDebtMap[transaction.borrower]!.total += transaction.amount;
-      totalDebtMap[transaction.borrower]!.transactions.add(transaction);
-      totalLendAmount += transaction.amount;
     }
 
     _totalDebtMap = totalDebtMap;
     _totalLendAmount = totalLendAmount;
+    _totalCollectedAmount = totalCollectedAmount;
     setState(() {});
   }
 
