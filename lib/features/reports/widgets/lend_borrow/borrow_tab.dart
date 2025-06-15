@@ -248,6 +248,35 @@ class _BorrowTabState extends State<BorrowTab> {
       children: [
         Container(
           color: Colors.white,
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text("Tổng tiền đã cho vay", style: TextStyle(fontSize: 16)),
+                  CurrencyDoubleText(value: _totalBorrowAmount, fontSize: 16),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text("Tổng tiền đã thu", style: TextStyle(fontSize: 16)),
+                  CurrencyDoubleText(
+                    value: _totalBorrowAmount,
+                    color: Colors.green,
+                    fontSize: 16,
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 12),
+
+        Container(
+          color: Colors.white,
           child: SingleChildScrollView(
             child: Column(
               children: [
