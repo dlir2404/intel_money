@@ -4,6 +4,8 @@ import 'package:intel_money/shared/component/typos/currency_double_text.dart';
 import '../../../core/models/related_user.dart';
 import '../../../core/models/transaction.dart';
 import '../../../shared/const/enum/transaction_data_source_type.dart';
+import '../../../shared/const/enum/transaction_type.dart';
+import '../../transaction/screens/create_transaction_screen.dart';
 import '../../transaction/widgets/transaction_group_by_day.dart';
 import '../widgets/lend_borrow/lend_tab.dart';
 
@@ -80,7 +82,7 @@ class LendDetailScreen extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text("Tổng cho vay", style: TextStyle(fontSize: 16),),
+                    const Text("Tổng cho vay", style: TextStyle(fontSize: 16)),
                     CurrencyDoubleText(
                       fontWeight: FontWeight.w500,
                       fontSize: 16,
@@ -109,7 +111,7 @@ class LendDetailScreen extends StatelessWidget {
                   children: [
                     Text(
                       "Cần thu (${((1 - borrower.totalCollected / borrower.totalDebt) * 100).toInt()}%)",
-                      style: TextStyle(fontSize: 16)
+                      style: TextStyle(fontSize: 16),
                     ),
                     CurrencyDoubleText(
                       fontWeight: FontWeight.w500,
@@ -130,11 +132,20 @@ class LendDetailScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(type.name, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500)),
+                  Text(
+                    type.name,
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text("Tổng cho vay", style: TextStyle(fontSize: 16)),
+                      const Text(
+                        "Tổng cho vay",
+                        style: TextStyle(fontSize: 16),
+                      ),
                       CurrencyDoubleText(
                         fontWeight: FontWeight.w500,
                         fontSize: 16,
@@ -146,7 +157,10 @@ class LendDetailScreen extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text("Tổng đã thu (${(data.collected / data.total * 100).toInt()}%)", style: TextStyle(fontSize: 16)),
+                      Text(
+                        "Tổng đã thu (${(data.collected / data.total * 100).toInt()}%)",
+                        style: TextStyle(fontSize: 16),
+                      ),
                       CurrencyDoubleText(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
@@ -158,7 +172,7 @@ class LendDetailScreen extends StatelessWidget {
               ),
             ),
           if (type != TransactionDataSourceType.allTime)
-            const SizedBox(height: 16,),
+            const SizedBox(height: 16),
 
           Expanded(
             child: SingleChildScrollView(
@@ -167,6 +181,37 @@ class LendDetailScreen extends StatelessWidget {
               ),
             ),
           ),
+
+          if (borrower.totalDebt > borrower.totalCollected)
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Theme.of(context).primaryColor,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(
+                      builder: (context) => CreateTransactionScreen(
+                        onSave: () {
+                          Navigator.of(context).pop();
+                        },
+                        transactionType: TransactionType.collectingDebt,
+                        borrower: borrower,
+                        amount: borrower.totalDebt - borrower.totalCollected,
+                      ),
+                    ),
+                  );
+                },
+                child: const Text("Thu nợ"),
+              ),
+            ),
         ],
       ),
     );

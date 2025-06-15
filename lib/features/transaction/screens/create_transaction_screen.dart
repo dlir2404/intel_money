@@ -28,7 +28,18 @@ import '../controller/transaction_controller.dart';
 import '../widgets/input_image.dart';
 
 class CreateTransactionScreen extends StatefulWidget {
-  const CreateTransactionScreen({super.key});
+  final TransactionType? transactionType;
+  final RelatedUser? borrower;
+  final double? amount;
+  final Function? onSave;
+
+  const CreateTransactionScreen({
+    super.key,
+    this.transactionType,
+    this.borrower,
+    this.amount,
+    this.onSave,
+  });
 
   @override
   State<CreateTransactionScreen> createState() =>
@@ -54,6 +65,23 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
   bool _isLoading = false;
 
   final TransactionController _transactionController = TransactionController();
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedTransactionType =
+        widget.transactionType ?? TransactionType.expense;
+    if (_selectedTransactionType == TransactionType.collectingDebt) {
+      _selectedCategory =
+          Provider.of<CategoryState>(
+            context,
+            listen: false,
+          ).collectingDebtCategory;
+    }
+
+    _borrower = widget.borrower;
+    _amount = widget.amount ?? 0;
+  }
 
   void _clearFields() {
     setState(() {
@@ -92,6 +120,10 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
       _clearFields();
 
       AdService().showAdIfEligible();
+
+      if (widget.onSave != null) {
+        widget.onSave!();
+      }
     } catch (e) {
       if (mounted) {
         AppToast.showError(context, e.toString());
@@ -159,10 +191,7 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
     } on SocketException catch (_) {
       // No internet connection
       if (!navigatorContext.mounted) return;
-      AppToast.showError(
-        navigatorContext,
-        'Vui lòng kiểm tra kết nối mạng',
-      );
+      AppToast.showError(navigatorContext, 'Vui lòng kiểm tra kết nối mạng');
     }
   }
 
@@ -180,8 +209,7 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
       if (_selectedCategory!.type == CategoryType.income &&
           _newRealBalance - currentBalance < 0) {
         _selectedCategory = null;
-      } else if (_selectedCategory!.type ==
-          CategoryType.expense &&
+      } else if (_selectedCategory!.type == CategoryType.expense &&
           _newRealBalance - currentBalance > 0) {
         _selectedCategory = null;
       }
@@ -315,10 +343,12 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
                   ],
                 ),
 
-              if (_selectedTransactionType == TransactionType.lend || _selectedTransactionType == TransactionType.collectingDebt)
+              if (_selectedTransactionType == TransactionType.lend ||
+                  _selectedTransactionType == TransactionType.collectingDebt)
                 Column(
                   children: [
                     SelectRelatedUserInput(
+                      relatedUser: _borrower,
                       placeholder: 'Người vay',
                       onRelatedUserSelected: (user) {
                         setState(() {
@@ -330,7 +360,8 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
                   ],
                 ),
 
-              if (_selectedTransactionType == TransactionType.borrow || _selectedTransactionType == TransactionType.repayment)
+              if (_selectedTransactionType == TransactionType.borrow ||
+                  _selectedTransactionType == TransactionType.repayment)
                 Column(
                   children: [
                     SelectRelatedUserInput(
