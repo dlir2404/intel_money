@@ -140,13 +140,17 @@ class CategoryState extends ChangeNotifier {
     notifyListeners();
   }
 
-  void removeCategory(int id) {
-    //TODO: must remove in children too
-    _categories.removeWhere((element) => element.id == id);
-    if (_expenseCategories.indexWhere((element) => element.id == id) != -1) {
-      _expenseCategories.removeWhere((element) => element.id == id);
+  void removeCategory(Category category) {
+    if (category.parentId != null) {
+      final parent = _categories.firstWhere((element) => element.id == category.parentId);
+      parent.removeChild(category);
     } else {
-      _incomeCategories.removeWhere((element) => element.id == id);
+      _categories.removeWhere((element) => element.id == category.id);
+      if (_expenseCategories.indexWhere((element) => element.id == category.id) != -1) {
+        _expenseCategories.removeWhere((element) => element.id == category.id);
+      } else {
+        _incomeCategories.removeWhere((element) => element.id == category.id);
+      }
     }
     notifyListeners();
   }

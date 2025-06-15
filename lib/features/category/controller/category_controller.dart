@@ -1,6 +1,32 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/models/category.dart';
+import '../../../core/services/category_service.dart';
+import '../../../core/state/category_state.dart';
+import '../../transaction/controller/transaction_controller.dart';
+
 class CategoryController {
+  static final CategoryController _instance = CategoryController._internal();
+  factory CategoryController() => _instance;
+  CategoryController._internal();
+
+  final CategoryService _categoryService = CategoryService();
+  final CategoryState _categoryState = CategoryState();
+  final TransactionController _transactionController = TransactionController();
+
+  Future<void> deleteCategory(Category category) async {
+    await _categoryService.deleteCategory(category.id);
+
+    _transactionController.removeTransactionsByCategory(category.id);
+    _categoryState.removeCategory(category);
+  }
+
+
+
+
+
+
+
   static List<Map<String, dynamic>> iconOptions = [
     {'name': 'category', 'icon': Icons.category, 'label': 'General'},
     {'name': 'food', 'icon': Icons.restaurant, 'label': 'Food'},

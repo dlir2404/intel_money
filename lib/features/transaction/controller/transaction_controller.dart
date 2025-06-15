@@ -1188,6 +1188,21 @@ class TransactionController {
       updateStatesAfterRemoveTransaction(transaction);
     }
   }
+
+  Future<void> removeTransactionsByCategory(int categoryId) async {
+    final transactions = _transactionState.transactions;
+
+    final transactionsToRemove = [];
+    for (var transaction in transactions) {
+      if (transaction.category?.id == categoryId) {
+        transactionsToRemove.add(transaction);
+      }
+    }
+
+    for (var transaction in transactionsToRemove) {
+      updateStatesAfterRemoveTransaction(transaction);
+    }
+  }
 }
 
 class TransactionException implements Exception {

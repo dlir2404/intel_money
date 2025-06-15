@@ -68,7 +68,6 @@ class CategoryService {
 
   Future<void> deleteCategory(int id) async {
     await _apiClient.delete('/category/$id');
-    _appState.removeCategory(id);
   }
 
   List<Category> handleCategories(List<Category> categories) {
