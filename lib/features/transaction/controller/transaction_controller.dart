@@ -647,8 +647,8 @@ class TransactionController {
         //decrease user total loan
         _appState.decreaseUserTotalLoan(newTransaction.amount);
 
-        //increase borrower total debt
-        _relatedUserState.decreaseRelatedUserTotalDebt(
+        //increase borrower total collected
+        _relatedUserState.increaseRelatedUserTotalCollected(
           (newTransaction as CollectingDebtTransaction).borrower.id!,
           newTransaction.amount,
         );
@@ -693,8 +693,8 @@ class TransactionController {
         //decrease user total debt
         _appState.decreaseUserTotalDebt(newTransaction.amount);
 
-        //decrease lender total loan
-        _relatedUserState.decreaseRelatedUserTotalLoan(
+        //decrease lender total paid
+        _relatedUserState.increaseRelatedUserTotalPaid(
           (newTransaction as RepaymentTransaction).lender.id!,
           newTransaction.amount,
         );
@@ -805,8 +805,8 @@ class TransactionController {
       //increase user total loan
       _appState.increaseUserTotalLoan(transaction.amount);
 
-      //increase borrower total debt
-      _relatedUserState.increaseRelatedUserTotalDebt(
+      //decrease borrower total collected
+      _relatedUserState.decreaseRelatedUserTotalCollected(
         (transaction as CollectingDebtTransaction).borrower.id!,
         transaction.amount,
       );
@@ -849,8 +849,8 @@ class TransactionController {
       //increase user total debt
       _appState.increaseUserTotalDebt(transaction.amount);
 
-      //increase lender total loan
-      _relatedUserState.increaseRelatedUserTotalLoan(
+      //decrease lender total paid
+      _relatedUserState.decreaseRelatedUserTotalPaid(
         (transaction as RepaymentTransaction).lender.id!,
         transaction.amount,
       );

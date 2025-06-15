@@ -44,6 +44,18 @@ class RelatedUserState extends ChangeNotifier {
     notifyListeners();
   }
 
+  void increaseRelatedUserTotalCollected(int id, double amount) {
+    final index = _relatedUsers.indexWhere((element) => element.id == id);
+    _relatedUsers[index].totalCollected += amount;
+    notifyListeners();
+  }
+
+  void increaseRelatedUserTotalPaid(int id, double amount) {
+    final index = _relatedUsers.indexWhere((element) => element.id == id);
+    _relatedUsers[index].totalPaid += amount;
+    notifyListeners();
+  }
+
   void decreaseRelatedUserTotalLoan(int id, double amount) {
     final index = _relatedUsers.indexWhere((element) => element.id == id);
     _relatedUsers[index].totalLoan -= amount;
@@ -53,6 +65,18 @@ class RelatedUserState extends ChangeNotifier {
   void decreaseRelatedUserTotalDebt(int id, double amount) {
     final index = _relatedUsers.indexWhere((element) => element.id == id);
     _relatedUsers[index].totalDebt -= amount;
+    notifyListeners();
+  }
+
+  void decreaseRelatedUserTotalCollected(int id, double amount) {
+    final index = _relatedUsers.indexWhere((element) => element.id == id);
+    _relatedUsers[index].totalCollected -= amount;
+    notifyListeners();
+  }
+
+  void decreaseRelatedUserTotalPaid(int id, double amount) {
+    final index = _relatedUsers.indexWhere((element) => element.id == id);
+    _relatedUsers[index].totalPaid -= amount;
     notifyListeners();
   }
 }

@@ -93,7 +93,7 @@ class BorrowDetailScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "Tổng đã trả (${(lender.totalCollected / lender.totalDebt * 100).toInt()}%)",
+                      "Tổng đã trả (${(lender.totalPaid / lender.totalLoan * 100).toInt()}%)",
                       style: TextStyle(fontSize: 16),
                     ),
                     CurrencyDoubleText(
