@@ -97,6 +97,329 @@ class _BorrowTabState extends State<BorrowTab> {
     setState(() {});
   }
 
+  Widget _buildAllTimeBorrowData() {
+    final followingBorrows = [];
+    final completedBorrows = [];
+
+    for (var entry in _totalDebtMap.entries) {
+      final lendData = entry.value;
+
+      if (lendData.total > lendData.paid) {
+        followingBorrows.add(entry);
+      } else {
+        completedBorrows.add(entry);
+      }
+    }
+
+    return Column(
+      children: [
+        Container(
+          color: Colors.white,
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              type == TransactionDataSourceType.allTime
+                  ? Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text("Phải trả", style: TextStyle(fontSize: 16)),
+                          CurrencyDoubleText(
+                            value: _totalBorrowAmount - _totalPaidAmount,
+                            fontSize: 16,
+                            color: Colors.red,
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      LinearProgressIndicator(
+                        value: _totalPaidAmount / _totalBorrowAmount,
+                        backgroundColor: Colors.grey[300],
+                        color: Colors.red, // Progress color
+                      ),
+                      const SizedBox(height: 8),
+                    ],
+                  )
+                  : const SizedBox.shrink(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text("Tổng tiền đã vay", style: TextStyle(fontSize: 16)),
+                  CurrencyDoubleText(value: _totalBorrowAmount, fontSize: 16),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text("Tổng tiền đã trả", style: TextStyle(fontSize: 16)),
+                  CurrencyDoubleText(
+                    value: _totalPaidAmount,
+                    color: Colors.red,
+                    fontSize: 16,
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 12),
+
+        Expanded(
+          child: Container(
+            color: Colors.white,
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  ExpansionTile(
+                    initiallyExpanded: true,
+                    collapsedShape: const RoundedRectangleBorder(
+                      side: BorderSide(color: Colors.transparent),
+                    ),
+                    shape: const RoundedRectangleBorder(
+                      side: BorderSide(color: Colors.transparent),
+                    ),
+                    backgroundColor: Colors.white,
+                    title: Text(
+                      "Đang theo dõi (${followingBorrows.length})",
+                      style: TextStyle(color: Theme.of(context).primaryColor),
+                    ),
+                    children: [
+                      if (followingBorrows.isEmpty)
+                        const Padding(
+                          padding: EdgeInsets.all(16.0),
+                          child: Text("Không có khoản nợ nào đang theo dõi."),
+                        ),
+                      ...followingBorrows.map((item) {
+                        final user = item.key;
+                        final lendData = item.value;
+
+                        return Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  CircleAvatar(
+                                    backgroundColor:
+                                        Theme.of(context).primaryColor,
+                                    radius: 20,
+                                    child: Text(
+                                      user.name.isNotEmpty
+                                          ? user.name[0].toUpperCase()
+                                          : '?',
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Text(
+                                    user.name,
+                                    style: const TextStyle(fontSize: 16),
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      CurrencyDoubleText(
+                                        value: lendData.total,
+                                        fontSize: 16,
+                                      ),
+                                      CurrencyDoubleText(
+                                        value: lendData.paid,
+                                        color: Colors.red,
+                                        fontSize: 16,
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Icon(
+                                    Icons.arrow_forward_ios,
+                                    color: Colors.grey[400],
+                                    size: 16,
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        );
+                      }),
+                    ],
+                  ),
+                  ExpansionTile(
+                    collapsedShape: const RoundedRectangleBorder(
+                      side: BorderSide(color: Colors.transparent),
+                    ),
+                    shape: const RoundedRectangleBorder(
+                      side: BorderSide(color: Colors.transparent),
+                    ),
+                    backgroundColor: Colors.white,
+                    title: Text(
+                      "Đã hoàn thành (${completedBorrows.length})",
+                      style: TextStyle(color: Colors.green),
+                    ),
+                    children: [
+                      if (completedBorrows.isEmpty)
+                        const Padding(
+                          padding: EdgeInsets.all(16.0),
+                          child: Text("Không có khoản nợ nào đã hoàn thành."),
+                        ),
+                      ...completedBorrows.map((item) {
+                        final user = item.key;
+                        final lendData = item.value;
+
+                        return Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  CircleAvatar(
+                                    backgroundColor:
+                                        Theme.of(context).primaryColor,
+                                    radius: 20,
+                                    child: Text(
+                                      user.name.isNotEmpty
+                                          ? user.name[0].toUpperCase()
+                                          : '?',
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Text(
+                                    user.name,
+                                    style: const TextStyle(fontSize: 16),
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      CurrencyDoubleText(
+                                        value: lendData.total,
+                                        fontSize: 16,
+                                      ),
+                                      CurrencyDoubleText(
+                                        value: lendData.paid,
+                                        color: Colors.red,
+                                        fontSize: 16,
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Icon(
+                                    Icons.arrow_forward_ios,
+                                    color: Colors.grey[400],
+                                    size: 16,
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        );
+                      }),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildBorrowDataForType() {
+    return Column(
+      children: [
+        Container(
+          color: Colors.white,
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                ..._totalDebtMap.entries.map((item) {
+                  final user = item.key;
+                  final lendData = item.value;
+
+                  return Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            CircleAvatar(
+                              backgroundColor: Theme.of(context).primaryColor,
+                              radius: 20,
+                              child: Text(
+                                user.name.isNotEmpty
+                                    ? user.name[0].toUpperCase()
+                                    : '?',
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Text(
+                              user.name,
+                              style: const TextStyle(fontSize: 16),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                CurrencyDoubleText(
+                                  value: lendData.total,
+                                  fontSize: 16,
+                                ),
+                                CurrencyDoubleText(
+                                  value: lendData.paid,
+                                  color: Colors.red,
+                                  fontSize: 16,
+                                ),
+                              ],
+                            ),
+                            const SizedBox(width: 12),
+                            Icon(
+                              Icons.arrow_forward_ios,
+                              color: Colors.grey[400],
+                              size: 16,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  );
+                }),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer2<TransactionState, RelatedUserState>(
@@ -156,145 +479,11 @@ class _BorrowTabState extends State<BorrowTab> {
                 ),
                 const SizedBox(height: 12),
 
-                Container(
-                  color: Colors.white,
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    children: [
-                      type == TransactionDataSourceType.allTime
-                          ? Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                "Phải trả",
-                                style: TextStyle(fontSize: 16),
-                              ),
-                              CurrencyDoubleText(
-                                value: _totalBorrowAmount - _totalPaidAmount,
-                                fontSize: 16,
-                                color: Colors.red,
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 8),
-                          LinearProgressIndicator(
-                            value: _totalPaidAmount / _totalBorrowAmount,
-                            backgroundColor: Colors.grey[300],
-                            color: Colors.red, // Progress color
-                          ),
-                          const SizedBox(height: 8),
-                        ],
-                      )
-                          : const SizedBox.shrink(),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "Tổng tiền đã vay",
-                            style: TextStyle(fontSize: 16),
-                          ),
-                          CurrencyDoubleText(
-                            value: _totalBorrowAmount,
-                            fontSize: 16,
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 12),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "Tổng tiền đã trả",
-                            style: TextStyle(fontSize: 16),
-                          ),
-                          CurrencyDoubleText(
-                            value: _totalPaidAmount,
-                            color: Colors.red,
-                            fontSize: 16,
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 12),
-
                 Expanded(
-                  child: Container(
-                    color: Colors.white,
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          ..._totalDebtMap.entries.map((item) {
-                            final user = item.key;
-                            final lendData = item.value;
-
-                            return Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      CircleAvatar(
-                                        backgroundColor:
-                                            Theme.of(context).primaryColor,
-                                        radius: 20,
-                                        child: Text(
-                                          user.name.isNotEmpty
-                                              ? user.name[0].toUpperCase()
-                                              : '?',
-                                          style: const TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 16,
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(width: 12),
-                                      Text(
-                                        user.name,
-                                        style: const TextStyle(fontSize: 16),
-                                      ),
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.end,
-                                        children: [
-                                          CurrencyDoubleText(
-                                            value: lendData.total,
-                                            fontSize: 16,
-                                          ),
-                                          CurrencyDoubleText(
-                                            value: lendData.paid,
-                                            color: Colors.red,
-                                            fontSize: 16,
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(width: 12),
-                                      Icon(
-                                        Icons.arrow_forward_ios,
-                                        color: Colors.grey[400],
-                                        size: 16,
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            );
-                          }),
-                        ],
-                      ),
-                    ),
-                  ),
+                  child:
+                      type == TransactionDataSourceType.allTime
+                          ? _buildAllTimeBorrowData()
+                          : _buildBorrowDataForType(),
                 ),
               ],
             );
