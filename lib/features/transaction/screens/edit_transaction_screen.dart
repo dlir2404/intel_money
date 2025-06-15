@@ -318,7 +318,7 @@ class _EditTransactionScreenState extends State<EditTransactionScreen> {
                 placeholder: "Chọn ví nguồn",
                 onWalletSelected: (wallet) {
                   setState(() {
-                    _sourceWallet = wallet;
+                    _sourceWallet = wallet!;
                   });
 
                   getCurrentBalance();

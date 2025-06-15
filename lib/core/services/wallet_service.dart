@@ -67,6 +67,5 @@ class WalletService {
 
   Future<void> delete(int id) async {
     await _apiClient.delete('/wallet/$id');
-    _walletState.removeWallet(id);
   }
 }

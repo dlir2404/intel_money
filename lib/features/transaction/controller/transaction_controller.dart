@@ -1158,6 +1158,24 @@ class TransactionController {
   Future<Transaction> getTransactionById(int transactionId) async {
     return await _transactionService.getTransactionById(transactionId);
   }
+
+  Future<void> removeTransactionsByWallet(int walletId) async {
+    final transactions = _transactionState.transactions;
+
+    final transactionsToRemove = [];
+    for (var transaction in transactions) {
+      if (transaction.sourceWallet.id == walletId ||
+          (transaction.type == TransactionType.transfer &&
+              (transaction as TransferTransaction).destinationWallet.id ==
+                  walletId)) {
+        transactionsToRemove.add(transaction);
+      }
+    }
+
+    for (var transaction in transactionsToRemove) {
+      updateStatesAfterRemoveTransaction(transaction);
+    }
+  }
 }
 
 class TransactionException implements Exception {

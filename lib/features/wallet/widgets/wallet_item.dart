@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:intel_money/shared/component/typos/currency_double_text.dart';
 
 import '../../../core/models/wallet.dart';
+import '../../../shared/helper/toast.dart';
+import '../controller/wallet_controller.dart';
 
 class WalletItem extends StatelessWidget {
   final Wallet wallet;
@@ -9,7 +11,7 @@ class WalletItem extends StatelessWidget {
   final bool showContextMenu;
   final Widget? trailing;
 
-  const WalletItem({
+  WalletItem({
     super.key,
     required this.wallet,
     required this.onTap,
@@ -17,7 +19,9 @@ class WalletItem extends StatelessWidget {
     this.trailing,
   });
 
-  PopupMenuButton _buildContextMenu() {
+  final WalletController _walletController = WalletController();
+
+  PopupMenuButton _buildContextMenu(BuildContext context) {
     return PopupMenuButton<String>(
       icon: Icon(Icons.more_vert, color: Colors.grey[600], size: 20),
       padding: EdgeInsets.zero,
@@ -67,11 +71,46 @@ class WalletItem extends StatelessWidget {
             // Handle edit action
             break;
           case 'delete':
-            // Handle delete action
+            _deleteWallet(context);
             break;
         }
       },
     );
+  }
+
+  void _deleteWallet(BuildContext context) async {
+    final bool? confirmDelete = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Xác nhận xóa'),
+          content: const Text(
+            'Bạn có chắc muốn xóa ví này? Tất cả các giao dịch liên quan đều sẽ bị xóa. Hành động này không thể hoàn tác.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('Hủy'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              style: TextButton.styleFrom(foregroundColor: Colors.red),
+              child: const Text('Xóa'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmDelete == true) {
+
+      try {
+        await _walletController.removeWallet(wallet);
+          AppToast.showSuccess(context, "Đã xóa.");
+      } catch (e) {
+          AppToast.showError(context, e.toString());
+      }
+    }
   }
 
   @override
@@ -135,7 +174,7 @@ class WalletItem extends StatelessWidget {
                   ),
                 ),
 
-                if (showContextMenu) _buildContextMenu(),
+                if (showContextMenu) _buildContextMenu(context),
                 if (trailing != null) trailing!,
               ],
             ),
