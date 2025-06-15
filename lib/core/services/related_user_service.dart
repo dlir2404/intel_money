@@ -6,12 +6,14 @@ import '../network/api_client.dart';
 class RelatedUserService {
   final RelatedUserState _relatedUserState = RelatedUserState();
   final ApiClient _apiClient = ApiClient.instance;
-  
+
   static final RelatedUserService _instance = RelatedUserService._internal();
+
   factory RelatedUserService() => _instance;
+
   RelatedUserService._internal();
-  
-  Future<void> create(RelatedUser temp) async {
+
+  Future<void> createFromTemp(RelatedUser temp) async {
     final response = await _apiClient.post('/related-user', {
       'name': temp.name,
     });
@@ -19,6 +21,20 @@ class RelatedUserService {
     temp.id = response['id'];
     temp.isTemporary = false;
     _relatedUserState.addRelatedUser(temp);
+  }
+
+  Future<RelatedUser> create({
+    required String name,
+    String? email,
+    String? phone,
+  }) async {
+    final response = await _apiClient.post('/related-user', {
+      'name': name,
+      'email': email,
+      'phone': phone,
+    });
+
+    return RelatedUser.fromJson(response);
   }
 
   Future<void> getAll() async {

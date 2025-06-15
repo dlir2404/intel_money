@@ -199,12 +199,12 @@ class TransactionController {
 
     //create borrower if not exists
     if (transactionType == TransactionType.lend && borrower!.isTemporary) {
-      await _relatedUserService.create(borrower);
+      await _relatedUserService.createFromTemp(borrower);
     }
 
     //create lender if not exists
     if (transactionType == TransactionType.borrow && lender!.isTemporary) {
-      await _relatedUserService.create(lender);
+      await _relatedUserService.createFromTemp(lender);
     }
 
     String imageUrl = '';
@@ -327,12 +327,12 @@ class TransactionController {
 
     //create borrower if not exists
     if (transactionType == TransactionType.lend && borrower!.isTemporary) {
-      await _relatedUserService.create(borrower);
+      await _relatedUserService.createFromTemp(borrower);
     }
 
     //create lender if not exists
     if (transactionType == TransactionType.borrow && lender!.isTemporary) {
-      await _relatedUserService.create(lender);
+      await _relatedUserService.createFromTemp(lender);
     }
 
     String imageUrl = '';

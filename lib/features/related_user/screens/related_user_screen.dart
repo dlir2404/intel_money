@@ -3,6 +3,8 @@ import 'package:intel_money/core/state/related_user_state.dart';
 import 'package:intel_money/features/related_user/widgets/related_user_item.dart';
 import 'package:provider/provider.dart';
 
+import 'create_related_user_screen.dart';
+
 class RelatedUserScreen extends StatefulWidget {
   const RelatedUserScreen({super.key});
 
@@ -11,7 +13,13 @@ class RelatedUserScreen extends StatefulWidget {
 }
 
 class _RelatedUserScreenState extends State<RelatedUserScreen> {
-  void _showCreateWalletScreen() {}
+  void _showCreateWalletScreen() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const CreateRelatedUserScreen(),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {

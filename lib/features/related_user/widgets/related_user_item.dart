@@ -26,66 +26,71 @@ class RelatedUserItem extends StatelessWidget {
             ),
           ],
         ),
-        child: Material(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          child: InkWell(
+        child: InkWell(
+          onTap: () {
+
+          },
+          child: Material(
+            color: Colors.white,
             borderRadius: BorderRadius.circular(12),
-            onTap: () {
-              // Handle tap action
-            },
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              child: Row(
-                children: [
-                  CircleAvatar(
-                    backgroundColor: Theme.of(context).primaryColor,
-                    radius: 24,
-                    child: Text(
-                      relatedUser.name.isNotEmpty
-                          ? relatedUser.name[0].toUpperCase()
-                          : '?',
-                      style: const TextStyle(color: Colors.white, fontSize: 16),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Text(
-                      relatedUser.name,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(12),
+              onTap: () {
+                // Handle tap action
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                child: Row(
+                  children: [
+                    CircleAvatar(
+                      backgroundColor: Theme.of(context).primaryColor,
+                      radius: 24,
+                      child: Text(
+                        relatedUser.name.isNotEmpty
+                            ? relatedUser.name[0].toUpperCase()
+                            : '?',
+                        style: const TextStyle(color: Colors.white, fontSize: 16),
                       ),
                     ),
-                  ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Text(
+                        relatedUser.name,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
 
-                  Column(
-                    children: [
-                      if (relatedUser.totalDebt - relatedUser.totalCollected > 0)
-                        Row(
-                          children: [
-                            Text("Cần thu: "),
-                            CurrencyDoubleText(
-                              value: relatedUser.totalDebt - relatedUser.totalCollected,
-                              color: Colors.green,
-                              fontSize: 16,
-                            )
-                          ],
-                        ),
-                      if (relatedUser.totalLoan - relatedUser.totalPaid > 0)
-                        Row(
-                          children: [
-                            Text("Cần trả: "),
-                            CurrencyDoubleText(
-                              value: relatedUser.totalLoan - relatedUser.totalPaid,
-                              color: Colors.red,
-                              fontSize: 16,
-                            )
-                          ],
-                        ),
-                    ],
-                  )
-                ],
+                    Column(
+                      children: [
+                        if (relatedUser.totalDebt - relatedUser.totalCollected > 0)
+                          Row(
+                            children: [
+                              Text("Cần thu: "),
+                              CurrencyDoubleText(
+                                value: relatedUser.totalDebt - relatedUser.totalCollected,
+                                color: Colors.green,
+                                fontSize: 16,
+                              )
+                            ],
+                          ),
+                        if (relatedUser.totalLoan - relatedUser.totalPaid > 0)
+                          Row(
+                            children: [
+                              Text("Cần trả: "),
+                              CurrencyDoubleText(
+                                value: relatedUser.totalLoan - relatedUser.totalPaid,
+                                color: Colors.red,
+                                fontSize: 16,
+                              )
+                            ],
+                          ),
+                      ],
+                    )
+                  ],
+                ),
               ),
             ),
           ),
