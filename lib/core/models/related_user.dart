@@ -2,9 +2,9 @@ import '../state/related_user_state.dart';
 
 class RelatedUser {
   int? id;
-  final String name;
-  final String? email;
-  final String? phone;
+  String name;
+  String? email;
+  String? phone;
 
   double totalLoan;
   double totalPaid;
@@ -54,6 +54,30 @@ class RelatedUser {
       totalPaid: 0.0,
       totalCollected: 0.0,
       isTemporary: true,
+    );
+  }
+
+  RelatedUser copyWith({
+    int? id,
+    String? name,
+    String? email,
+    String? phone,
+    double? totalLoan,
+    double? totalDebt,
+    double? totalPaid,
+    double? totalCollected,
+    bool? isTemporary,
+  }) {
+    return RelatedUser(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      email: email ?? this.email,
+      phone: phone ?? this.phone,
+      totalLoan: totalLoan ?? this.totalLoan,
+      totalDebt: totalDebt ?? this.totalDebt,
+      totalPaid: totalPaid ?? this.totalPaid,
+      totalCollected: totalCollected ?? this.totalCollected,
+      isTemporary: isTemporary ?? this.isTemporary,
     );
   }
 

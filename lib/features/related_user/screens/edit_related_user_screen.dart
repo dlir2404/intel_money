@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:intel_money/core/models/related_user.dart';
 import 'package:intel_money/shared/helper/toast.dart';
 
 import '../../../shared/helper/validation.dart';
 import '../controller/related_user_controller.dart';
 
-class CreateRelatedUserScreen extends StatefulWidget {
-  const CreateRelatedUserScreen({super.key});
+class EditRelatedUserScreen extends StatefulWidget {
+  final RelatedUser relatedUser;
+  const EditRelatedUserScreen({super.key, required this.relatedUser});
 
   @override
-  State<CreateRelatedUserScreen> createState() =>
+  State<EditRelatedUserScreen> createState() =>
       _CreateRelatedUserScreenState();
 }
 
-class _CreateRelatedUserScreenState extends State<CreateRelatedUserScreen> {
+class _CreateRelatedUserScreenState extends State<EditRelatedUserScreen> {
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
 
@@ -21,12 +23,21 @@ class _CreateRelatedUserScreenState extends State<CreateRelatedUserScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
 
+  @override
+  void initState() {
+    super.initState();
+    _nameController.text = widget.relatedUser.name;
+    _emailController.text = widget.relatedUser.email ?? '';
+    _phoneController.text = widget.relatedUser.phone ?? '';
+  }
+
   Future<void> _save() async {
     setState(() {
       _isLoading = true;
     });
     if (_formKey.currentState!.validate()) {
-      await _relatedUserController.create(
+      await _relatedUserController.edit(
+        old: widget.relatedUser,
         name: _nameController.text,
         email: _emailController.text.isNotEmpty ? _emailController.text : null,
         phone: _phoneController.text.isNotEmpty ? _phoneController.text : null,
@@ -47,13 +58,13 @@ class _CreateRelatedUserScreenState extends State<CreateRelatedUserScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Tạo người vay/cho vay"),
+        title: Text(widget.relatedUser.name),
         centerTitle: true,
         backgroundColor: Theme.of(context).primaryColor,
         foregroundColor: Colors.white,
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 24.0),
+        padding: const EdgeInsets.all(20.0),
         child: Form(
           key: _formKey,
           child: Column(

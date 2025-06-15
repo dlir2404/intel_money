@@ -1,3 +1,4 @@
+import '../../../core/models/related_user.dart';
 import '../../../core/services/related_user_service.dart';
 import '../../../core/state/related_user_state.dart';
 
@@ -23,5 +24,26 @@ class RelatedUserController {
       phone: phone,
     );
     _relatedUserState.addRelatedUser(relatedUser);
+  }
+
+  Future<void> edit({
+    required RelatedUser old,
+    required String name,
+    String? email,
+    String? phone,
+  }) async {
+    await _relatedUserService.edit(
+      id: old.id!,
+      name: name,
+      email: email,
+      phone: phone,
+    );
+
+    final newUser = old.copyWith();
+    newUser.name = name;
+    newUser.email = email;
+    newUser.phone = phone;
+
+    _relatedUserState.updateRelatedUser(newUser);
   }
 }

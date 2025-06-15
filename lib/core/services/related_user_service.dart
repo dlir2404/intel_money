@@ -37,6 +37,19 @@ class RelatedUserService {
     return RelatedUser.fromJson(response);
   }
 
+  Future<void> edit({
+    required int id,
+    required String name,
+    String? email,
+    String? phone,
+  }) async {
+    await _apiClient.put('/related-user/$id', {
+      'name': name,
+      'email': email,
+      'phone': phone,
+    });
+  }
+
   Future<void> getAll() async {
     final response = await _apiClient.get('/related-user');
     final List<RelatedUser> relatedUsers = [];

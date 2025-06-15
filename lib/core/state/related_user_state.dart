@@ -23,7 +23,9 @@ class RelatedUserState extends ChangeNotifier {
 
   void updateRelatedUser(RelatedUser relatedUser) {
     final index = _relatedUsers.indexWhere((element) => element.id == relatedUser.id);
-    _relatedUsers[index] = relatedUser;
+    _relatedUsers[index].name = relatedUser.name;
+    _relatedUsers[index].email = relatedUser.email;
+    _relatedUsers[index].phone = relatedUser.phone;
     notifyListeners();
   }
 
