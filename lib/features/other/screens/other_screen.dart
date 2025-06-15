@@ -161,20 +161,29 @@ class OtherScreen extends StatelessWidget {
   }
 
   Widget _buildFunctionGrid(BuildContext context) {
-    final theme = Theme.of(context);
-    final primaryColor = theme.primaryColor;
-
-    final functionItems = [
-      {'icon': Icons.category, 'title': 'Danh mục thu/chi', 'color': Colors.orange},
+    final items = [
       {
-        'icon': Icons.payment,
-        'title': 'Payment Methods',
-        'color': Colors.green,
+        'icon': Icons.category,
+        'title': 'Danh mục thu/chi',
+        'color': Colors.orange,
+        'onTap': (BuildContext context) {
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => const CategoryScreen()),
+          );
+        },
       },
-      {'icon': Icons.replay, 'title': 'Recurring', 'color': Colors.purple},
-      {'icon': Icons.attach_money, 'title': 'Budget', 'color': Colors.blue},
-      {'icon': Icons.pie_chart, 'title': 'Reports', 'color': Colors.red},
-      {'icon': Icons.backup, 'title': 'Backup', 'color': Colors.teal},
+      {
+        'icon': Icons.person,
+        'title': 'Người vay/cho vay',
+        'color': Colors.blue,
+        'onTap': null,
+      },
+      {
+        'icon': Icons.attach_money,
+        'title': 'Ngân sách',
+        'color': Colors.blue,
+        'onTap': null,
+      },
     ];
 
     return GridView.builder(
@@ -186,34 +195,25 @@ class OtherScreen extends StatelessWidget {
         crossAxisSpacing: 12,
         mainAxisSpacing: 12,
       ),
-      itemCount: functionItems.length,
+      itemCount: items.length,
       itemBuilder: (context, index) {
-        return _buildGridItem(
-          context,
-          functionItems[index]['icon'] as IconData,
-          functionItems[index]['title'] as String,
-          functionItems[index]['color'] as Color,
-        );
+        return _buildGridItem(context, items[index]);
       },
     );
   }
 
-  Widget _buildGridItem(
-    BuildContext context,
-    IconData icon,
-    String title,
-    Color color,
-  ) {
+  Widget _buildGridItem(BuildContext context, dynamic item) {
+    final icon = item['icon'] as IconData;
+    final title = item['title'] as String;
+    final color = item['color'] as Color;
+    final onTap = item['ontap'] as Function?;
+
     return InkWell(
       onTap: () {
-        // Handle navigation based on the function title
         AdService().showAdIfEligible();
-        if (title == 'Danh mục thu/chi') {
-          Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => const CategoryScreen()),
-          );
+        if (onTap != null) {
+          onTap(context);
         }
-        // Other function buttons can be handled here
       },
       borderRadius: BorderRadius.circular(16),
       child: Container(

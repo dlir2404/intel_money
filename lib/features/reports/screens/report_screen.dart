@@ -76,24 +76,6 @@ class ReportScreen extends StatelessWidget {
         );
       },
     },
-    {
-      'icon': Icons.person,
-      'title': 'Đối tượng thu/chi',
-      'color': Colors.blue,
-      'ontap': null,
-    },
-    {
-      'icon': Icons.calendar_month_rounded,
-      'title': 'Chuyến đi/sự kiện',
-      'color': Colors.greenAccent,
-      'ontap': null,
-    },
-    {
-      'icon': Icons.analytics_outlined,
-      'title': 'Phân tích tài chính',
-      'color': Colors.deepPurple,
-      'ontap': null,
-    },
   ];
 
   @override
