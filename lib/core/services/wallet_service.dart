@@ -10,10 +10,12 @@ class WalletService {
   final ApiClient _apiClient = ApiClient.instance;
 
   static final WalletService _instance = WalletService._internal();
+
   factory WalletService() => _instance;
+
   WalletService._internal();
 
-  Future<void> create(
+  Future<Wallet> create(
     String name,
     String description,
     String icon,
@@ -23,13 +25,9 @@ class WalletService {
       'name': name,
       'description': description,
       'icon': icon,
-      'balance': balance,
+      'baseBalance': balance,
     });
-
-    debugPrint(response.toString());
-
-    final wallet = Wallet.fromJson(response);
-    _walletState.addWallet(wallet);
+    return Wallet.fromJson(response);
   }
 
   Future<void> getWallets() async {
@@ -42,27 +40,26 @@ class WalletService {
   }
 
   Future<void> update(
-    int id,
+    Wallet oldWallet,
     String name,
     String description,
     String icon,
-    double balance,
+    double baseBalance,
   ) async {
-    await _apiClient.put('/wallet/$id', {
+    await _apiClient.put('/wallet/${oldWallet.id}', {
       'name': name,
       'description': description,
       'icon': icon,
-      'balance': balance,
+      'baseBalance': baseBalance,
     });
 
-    final wallet = Wallet(
-      id: id,
-      name: name,
-      icon: WalletIcon.getIcon(icon),
-      balance: balance,
-      description: description,
-    );
-    _walletState.updateWallet(wallet);
+    final newWallet = oldWallet.copyWith();
+    newWallet.name = name;
+    newWallet.description = description;
+    newWallet.icon = WalletIcon.getIcon(icon);
+    newWallet.baseBalance = baseBalance;
+
+    _walletState.updateWallet(newWallet);
   }
 
   Future<void> delete(int id) async {

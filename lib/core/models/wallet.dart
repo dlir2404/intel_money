@@ -8,13 +8,15 @@ class Wallet {
   String? description;
   AppIcon icon;
   double balance;
+  double baseBalance;
 
   Wallet({
     required this.id,
     required this.name,
     this.description,
     required this.icon,
-    required this.balance
+    required this.balance,
+    required this.baseBalance,
   });
 
 
@@ -29,7 +31,8 @@ class Wallet {
       name: json['name'],
       description: json['description'],
       icon: WalletIcon.getIcon(json['icon']),
-      balance: double.parse(json['balance'].toString())
+      balance: double.parse(json['balance'].toString()),
+      baseBalance: double.parse(json['baseBalance'].toString()),
     );
   }
 
@@ -39,7 +42,26 @@ class Wallet {
       'name': name,
       'description': description,
       'icon': icon,
-      'balance': balance
+      'balance': balance,
+      'baseBalance': baseBalance,
     };
+  }
+
+  Wallet copyWith({
+    int? id,
+    String? name,
+    String? description,
+    AppIcon? icon,
+    double? balance,
+    double? baseBalance,
+  }) {
+    return Wallet(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      description: description ?? this.description,
+      icon: icon ?? this.icon,
+      balance: balance ?? this.balance,
+      baseBalance: baseBalance ?? this.baseBalance,
+    );
   }
 }

@@ -21,16 +21,115 @@ class CreateWalletScreen extends StatefulWidget {
 class _CreateWalletScreenState extends State<CreateWalletScreen> {
   final _formKey = GlobalKey<FormState>();
 
+  bool isLoading = false;
+
   double initialAmount = 0;
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   AppIcon _selectedIcon = WalletIcon.defaultIcon(); // Default icon
+
+  final WalletController _walletController = WalletController();
 
   @override
   void dispose() {
     _nameController.dispose();
     _descriptionController.dispose();
     super.dispose();
+  }
+
+  Future<void> _createWallet() async {
+    setState(() {
+      isLoading = true;
+    });
+
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+
+    try {
+      await _walletController.create(
+        _nameController.text,
+        _descriptionController.text,
+        _selectedIcon.name, // Use the selected icon instead of "test icon"
+        initialAmount,
+      );
+      if (mounted) {
+        AdService().showAdIfEligible();
+
+        AppToast.showSuccess(context, "Wallet created successfully");
+        Navigator.pop(context);
+      }
+    } catch (error) {
+      if (mounted) {
+        AppToast.showError(context, error.toString());
+      }
+    } finally {
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
+  Widget _buildIconSelector() {
+    final icons = WalletIcon.icons;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Chọn biểu tượng ví',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w500,
+            color: Colors.grey[800],
+          ),
+        ),
+        const SizedBox(height: 15),
+        SizedBox(
+          height: 70,
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            children:
+                icons.map((icon) {
+                  final bool isSelected = _selectedIcon == icon;
+                  return GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _selectedIcon = icon;
+                      });
+                    },
+                    child: Container(
+                      margin: const EdgeInsets.only(right: 15),
+                      width: 60,
+                      decoration: BoxDecoration(
+                        color:
+                            isSelected
+                                ? icon.color.withOpacity(0.5)
+                                : icon.color.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(15),
+                        border: Border.all(
+                          color:
+                              isSelected
+                                  ? icon.color.withOpacity(0.8)
+                                  : icon.color.withOpacity(0.1),
+                          width: 2,
+                        ),
+                      ),
+                      child: Icon(
+                        icon.icon,
+                        color:
+                            isSelected
+                                ? icon.color
+                                : icon.color.withOpacity(0.6),
+                        size: 28,
+                      ),
+                    ),
+                  );
+                }).toList(),
+          ),
+        ),
+      ],
+    );
   }
 
   @override
@@ -65,18 +164,12 @@ class _CreateWalletScreenState extends State<CreateWalletScreen> {
                 // Header
                 const Text(
                   'Tạo ví mới',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 10),
                 Text(
                   'Chọn biểu tượng, đặt tên và số dư ban đầu cho ví của bạn.',
-                  style: TextStyle(
-                    color: Colors.grey[600],
-                    fontSize: 16,
-                  ),
+                  style: TextStyle(color: Colors.grey[600], fontSize: 16),
                 ),
                 const SizedBox(height: 30),
 
@@ -126,7 +219,7 @@ class _CreateWalletScreenState extends State<CreateWalletScreen> {
                   width: double.infinity,
                   height: 55,
                   child: ElevatedButton(
-                    onPressed: _createWallet,
+                    onPressed: isLoading ? null : _createWallet,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Theme.of(context).primaryColor,
                       foregroundColor: Colors.white,
@@ -135,10 +228,18 @@ class _CreateWalletScreenState extends State<CreateWalletScreen> {
                         borderRadius: BorderRadius.circular(15),
                       ),
                     ),
-                    child: const Text(
-                      'Tạo ví',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
+                    child:
+                        isLoading
+                            ? const CircularProgressIndicator(
+                              color: Colors.white,
+                            )
+                            : const Text(
+                              'Tạo ví',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                   ),
                 ),
               ],
@@ -147,89 +248,5 @@ class _CreateWalletScreenState extends State<CreateWalletScreen> {
         ),
       ),
     );
-  }
-
-  Widget _buildIconSelector() {
-    final icons = WalletIcon.icons;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Select Icon',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
-            color: Colors.grey[800],
-          ),
-        ),
-        const SizedBox(height: 15),
-        SizedBox(
-          height: 70,
-          child: ListView(
-            scrollDirection: Axis.horizontal,
-            children: icons.map((icon) {
-              final bool isSelected = _selectedIcon == icon;
-              return GestureDetector(
-                onTap: () {
-                  setState(() {
-                    _selectedIcon = icon;
-                  });
-                },
-                child: Container(
-                  margin: const EdgeInsets.only(right: 15),
-                  width: 60,
-                  decoration: BoxDecoration(
-                    color: isSelected
-                        ? Theme.of(context).primaryColor.withOpacity(0.2)
-                        : Colors.grey[100],
-                    borderRadius: BorderRadius.circular(15),
-                    border: Border.all(
-                      color: isSelected
-                          ? Theme.of(context).primaryColor
-                          : Colors.grey[300]!,
-                      width: 2,
-                    ),
-                  ),
-                  child: Icon(
-                    icon.icon,
-                    color: isSelected
-                        ? Theme.of(context).primaryColor
-                        : Colors.grey[600],
-                    size: 28,
-                  ),
-                ),
-              );
-            }).toList(),
-          ),
-        ),
-      ],
-    );
-  }
-
-  void _createWallet() {
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
-
-    WalletService().create(
-      _nameController.text,
-      _descriptionController.text,
-      _selectedIcon.name, // Use the selected icon instead of "test icon"
-      initialAmount,
-    ).then((_) {
-      if (mounted) {
-        AdService().showAdIfEligible();
-
-        AppToast.showSuccess(context, "Wallet created successfully");
-        Future.delayed(const Duration(seconds: 1), () {
-          Navigator.pop(context);
-        });
-      }
-    }).catchError((error) {
-      if (mounted) {
-        AppToast.showError(context, error.toString());
-      }
-    });
   }
 }

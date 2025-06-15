@@ -26,7 +26,10 @@ class WalletState extends ChangeNotifier {
 
   void updateWallet(Wallet wallet) {
     final index = _wallets.indexWhere((element) => element.id == wallet.id);
-    _wallets[index] = wallet;
+    _wallets[index].name = wallet.name;
+    _wallets[index].description = wallet.description;
+    _wallets[index].icon = wallet.icon;
+    _wallets[index].baseBalance = wallet.baseBalance;
     notifyListeners();
   }
 

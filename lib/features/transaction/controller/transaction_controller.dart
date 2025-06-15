@@ -997,7 +997,7 @@ class TransactionController {
     required DateTime date,
     Transaction? excludeTransaction,
   }) {
-    double baseBalance = 0;
+    double baseBalance = sourceWallet.baseBalance;
     double diff = 0;
 
     final transactions = _transactionState.transactions;
