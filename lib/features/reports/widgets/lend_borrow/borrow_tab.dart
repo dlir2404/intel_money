@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:intel_money/core/models/related_user.dart';
+import 'package:intel_money/features/reports/widgets/lend_borrow/lender.dart';
 import 'package:intel_money/shared/component/typos/currency_double_text.dart';
 import 'package:provider/provider.dart';
 
-import '../../../core/models/transaction.dart';
-import '../../../core/state/related_user_state.dart';
-import '../../../core/state/transaction_state.dart';
-import '../../../shared/const/enum/transaction_data_source_type.dart';
-import '../../../shared/const/enum/transaction_type.dart';
-import '../../../shared/helper/app_time.dart';
-import '../../transaction/screens/select_data_source_type_screen.dart';
-import '../../transaction/widgets/select_data_source_type_button.dart';
+import '../../../../core/models/transaction.dart';
+import '../../../../core/state/related_user_state.dart';
+import '../../../../core/state/transaction_state.dart';
+import '../../../../shared/const/enum/transaction_data_source_type.dart';
+import '../../../../shared/const/enum/transaction_type.dart';
+import '../../../../shared/helper/app_time.dart';
+import '../../../transaction/screens/select_data_source_type_screen.dart';
+import '../../../transaction/widgets/select_data_source_type_button.dart';
 
 class BorrowTab extends StatefulWidget {
   const BorrowTab({super.key});
@@ -193,63 +194,12 @@ class _BorrowTabState extends State<BorrowTab> {
                         ),
                       ...followingBorrows.map((item) {
                         final user = item.key;
-                        final lendData = item.value;
+                        final borrowData = item.value;
 
-                        return Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  CircleAvatar(
-                                    backgroundColor:
-                                        Theme.of(context).primaryColor,
-                                    radius: 20,
-                                    child: Text(
-                                      user.name.isNotEmpty
-                                          ? user.name[0].toUpperCase()
-                                          : '?',
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Text(
-                                    user.name,
-                                    style: const TextStyle(fontSize: 16),
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      CurrencyDoubleText(
-                                        value: lendData.total,
-                                        fontSize: 16,
-                                      ),
-                                      CurrencyDoubleText(
-                                        value: lendData.paid,
-                                        color: Colors.red,
-                                        fontSize: 16,
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Icon(
-                                    Icons.arrow_forward_ios,
-                                    color: Colors.grey[400],
-                                    size: 16,
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
+                        return Lender(
+                          lender: user,
+                          borrowData: borrowData,
+                          type: type,
                         );
                       }),
                     ],
@@ -274,63 +224,12 @@ class _BorrowTabState extends State<BorrowTab> {
                         ),
                       ...completedBorrows.map((item) {
                         final user = item.key;
-                        final lendData = item.value;
+                        final borrowData = item.value;
 
-                        return Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  CircleAvatar(
-                                    backgroundColor:
-                                        Theme.of(context).primaryColor,
-                                    radius: 20,
-                                    child: Text(
-                                      user.name.isNotEmpty
-                                          ? user.name[0].toUpperCase()
-                                          : '?',
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Text(
-                                    user.name,
-                                    style: const TextStyle(fontSize: 16),
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  Column(
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      CurrencyDoubleText(
-                                        value: lendData.total,
-                                        fontSize: 16,
-                                      ),
-                                      CurrencyDoubleText(
-                                        value: lendData.paid,
-                                        color: Colors.red,
-                                        fontSize: 16,
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Icon(
-                                    Icons.arrow_forward_ios,
-                                    color: Colors.grey[400],
-                                    size: 16,
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
+                        return Lender(
+                          lender: user,
+                          borrowData: borrowData,
+                          type: type,
                         );
                       }),
                     ],
@@ -354,62 +253,12 @@ class _BorrowTabState extends State<BorrowTab> {
               children: [
                 ..._totalDebtMap.entries.map((item) {
                   final user = item.key;
-                  final lendData = item.value;
+                  final borrowData = item.value;
 
-                  return Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            CircleAvatar(
-                              backgroundColor: Theme.of(context).primaryColor,
-                              radius: 20,
-                              child: Text(
-                                user.name.isNotEmpty
-                                    ? user.name[0].toUpperCase()
-                                    : '?',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Text(
-                              user.name,
-                              style: const TextStyle(fontSize: 16),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                CurrencyDoubleText(
-                                  value: lendData.total,
-                                  fontSize: 16,
-                                ),
-                                CurrencyDoubleText(
-                                  value: lendData.paid,
-                                  color: Colors.red,
-                                  fontSize: 16,
-                                ),
-                              ],
-                            ),
-                            const SizedBox(width: 12),
-                            Icon(
-                              Icons.arrow_forward_ios,
-                              color: Colors.grey[400],
-                              size: 16,
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+                  return Lender(
+                    lender: user,
+                    borrowData: borrowData,
+                    type: type,
                   );
                 }),
               ],

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:intel_money/features/reports/widgets/borrow_tab.dart';
+import 'package:intel_money/features/reports/widgets/lend_borrow/borrow_tab.dart';
 
-import '../widgets/lend_tab.dart';
+import '../widgets/lend_borrow/lend_tab.dart';
 
 class LendBorrowScreen extends StatefulWidget {
   const LendBorrowScreen({super.key});
