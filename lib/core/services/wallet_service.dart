@@ -40,26 +40,18 @@ class WalletService {
   }
 
   Future<void> update(
-    Wallet oldWallet,
+    int id,
     String name,
     String description,
     String icon,
     double baseBalance,
   ) async {
-    await _apiClient.put('/wallet/${oldWallet.id}', {
+    await _apiClient.put('/wallet/$id', {
       'name': name,
       'description': description,
       'icon': icon,
       'baseBalance': baseBalance,
     });
-
-    final newWallet = oldWallet.copyWith();
-    newWallet.name = name;
-    newWallet.description = description;
-    newWallet.icon = WalletIcon.getIcon(icon);
-    newWallet.baseBalance = baseBalance;
-
-    _walletState.updateWallet(newWallet);
   }
 
   Future<void> delete(int id) async {

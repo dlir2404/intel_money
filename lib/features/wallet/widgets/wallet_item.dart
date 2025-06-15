@@ -4,6 +4,7 @@ import 'package:intel_money/shared/component/typos/currency_double_text.dart';
 import '../../../core/models/wallet.dart';
 import '../../../shared/helper/toast.dart';
 import '../controller/wallet_controller.dart';
+import '../screens/edit_wallet_screen.dart';
 
 class WalletItem extends StatelessWidget {
   final Wallet wallet;
@@ -68,7 +69,11 @@ class WalletItem extends StatelessWidget {
             // Handle transfer action
             break;
           case 'edit':
-            // Handle edit action
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => EditWalletScreen(wallet: wallet),
+              ),
+            );
             break;
           case 'delete':
             _deleteWallet(context);
@@ -103,12 +108,11 @@ class WalletItem extends StatelessWidget {
     );
 
     if (confirmDelete == true) {
-
       try {
         await _walletController.removeWallet(wallet);
-          AppToast.showSuccess(context, "Đã xóa.");
+        AppToast.showSuccess(context, "Đã xóa.");
       } catch (e) {
-          AppToast.showError(context, e.toString());
+        AppToast.showError(context, e.toString());
       }
     }
   }
@@ -147,7 +151,11 @@ class WalletItem extends StatelessWidget {
                     color: wallet.icon.color.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Icon(wallet.icon.icon, color: wallet.icon.color, size: 24),
+                  child: Icon(
+                    wallet.icon.icon,
+                    color: wallet.icon.color,
+                    size: 24,
+                  ),
                 ),
                 const SizedBox(width: 16),
 
@@ -167,9 +175,12 @@ class WalletItem extends StatelessWidget {
                       ),
                       CurrencyDoubleText(
                         value: wallet.balance,
-                        color: wallet.balance >= 0 ? Colors.green[600] : Colors.red[600],
+                        color:
+                            wallet.balance >= 0
+                                ? Colors.green[600]
+                                : Colors.red[600],
                         fontSize: 16,
-                      )
+                      ),
                     ],
                   ),
                 ),

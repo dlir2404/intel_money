@@ -1049,6 +1049,18 @@ class TransactionController {
     return baseBalance + diff;
   }
 
+  Transaction? getFirstModifyBalanceTransaction(int walletId) {
+    final transactions = _transactionState.transactions;
+
+    for (var i = transactions.length - 1; i >= 0; i--) {
+      if (transactions[i].type == TransactionType.modifyBalance &&
+          transactions[i].sourceWallet.id == walletId) {
+        return transactions[i];
+      }
+    }
+    return null;
+  }
+
   void updateMostSoonModifyBalanceTransactionAfterCreateTransaction({
     required Transaction transaction,
     required ModifyBalanceTransaction mostSoonModifyBalanceTransaction,

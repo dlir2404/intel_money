@@ -30,6 +30,7 @@ class WalletState extends ChangeNotifier {
     _wallets[index].description = wallet.description;
     _wallets[index].icon = wallet.icon;
     _wallets[index].baseBalance = wallet.baseBalance;
+    _wallets[index].balance = wallet.balance;
     notifyListeners();
   }
 

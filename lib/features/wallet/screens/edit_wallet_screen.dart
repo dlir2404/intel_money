@@ -7,18 +7,20 @@ import 'package:intel_money/shared/helper/toast.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/models/app_icon.dart';
+import '../../../core/models/wallet.dart';
 import '../../../core/services/ad_service.dart';
 import '../../../shared/component/input/form_input.dart';
 import '../../../shared/const/icons/wallet_icon.dart';
 
-class CreateWalletScreen extends StatefulWidget {
-  const CreateWalletScreen({super.key});
+class EditWalletScreen extends StatefulWidget {
+  final Wallet wallet;
+  const EditWalletScreen({super.key, required this.wallet});
 
   @override
-  State<CreateWalletScreen> createState() => _CreateWalletScreenState();
+  State<EditWalletScreen> createState() => _CreateWalletScreenState();
 }
 
-class _CreateWalletScreenState extends State<CreateWalletScreen> {
+class _CreateWalletScreenState extends State<EditWalletScreen> {
   final _formKey = GlobalKey<FormState>();
 
   bool isLoading = false;
@@ -31,13 +33,24 @@ class _CreateWalletScreenState extends State<CreateWalletScreen> {
   final WalletController _walletController = WalletController();
 
   @override
+  void initState() {
+    super.initState();
+    _nameController.text = widget.wallet.name;
+    _descriptionController.text = widget.wallet.description ?? '';
+    _selectedIcon = widget.wallet.icon;
+
+    // Set initial amount to the wallet's base balance
+    initialAmount = widget.wallet.baseBalance;
+  }
+
+  @override
   void dispose() {
     _nameController.dispose();
     _descriptionController.dispose();
     super.dispose();
   }
 
-  Future<void> _createWallet() async {
+  Future<void> _save() async {
     setState(() {
       isLoading = true;
     });
@@ -47,10 +60,11 @@ class _CreateWalletScreenState extends State<CreateWalletScreen> {
     }
 
     try {
-      await _walletController.create(
+      await _walletController.updateWallet(
+        widget.wallet,
         _nameController.text,
         _descriptionController.text,
-        _selectedIcon.name, // Use the selected icon instead of "test icon"
+        _selectedIcon.name,
         initialAmount,
       );
       if (mounted) {
@@ -145,7 +159,7 @@ class _CreateWalletScreenState extends State<CreateWalletScreen> {
             onPressed: () => Navigator.of(context).pop(),
           ),
           title: Text(
-            'Tạo ví mới',
+            widget.wallet.name,
             style: const TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.w500,
@@ -163,7 +177,7 @@ class _CreateWalletScreenState extends State<CreateWalletScreen> {
               children: [
                 // Header
                 const Text(
-                  'Tạo ví mới',
+                  'Chỉnh sửa ví',
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 10),
@@ -196,6 +210,7 @@ class _CreateWalletScreenState extends State<CreateWalletScreen> {
 
                 // Initial amount
                 MainInput(
+                  initialValue: initialAmount,
                   label: 'Số dư ban đầu',
                   onChanged: (value) {
                     setState(() {
@@ -219,7 +234,7 @@ class _CreateWalletScreenState extends State<CreateWalletScreen> {
                   width: double.infinity,
                   height: 55,
                   child: ElevatedButton(
-                    onPressed: isLoading ? null : _createWallet,
+                    onPressed: isLoading ? null : _save,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Theme.of(context).primaryColor,
                       foregroundColor: Colors.white,
@@ -234,7 +249,7 @@ class _CreateWalletScreenState extends State<CreateWalletScreen> {
                               color: Colors.white,
                             )
                             : const Text(
-                              'Tạo ví',
+                              'Lưu',
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
