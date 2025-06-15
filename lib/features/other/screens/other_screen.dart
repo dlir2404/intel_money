@@ -8,6 +8,7 @@ import '../../../core/models/user.dart';
 import '../../../core/services/ad_service.dart';
 import '../../../core/services/auth_service.dart';
 import '../../category/screens/category_screen.dart';
+import '../../related_user/screens/related_user_screen.dart';
 import 'general_setting_screen.dart';
 
 class OtherScreen extends StatelessWidget {
@@ -176,7 +177,13 @@ class OtherScreen extends StatelessWidget {
         'icon': Icons.person,
         'title': 'Người vay/cho vay',
         'color': Colors.blue,
-        'onTap': null,
+        'onTap': (BuildContext context) {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => const RelatedUserScreen(),
+            ),
+          );
+        },
       },
       {
         'icon': Icons.attach_money,
@@ -206,7 +213,7 @@ class OtherScreen extends StatelessWidget {
     final icon = item['icon'] as IconData;
     final title = item['title'] as String;
     final color = item['color'] as Color;
-    final onTap = item['ontap'] as Function?;
+    final onTap = item['onTap'] as Function?;
 
     return InkWell(
       onTap: () {
