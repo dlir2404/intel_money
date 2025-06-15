@@ -135,7 +135,7 @@ class _BorrowTabState extends State<BorrowTab> {
                       ),
                       const SizedBox(height: 8),
                       LinearProgressIndicator(
-                        value: _totalPaidAmount / _totalBorrowAmount,
+                        value: _totalBorrowAmount == 0 ? 0 : _totalPaidAmount / _totalBorrowAmount,
                         backgroundColor: Colors.grey[300],
                         color: Colors.red, // Progress color
                       ),

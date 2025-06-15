@@ -137,7 +137,7 @@ class _LendTabState extends State<LendTab> {
                   ),
                   const SizedBox(height: 8),
                   LinearProgressIndicator(
-                    value: _totalCollectedAmount / _totalLendAmount,
+                    value: _totalLendAmount == 0 ? 0 : _totalCollectedAmount / _totalLendAmount,
                     backgroundColor: Colors.grey[300],
                     color: Colors.green, // Progress color
                   ),
