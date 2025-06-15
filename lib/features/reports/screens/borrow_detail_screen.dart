@@ -4,6 +4,8 @@ import 'package:intel_money/shared/component/typos/currency_double_text.dart';
 import '../../../core/models/related_user.dart';
 import '../../../core/models/transaction.dart';
 import '../../../shared/const/enum/transaction_data_source_type.dart';
+import '../../../shared/const/enum/transaction_type.dart';
+import '../../transaction/screens/create_transaction_screen.dart';
 import '../../transaction/widgets/transaction_group_by_day.dart';
 import '../widgets/lend_borrow/borrow_tab.dart';
 
@@ -167,6 +169,37 @@ class BorrowDetailScreen extends StatelessWidget {
               ),
             ),
           ),
+
+          if (lender.totalLoan > lender.totalPaid)
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Theme.of(context).primaryColor,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 15),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(
+                      builder: (context) => CreateTransactionScreen(
+                        onSave: () {
+                          Navigator.of(context).pop();
+                        },
+                        transactionType: TransactionType.repayment,
+                        lender: lender,
+                        amount: lender.totalLoan - lender.totalPaid,
+                      ),
+                    ),
+                  );
+                },
+                child: const Text("Trả nợ"),
+              ),
+            ),
         ],
       ),
     );

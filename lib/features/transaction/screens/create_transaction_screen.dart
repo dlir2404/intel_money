@@ -30,6 +30,7 @@ import '../widgets/input_image.dart';
 class CreateTransactionScreen extends StatefulWidget {
   final TransactionType? transactionType;
   final RelatedUser? borrower;
+  final RelatedUser? lender;
   final double? amount;
   final Function? onSave;
 
@@ -38,7 +39,7 @@ class CreateTransactionScreen extends StatefulWidget {
     this.transactionType,
     this.borrower,
     this.amount,
-    this.onSave,
+    this.onSave, this.lender,
   });
 
   @override
@@ -77,8 +78,15 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
             context,
             listen: false,
           ).collectingDebtCategory;
+    } else if (_selectedTransactionType == TransactionType.repayment) {
+      _selectedCategory =
+          Provider.of<CategoryState>(
+            context,
+            listen: false,
+          ).repaymentCategory;
     }
 
+    _lender = widget.lender;
     _borrower = widget.borrower;
     _amount = widget.amount ?? 0;
   }
@@ -365,6 +373,7 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
                 Column(
                   children: [
                     SelectRelatedUserInput(
+                      relatedUser: _lender,
                       placeholder: 'Người cho vay',
                       onRelatedUserSelected: (user) {
                         setState(() {
