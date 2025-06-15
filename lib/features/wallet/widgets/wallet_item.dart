@@ -32,16 +32,6 @@ class WalletItem extends StatelessWidget {
       itemBuilder:
           (context) => [
             PopupMenuItem<String>(
-              value: 'transfer',
-              child: Row(
-                children: [
-                  Icon(Icons.swap_horiz, size: 18),
-                  const SizedBox(width: 8),
-                  const Text('Transfer'),
-                ],
-              ),
-            ),
-            PopupMenuItem<String>(
               value: 'edit',
               child: Row(
                 children: [
@@ -65,9 +55,6 @@ class WalletItem extends StatelessWidget {
       onSelected: (value) {
         // Handle context menu actions here
         switch (value) {
-          case 'transfer':
-            // Handle transfer action
-            break;
           case 'edit':
             Navigator.of(context).push(
               MaterialPageRoute(
