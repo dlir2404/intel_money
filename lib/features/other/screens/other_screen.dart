@@ -9,6 +9,7 @@ import '../../../core/services/ad_service.dart';
 import '../../../core/services/auth_service.dart';
 import '../../category/screens/category_screen.dart';
 import '../../related_user/screens/related_user_screen.dart';
+import 'data_setting_screen.dart';
 import 'general_setting_screen.dart';
 
 class OtherScreen extends StatelessWidget {
@@ -282,7 +283,12 @@ class OtherScreen extends StatelessWidget {
         'title': 'Cài đặt dữ liệu',
         'color': Colors.green,
         'onTap': () {
-          // Handle navigation to Data Settings
+          AdService().showAdIfEligible();
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => const DataSettingScreen(),
+            ),
+          );
         },
       },
       {

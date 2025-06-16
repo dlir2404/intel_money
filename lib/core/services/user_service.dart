@@ -10,10 +10,14 @@ class UserService {
   UserService._internal();
 
   Future<void> updateUserTimezone(String timezone) async {
-    _apiClient.post('/user/change-timezone', {
+    await _apiClient.post('/user/change-timezone', {
       'timezone': timezone,
     });
 
     AppState().setUserTimezone(timezone);
+  }
+
+  Future<void> resetData() async {
+    await _apiClient.post('/user/reset-data', {});
   }
 }

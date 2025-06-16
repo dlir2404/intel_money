@@ -1,6 +1,7 @@
 // lib/core/initialization/data_initializer.dart
 
 import 'package:flutter/material.dart';
+import 'package:intel_money/core/state/statistic_state.dart';
 import 'package:intel_money/features/reports/controller/statistic_controller.dart';
 import 'package:intel_money/features/transaction/controller/transaction_controller.dart';
 import 'package:provider/provider.dart';
@@ -10,7 +11,6 @@ import 'package:intel_money/core/services/category_service.dart';
 import 'package:intel_money/core/services/auth_service.dart';
 
 import '../services/related_user_service.dart';
-import '../services/statistic_service.dart';
 
 /// Handles loading all limited data sets when the app starts (after authentication)
 class DataInitializer {
@@ -41,7 +41,7 @@ class DataInitializer {
       await _loadTransactions();
 
       // Load today statistics separately as it might be heavy and have references to transactions
-      await _loadTodayStatistics();
+      await _loadStatistics();
 
 
       debugPrint('>>>>>>>>> All app data loaded successfully');
@@ -108,9 +108,9 @@ class DataInitializer {
     }
   }
 
-  Future<void> _loadTodayStatistics() async {
+  Future<void> _loadStatistics() async {
     try {
-      await StatisticController().getTodayStatisticDataV2();
+      StatisticState().recalculateStatisticData();
       debugPrint('Today statistics loaded successfully');
     } catch (e) {
       debugPrint('Error loading today statistics: $e');
