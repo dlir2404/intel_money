@@ -34,7 +34,7 @@ class DataSettingScreen extends StatelessWidget {
       try {
         await UserService().resetData();
         AppToast.showSuccess(context, "Thành công");
-        Navigator.of(context).pushNamed(AppRoutes.home);
+        Navigator.of(context).pushReplacementNamed(AppRoutes.home);
       } catch (error) {
         AppToast.showError(context, error.toString());
       }

@@ -54,12 +54,6 @@ class _RecentLendBorrowState extends State<RecentLendBorrow> {
                     fontStyle: FontStyle.italic,
                   ),
                 ),
-                const SizedBox(height: 4),
-
-                Text(
-                  "Ngày thu: Không xác định",
-                  style: const TextStyle(fontSize: 13),
-                ),
               ],
             ),
             Expanded(child: const SizedBox()),
@@ -110,12 +104,6 @@ class _RecentLendBorrowState extends State<RecentLendBorrow> {
                     fontSize: 14,
                     fontStyle: FontStyle.italic,
                   ),
-                ),
-                const SizedBox(height: 4),
-
-                Text(
-                  "Ngày trả: Không xác định",
-                  style: const TextStyle(fontSize: 13),
                 ),
               ],
             ),

@@ -186,12 +186,6 @@ class OtherScreen extends StatelessWidget {
           );
         },
       },
-      {
-        'icon': Icons.attach_money,
-        'title': 'Ngân sách',
-        'color': Colors.blue,
-        'onTap': null,
-      },
     ];
 
     return GridView.builder(
@@ -289,22 +283,6 @@ class OtherScreen extends StatelessWidget {
               builder: (context) => const DataSettingScreen(),
             ),
           );
-        },
-      },
-      {
-        'icon': Icons.feedback,
-        'title': 'Phản hồi',
-        'color': Colors.orange,
-        'onTap': () {
-          // Handle navigation to Feedback
-        },
-      },
-      {
-        'icon': Icons.help,
-        'title': 'Thông tin & trợ giúp',
-        'color': Colors.purple,
-        'onTap': () {
-          // Handle navigation to Help & Information
         },
       },
       {
