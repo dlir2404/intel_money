@@ -19,6 +19,13 @@ class StatisticService {
 
   StatisticService._internal();
 
+  Future<StatisticData> getTodayStatisticDataV1() async {
+    final response = await _apiClient.get('/statistic/today');
+
+    final statisticData = StatisticData.fromJson(response);
+    return statisticData;
+  }
+
   Future<StatisticData> getTodayStatisticDataV2() async {
     final todayTransactions =
         TransactionState().transactions.where((transaction) {
@@ -26,6 +33,14 @@ class StatisticService {
         }).toList();
 
     final statisticData = calculateStatistic(transactions: todayTransactions);
+
+    return statisticData;
+  }
+
+  Future<StatisticData> getThisWeekStatisticDataV1() async {
+    final response = await _apiClient.get('/statistic/this-week');
+
+    final statisticData = StatisticData.fromJson(response);
 
     return statisticData;
   }
@@ -43,6 +58,14 @@ class StatisticService {
     return statisticData;
   }
 
+  Future<StatisticData> getThisMonthStatisticDataV1() async {
+    final response = await _apiClient.get('/statistic/this-month');
+
+    final statisticData = StatisticData.fromJson(response);
+
+    return statisticData;
+  }
+
   Future<StatisticData> getThisMonthStatisticDataV2() async {
     final thisMonthTransactions =
         TransactionState().transactions.where((transaction) {
@@ -56,6 +79,14 @@ class StatisticService {
     return statisticData;
   }
 
+  Future<StatisticData> getThisQuarterStatisticDataV1() async {
+    final response = await _apiClient.get('/statistic/this-quarter');
+
+    final statisticData = StatisticData.fromJson(response);
+
+    return statisticData;
+  }
+
   Future<StatisticData> getThisQuarterStatisticDataV2() async {
     final thisQuarterTransactions =
         TransactionState().transactions.where((transaction) {
@@ -65,6 +96,14 @@ class StatisticService {
     final statisticData = calculateStatistic(
       transactions: thisQuarterTransactions,
     );
+
+    return statisticData;
+  }
+
+  Future<StatisticData> getThisYearStatisticDataV1() async {
+    final response = await _apiClient.get('/statistic/this-year');
+
+    final statisticData = StatisticData.fromJson(response);
 
     return statisticData;
   }
