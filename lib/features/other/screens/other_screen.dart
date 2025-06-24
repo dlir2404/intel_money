@@ -146,18 +146,6 @@ class OtherScreen extends StatelessWidget {
             ],
           ),
         ),
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.2),
-            shape: BoxShape.circle,
-          ),
-          child: IconButton(
-            icon: const Icon(Icons.edit, color: Colors.white),
-            onPressed: () {
-              // Navigate to profile edit screen
-            },
-          ),
-        ),
       ],
     );
   }

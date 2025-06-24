@@ -38,13 +38,6 @@ class GeneralSettingScreen extends StatelessWidget {
           GeneralSettingGroup(
             title: "Hiển thị",
             widgets: [
-              GeneralSettingSelectInput(
-                title: "Theme",
-                selectedValue: "Light",
-                onTap: () {
-                  // Handle theme selection
-                },
-              ),
               CurrencyPicker(),
               TimezonePicker()
             ],
