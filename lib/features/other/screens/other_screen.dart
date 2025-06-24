@@ -277,10 +277,39 @@ class OtherScreen extends StatelessWidget {
         'icon': Icons.logout,
         'title': 'Đăng xuất',
         'color': Colors.teal,
-        'onTap': () {
-          AuthService().logout();
-          AppRoutes.navigateToLogin(context);
-          AppToast.showSuccess(context, "Đăng xuất thành công");
+        'onTap': () async {
+          final confirm = await showDialog<bool>(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: const Text("Xác nhận đăng xuất"),
+                content: const Text("Bạn có chắc chắn muốn đăng xuất?"),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(false),
+                    child: const Text("Hủy"),
+                  ),
+                  TextButton(
+                    onPressed: () async {
+                      await AuthService().logout();
+                      Navigator.of(context).pop(true);
+                    },
+                    child: const Text("Đăng xuất"),
+                  ),
+                ],
+              );
+            }
+          );
+
+          if (confirm == true) {
+            try {
+              AuthService().logout();
+              AppRoutes.navigateToLogin(context);
+              AppToast.showSuccess(context, "Đăng xuất thành công");
+            } catch (error) {
+              AppToast.showError(context, error.toString());
+            }
+          }
         },
       },
     ];
