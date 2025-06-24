@@ -15,7 +15,7 @@ class ExtractTransactionInfoResponse {
       double.parse(json['amount'].toString()),
       json['categoryId'],
       json['walletId'],
-      AppTime.parseFromApi(json['date']),
+      json['date'] != null ? AppTime.parseFromApi(json['date']) : null,
       json['description'],
     );
   }

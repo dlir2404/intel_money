@@ -79,10 +79,13 @@ class TransactionController {
         await extractTransactionDataFromText(scannedText);
 
     Category? category;
-    if (transInfo.categoryId != null) {
+    if (transInfo.categoryId != null && transInfo.categoryId != 0) {
       category = Category.fromContext(transInfo.categoryId!);
     }
-    final Wallet wallet = Wallet.fromContext(transInfo.walletId);
+    Wallet? wallet;
+    if (transInfo.walletId != null && transInfo.walletId != 0) {
+       wallet = Wallet.fromContext(transInfo.walletId);
+    }
 
     return TakePictureResponse(
       receiptImage: File(image.path),
