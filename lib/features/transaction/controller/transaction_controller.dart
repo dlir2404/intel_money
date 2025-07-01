@@ -184,6 +184,8 @@ class TransactionController {
     required double? newRealBalance,
     required double? difference, //just use for validation
     required File? image,
+
+    required DateTime? collectionDate,
   }) async {
     _validateFields(
       amount: amount,
@@ -253,6 +255,7 @@ class TransactionController {
           sourceWalletId: sourceWallet!.id,
           categoryId: category!.id,
           borrowerId: borrower!.id!,
+          collectionDate: collectionDate,
         );
         break;
       case TransactionType.collectingDebt:

@@ -198,6 +198,8 @@ class TransactionService {
     required int categoryId,
     required int borrowerId,
     String? image,
+
+    required DateTime? collectionDate,
   }) async {
     final response = await _apiClient.post('/transaction/lend/create', {
       'amount': amount,
@@ -207,6 +209,9 @@ class TransactionService {
       'borrowerId': borrowerId,
       'categoryId': categoryId,
       'image': image,
+      'collectionDate': collectionDate != null
+          ? AppTime.toUtcIso8601String(collectionDate)
+          : null,
     });
     final transaction = Transaction.fromJson(response);
     return transaction;

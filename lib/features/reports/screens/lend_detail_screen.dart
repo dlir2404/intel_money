@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intel_money/shared/component/typos/currency_double_text.dart';
+import 'package:intel_money/shared/helper/app_time.dart';
 
 import '../../../core/models/related_user.dart';
 import '../../../core/models/transaction.dart';
@@ -198,14 +199,16 @@ class LendDetailScreen extends StatelessWidget {
                 onPressed: () {
                   Navigator.of(context).pushReplacement(
                     MaterialPageRoute(
-                      builder: (context) => CreateTransactionScreen(
-                        onSave: () {
-                          Navigator.of(context).pop();
-                        },
-                        transactionType: TransactionType.collectingDebt,
-                        borrower: borrower,
-                        amount: borrower.totalDebt - borrower.totalCollected,
-                      ),
+                      builder:
+                          (context) => CreateTransactionScreen(
+                            onSave: () {
+                              Navigator.of(context).pop();
+                            },
+                            transactionType: TransactionType.collectingDebt,
+                            borrower: borrower,
+                            amount:
+                                borrower.totalDebt - borrower.totalCollected,
+                          ),
                     ),
                   );
                 },

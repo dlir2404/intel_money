@@ -39,7 +39,8 @@ class CreateTransactionScreen extends StatefulWidget {
     this.transactionType,
     this.borrower,
     this.amount,
-    this.onSave, this.lender,
+    this.onSave,
+    this.lender,
   });
 
   @override
@@ -56,6 +57,8 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
   DateTime? _transactionDate = DateTime.now();
   final TextEditingController _descriptionController = TextEditingController();
   File? _image;
+
+  DateTime? _collectionDate;
 
   RelatedUser? _borrower;
   RelatedUser? _lender;
@@ -80,10 +83,7 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
           ).collectingDebtCategory;
     } else if (_selectedTransactionType == TransactionType.repayment) {
       _selectedCategory =
-          Provider.of<CategoryState>(
-            context,
-            listen: false,
-          ).repaymentCategory;
+          Provider.of<CategoryState>(context, listen: false).repaymentCategory;
     }
 
     _lender = widget.lender;
@@ -118,6 +118,7 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
         newRealBalance: _newRealBalance,
         difference: _newRealBalance - (_sourceWallet?.balance ?? 0),
         image: _image,
+        collectionDate: _collectionDate,
       );
 
       if (mounted) {
@@ -414,6 +415,8 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
                   ],
                 ),
 
+              if (_selectedTransactionType == TransactionType.lend)
+                Text("Thời gian cho vay"),
               DateInput(
                 selectedDate: _transactionDate,
                 placeholder: 'Thời gian',
@@ -426,6 +429,24 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
                 },
               ),
               const SizedBox(height: 16),
+
+              if (_selectedTransactionType == TransactionType.lend)
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("Thời gian thu nợ"),
+                    DateInput(
+                      selectedDate: _collectionDate,
+                      placeholder: 'Thời gian thu nợ',
+                      onDateSelected: (DateTime date) {
+                        setState(() {
+                          _collectionDate = date;
+                        });
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                  ],
+                ),
 
               FormInput(
                 label: 'Mô tả (Không bắt buộc)',

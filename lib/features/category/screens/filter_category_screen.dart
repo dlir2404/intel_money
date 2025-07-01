@@ -50,13 +50,13 @@ class _FilterCategoryScreenState extends State<FilterCategoryScreen> {
                     ? state.expenseCategories
                     : state.incomeCategories;
 
-                final flatCategories = [
-                  ...allCategories, // Include all parent categories
-                  ...allCategories.expand((category) => category.children) // Include all children
-                ];
+                // final flatCategories = [
+                //   ...allCategories, // Include all parent categories
+                //   ...allCategories.expand((category) => category.children) // Include all children
+                // ];
 
                 return ListItemFilter(
-                  items: flatCategories,
+                  items: allCategories,
                   selectedItems: widget.selectedCategories,
                   getItemName: (item) => item.name,
                   onSelectionChanged: (selectedItems) {

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intel_money/features/transaction/screens/edit_transaction_screen.dart';
 import 'package:intel_money/shared/component/typos/currency_double_text.dart';
 import 'package:intel_money/shared/const/enum/transaction_type.dart';
+import 'package:intel_money/shared/helper/app_time.dart';
 
 import '../../../core/models/transaction.dart';
 
@@ -40,29 +41,48 @@ class TransactionItem extends StatelessWidget {
       name = transaction.type.name;
     }
 
-    if (transaction.type != TransactionType.modifyBalance) {
+    if (transaction.type == TransactionType.modifyBalance) {
       return Expanded(
-        child: Text(
-          name,
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              name,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+            ),
+            Text(
+              "Điều chỉnh số dư",
+              style: const TextStyle(fontSize: 12, color: Colors.grey),
+            ),
+          ],
+        ),
+      );
+    }
+    
+    if (transaction.type == TransactionType.lend && (transaction as LendTransaction).collectionDate != null) {
+      return Expanded(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              name,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+            ),
+            Text(
+              "Ngày thu: ${AppTime.format(time: (transaction as LendTransaction).collectionDate!)}",
+              style: const TextStyle(fontSize: 12, color: Colors.grey),
+            ),
+          ],
         ),
       );
     }
 
     return Expanded(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            name,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-          ),
-          Text(
-            "Adjust account balance",
-            style: const TextStyle(fontSize: 12, color: Colors.grey),
-          ),
-        ],
+      child: Text(
+        name,
+        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
       ),
     );
   }

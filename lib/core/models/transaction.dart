@@ -107,6 +107,7 @@ class Transaction {
 
 class LendTransaction extends Transaction {
   RelatedUser borrower;
+  DateTime? collectionDate;
 
   LendTransaction({
     required super.id,
@@ -118,11 +119,13 @@ class LendTransaction extends Transaction {
     super.description,
     super.image,
     required bool notAddToReport,
+    required DateTime? this.collectionDate,
   }) : super(type: TransactionType.lend);
 
   factory LendTransaction.fromJson(Map<String, dynamic> json) {
     final borrower = RelatedUser.fromContext(json['extraInfo']['borrowerId']);
-    return LendTransaction(
+
+    final transaction = LendTransaction(
       id: json['id'],
       amount: double.parse(json['amount'].toString()),
       borrower: borrower,
@@ -132,7 +135,11 @@ class LendTransaction extends Transaction {
       description: json['description'],
       image: json['image'],
       notAddToReport: json['notAddToReport'] == true ? true : false,
+      collectionDate: json['extraInfo']['collectionDate'] != null
+          ? AppTime.parseFromApi(json['extraInfo']['collectionDate'])
+          : null,
     );
+    return transaction;
   }
 
   @override
@@ -158,6 +165,7 @@ class LendTransaction extends Transaction {
       description: description ?? this.description,
       notAddToReport: notAddToReport ?? this.notAddToReport,
       image: image ?? this.image,
+      collectionDate: collectionDate ?? collectionDate,
     );
   }
 }

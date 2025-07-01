@@ -167,7 +167,7 @@ class StatisticService {
       }
 
       if (categories != null && categories.isNotEmpty) {
-        if (!categories.any((category) => category.id == transaction.category?.id)) {
+        if (!categories.any((category) => (category.id == transaction.category?.id) || (category.id == transaction.category?.parentId))) {
           return false;
         }
       }
