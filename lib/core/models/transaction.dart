@@ -119,7 +119,7 @@ class LendTransaction extends Transaction {
     super.description,
     super.image,
     required bool notAddToReport,
-    required DateTime? this.collectionDate,
+    required this.collectionDate,
   }) : super(type: TransactionType.lend);
 
   factory LendTransaction.fromJson(Map<String, dynamic> json) {
@@ -172,6 +172,7 @@ class LendTransaction extends Transaction {
 
 class BorrowTransaction extends Transaction {
   RelatedUser lender;
+  DateTime? repaymentDate;
 
   BorrowTransaction({
     required super.id,
@@ -183,6 +184,7 @@ class BorrowTransaction extends Transaction {
     super.description,
     super.image,
     required bool notAddToReport,
+    required this.repaymentDate,
   }) : super(type: TransactionType.borrow);
 
   factory BorrowTransaction.fromJson(Map<String, dynamic> json) {
@@ -197,6 +199,9 @@ class BorrowTransaction extends Transaction {
       description: json['description'],
       image: json['image'],
       notAddToReport: json['notAddToReport'] == true ? true : false,
+      repaymentDate: json['extraInfo']['repaymentDate'] != null
+          ? AppTime.parseFromApi(json['extraInfo']['repaymentDate'])
+          : null,
     );
   }
 
@@ -223,6 +228,7 @@ class BorrowTransaction extends Transaction {
       description: description ?? this.description,
       notAddToReport: notAddToReport ?? this.notAddToReport,
       image: image ?? this.image,
+      repaymentDate: repaymentDate
     );
   }
 }

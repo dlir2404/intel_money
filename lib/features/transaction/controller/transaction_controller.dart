@@ -186,6 +186,7 @@ class TransactionController {
     required File? image,
 
     required DateTime? collectionDate,
+    required DateTime? repaymentDate,
   }) async {
     _validateFields(
       amount: amount,
@@ -275,6 +276,7 @@ class TransactionController {
           sourceWalletId: sourceWallet!.id,
           categoryId: category!.id,
           lenderId: lender!.id!,
+          repaymentDate: repaymentDate,
         );
         break;
       case TransactionType.repayment:

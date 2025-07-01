@@ -59,6 +59,7 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
   File? _image;
 
   DateTime? _collectionDate;
+  DateTime? _repaymentDate;
 
   RelatedUser? _borrower;
   RelatedUser? _lender;
@@ -119,6 +120,7 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
         difference: _newRealBalance - (_sourceWallet?.balance ?? 0),
         image: _image,
         collectionDate: _collectionDate,
+        repaymentDate: _repaymentDate,
       );
 
       if (mounted) {
@@ -417,6 +419,8 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
 
               if (_selectedTransactionType == TransactionType.lend)
                 Text("Thời gian cho vay"),
+              if (_selectedTransactionType == TransactionType.borrow)
+                Text("Thời gian vay"),
               DateInput(
                 selectedDate: _transactionDate,
                 placeholder: 'Thời gian',
@@ -434,13 +438,31 @@ class _CreateTransactionScreenState extends State<CreateTransactionScreen> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text("Thời gian thu nợ"),
+                    Text("Thời gian thu"),
                     DateInput(
                       selectedDate: _collectionDate,
-                      placeholder: 'Thời gian thu nợ',
+                      placeholder: 'Thời gian thu',
                       onDateSelected: (DateTime date) {
                         setState(() {
                           _collectionDate = date;
+                        });
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                  ],
+                ),
+
+              if (_selectedTransactionType == TransactionType.borrow)
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("Thời gian trả"),
+                    DateInput(
+                      selectedDate: _repaymentDate,
+                      placeholder: 'Thời gian trả',
+                      onDateSelected: (DateTime date) {
+                        setState(() {
+                          _repaymentDate = date;
                         });
                       },
                     ),

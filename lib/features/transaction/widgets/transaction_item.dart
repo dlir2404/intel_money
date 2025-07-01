@@ -79,6 +79,25 @@ class TransactionItem extends StatelessWidget {
       );
     }
 
+    if (transaction.type == TransactionType.borrow && (transaction as BorrowTransaction).repaymentDate != null) {
+      return Expanded(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              name,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+            ),
+            Text(
+              "Ngày trả: ${AppTime.format(time: (transaction as BorrowTransaction).repaymentDate!)}",
+              style: const TextStyle(fontSize: 12, color: Colors.grey),
+            ),
+          ],
+        ),
+      );
+    }
+
     return Expanded(
       child: Text(
         name,
