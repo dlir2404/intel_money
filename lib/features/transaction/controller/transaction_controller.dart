@@ -462,43 +462,43 @@ class TransactionController {
     required File? image,
   }) {
     if (transactionType != TransactionType.modifyBalance && amount <= 0) {
-      throw TransactionException('Amount must be greater than 0');
+      throw TransactionException('Số tiền phải lớn hơn 0');
     }
 
     if ((transactionType != TransactionType.transfer) && category == null) {
-      throw TransactionException('Please select a category');
+      throw TransactionException('Vui lòng chọn danh mục');
     }
 
     if (sourceWallet == null) {
-      throw TransactionException('Please select a wallet');
+      throw TransactionException('Vui lòng chọn ví');
     }
 
     if (transactionDate == null) {
-      throw TransactionException('Please select a transaction date');
+      throw TransactionException('Ngày giao dịch không được để trống');
     }
 
     if (transactionType == TransactionType.transfer &&
         destinationWallet == null) {
-      throw TransactionException("Please choose a destination wallet");
+      throw TransactionException("Vui lòng chọn ví đích");
     }
 
     if (transactionType == TransactionType.transfer &&
         sourceWallet == destinationWallet) {
       throw TransactionException(
-        "Source wallet and destination wallet can not be the same",
+        "Ví nguồn và ví đích không thể giống nhau",
       );
     }
 
     if (transactionType == TransactionType.lend && borrower == null) {
-      throw TransactionException("Please choose a borrower");
+      throw TransactionException("Vui lòng chọn người vay");
     }
 
     if (transactionType == TransactionType.borrow && lender == null) {
-      throw TransactionException("Please choose a lender");
+      throw TransactionException("Vui lòng chọn người cho vay");
     }
 
     if (transactionType == TransactionType.modifyBalance && difference == 0) {
-      throw TransactionException("Difference can not be zero");
+      throw TransactionException("Chênh lệch phải khác 0");
     }
   }
 

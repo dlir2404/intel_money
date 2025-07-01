@@ -393,7 +393,7 @@ class _MainInputState extends State<MainInput> {
               result = firstNum / secondNum;
             } else {
               // Handle division by zero
-              AppToast.showError(context, 'Cannot divide by zero');
+              AppToast.showError(context, 'Không thể chia cho 0');
             }
             break;
         }

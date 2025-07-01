@@ -65,13 +65,13 @@ class _RegisterBodyWidgetState extends State<RegisterBodyWidget> {
           _passwordController.text
       ).then((value) {
         if (mounted){
-          AppToast.showSuccess(context, 'Register successfully');
+          AppToast.showSuccess(context, 'Đăng ký thành công');
           AppRoutes.navigateToHome(context);
         }
       }).catchError((error) {
         if (mounted){
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Sign in failed: ${error.toString()}')),
+            SnackBar(content: Text('Đăng ký thất bại: ${error.toString()}')),
           );
         }
       }).whenComplete(() {
@@ -91,12 +91,12 @@ class _RegisterBodyWidgetState extends State<RegisterBodyWidget> {
       await GoogleAuthService().signIn();
 
       if (mounted){
-        AppToast.showSuccess(context, 'Sign up successfully');
+        AppToast.showSuccess(context, 'Đăng ký thành công');
         AppRoutes.navigateToHome(context);
       }
     } catch (error) {
       if (mounted){
-        AppToast.showError(context, 'Sign up failed: ${error.toString()}');
+        AppToast.showError(context, 'Đăng ký thất bại: ${error.toString()}');
       }
     } finally {
       setState(() {

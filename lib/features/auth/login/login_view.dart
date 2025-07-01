@@ -55,12 +55,12 @@ class _BodyWidgetState extends State<BodyWidget> {
           _passwordController.text
       ).then((value) {
         if (mounted){
-          AppToast.showSuccess(context, 'Login successfully');
+          AppToast.showSuccess(context, 'Đăng nhập thành công');
           AppRoutes.navigateToHome(context);
         }
       }).catchError((error) {
         if (mounted){
-          AppToast.showError(context, 'Sign in failed: ${error.toString()}');
+          AppToast.showError(context, 'Đăng nhập thất bại: ${error.toString()}');
         }
       }).whenComplete(() {
         setState(() {
@@ -79,12 +79,12 @@ class _BodyWidgetState extends State<BodyWidget> {
       await GoogleAuthService().signIn();
 
       if (mounted){
-        AppToast.showSuccess(context, 'Login successfully');
+        AppToast.showSuccess(context, 'Đăng nhập thành công');
         AppRoutes.navigateToHome(context);
       }
     } catch (error) {
       if (mounted){
-        AppToast.showError(context, 'Sign in failed: ${error.toString()}');
+        AppToast.showError(context, 'Đăng nhập thất bại: ${error.toString()}');
       }
     } finally {
       setState(() {

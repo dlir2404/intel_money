@@ -42,7 +42,7 @@ class _EditCategoryScreenState extends State<EditCategoryScreen> {
       if (arguments == null ||
           arguments.isEmpty ||
           !arguments.containsKey('category')) {
-        AppToast.showError(context, "Error occur, no category selected");
+        AppToast.showError(context, "Có lỗi xảy ra");
       }
 
       setState(() {
